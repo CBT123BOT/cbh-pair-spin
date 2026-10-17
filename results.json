@@ -1,12 +1,44 @@
 {
  "network": "XRPL MAINNET",
  "seller": "rNxAwKP3rdNTfe4ZNw1SntXCfW2U4r2XuB",
- "wave": "D2",
- "price_xrp": "11.82",
- "pairs_sold": 0,
+ "wave": "SOLD OUT",
+ "price_xrp": null,
+ "pairs_sold": 1,
  "pairs_total": 1,
- "pairs_left": 1,
+ "pairs_left": 0,
  "fair_random": "index = int(SHA-256(bytes(payment_tx_hash + validating_ledger_hash))) mod len(remaining pool sorted by piece #)",
- "updated": "2026-10-17T17:31:58.236250+00:00",
- "events": []
+ "updated": "2026-10-17T17:40:21.578303+00:00",
+ "events": [
+  {
+   "t": 1792258805.2544553,
+   "time_utc": "2026-10-17T17:40:05.254462+00:00",
+   "payment_tx": "C0D4495F9C706C29BDF161FBA2D0F626F1F0C8C4966F523C1A5382D202CE3EA3",
+   "ledger_index": 107722053,
+   "buyer": "rHcxvJeFh8Jk6kjrGjASrtZfgcYgB3rewT",
+   "delivered": "11820000",
+   "action": "pair",
+   "wave": "D2",
+   "price_drops": "11820000",
+   "piece": "0248",
+   "pick": {
+    "ledger_hash": "57C691979908F46256AC16EA4A3D3D0D67F22353A22EC3A6B42EB7183667B0AE",
+    "pool": [
+     "0248"
+    ],
+    "index": 0
+   },
+   "polaroid": {
+    "nft_id": "00181770992DB95F47B7A516192A895CCF7E2789C11673739D6A57590666EBC2",
+    "offer_id": "02B2A05CF74D837E343DA781389AC13F008122D8FDC5662B29A6C275339E3C0B",
+    "mint_tx": "5EB204B7C8FC014F8A54F69E0F995DAB83C812E1BDFC8161B5C2AFE7552416C1",
+    "name": "Chip Botsworth #0248"
+   },
+   "twin": {
+    "nft_id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373B450285B0666EBC3",
+    "offer_id": "D083750519844C1323AA14BAA0D0815678C83C9B55EF48EBBD7A6E8AB195FE52",
+    "mint_tx": "A3F10DB779B32E59A6B5E015BE62406D7AE28E0F27A27E3C727E2BD4EB8B5065",
+    "name": "Chip Botsworth #0248 \u2022 3D TwiN"
+   }
+  }
+ ]
 }
