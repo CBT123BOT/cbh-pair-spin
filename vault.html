@@ -1,0 +1,106 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="img/favicon.png">
+<title>Crypto Bros&amp;Ho's Trading Company · THE VAULT</title>
+<style>
+body{font-family:system-ui,sans-serif;background:#0d0f14;color:#eee;margin:0 auto;padding:16px;max-width:760px}
+.title{position:relative;display:block;width:fit-content;margin:6px auto 14px;font-family:Georgia,'Times New Roman',serif;font-size:clamp(1.55em,7.4vw,2.6em);font-weight:900;line-height:1.12;text-align:center;letter-spacing:.5px;color:#6b4a0c;
+text-shadow:0 1px 0 #8a6414,0 2px 0 #7a5810,0 3px 0 #6b4a0c,0 4px 0 #5a3d08,0 5px 0 #4a3106,0 6px 1px rgba(0,0,0,.55),0 8px 6px rgba(0,0,0,.55),0 14px 18px rgba(0,0,0,.6)}
+.title::after{content:attr(data-text);position:absolute;inset:0;
+background:linear-gradient(180deg,#fff6c9 0%,#ffe27a 18%,#f5c542 38%,#c8921c 55%,#f7d262 70%,#fff0b0 82%,#b9801a 100%);
+-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-stroke:.6px rgba(255,240,180,.55);text-shadow:none;
+filter:drop-shadow(0 -1px 0 rgba(255,255,230,.6))}
+h1{font-size:1.25em;color:#f5c542;margin:.5em 0}
+.tn{background:#b3261e;color:#fff;font-weight:800;text-align:center;padding:8px;border-radius:8px;letter-spacing:.5px}
+.note{background:#1c2130;border-left:4px solid #f5c542;padding:10px;border-radius:6px;font-size:.95em;word-break:break-word;margin:10px 0}
+input{width:100%;box-sizing:border-box;padding:12px;font-size:1em;border-radius:8px;border:1px solid #444;background:#151922;color:#fff;margin:8px 0}
+.stats{display:flex;gap:10px;margin:10px 0}.stats div{flex:1;background:#171b26;border-radius:10px;padding:10px;text-align:center}.stats b{display:block;font-size:1.5em;color:#f5c542}
+.machine{background:linear-gradient(#2a2410,#171b26);border:3px solid #f5c542;border-radius:16px;padding:14px;margin:14px 0}
+.reels{display:grid;grid-template-columns:1fr 1fr;gap:12px}.reel{background:#0b0d12;border-radius:10px;overflow:hidden;position:relative;aspect-ratio:1}
+.reel img{width:100%;height:100%;object-fit:cover;display:block}.reel .lab{position:absolute;bottom:0;left:0;right:0;background:#000a;font-size:.8em;padding:5px;text-align:center}
+.reel .q{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:4em;color:#f5c542;text-shadow:0 0 12px #000}
+.spinning img{filter:blur(7px) brightness(.7)}
+button.spin{display:block;width:100%;margin-top:12px;padding:16px;font-size:1.4em;font-weight:900;border:0;border-radius:12px;background:#f5c542;color:#111;cursor:pointer;letter-spacing:2px}
+button.spin:disabled{background:#6b5a22;color:#333}
+#status{margin:10px 0;font-size:1.05em;min-height:1.3em}
+a.btn{display:block;margin-top:8px;padding:12px;border-radius:8px;text-decoration:none;font-weight:700;text-align:center;background:#f5c542;color:#111}
+a.sec{background:#2a3145;color:#cfe;font-weight:600}
+.small{font-size:.8em;color:#8a93a8;word-break:break-all}
+.hist .row{background:#171b26;border-radius:10px;padding:10px;margin:8px 0}
+#qr{display:none;text-align:center;margin:10px 0}#qr img{background:#fff;padding:8px;border-radius:8px}
+.claim{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:14px;margin:-16px -16px 14px;padding:12px 16px;background:linear-gradient(180deg,#1a1508,#0d0f14);border-bottom:2px solid #f5c542;box-shadow:0 4px 18px rgba(245,197,66,.18)}
+.plug{width:96px;height:96px;flex:0 0 96px;perspective:400px}.plug img{width:100%;height:100%;border-radius:50%;animation:coin 6s linear infinite;filter:drop-shadow(0 0 6px rgba(245,197,66,.55))}
+@keyframes coin{from{transform:rotateY(0)}to{transform:rotateY(360deg)}}
+@media (prefers-reduced-motion:reduce){.plug img{animation:none}}
+.tb-info{flex:1;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.chip{border:1.5px solid #f5c542;border-radius:999px;padding:7px 16px;font-weight:900;color:#f5c542;background:rgba(245,197,66,.08);font-size:1.25em;white-space:nowrap;letter-spacing:.5px}
+.chip small{color:#cdb46a;font-weight:600;margin-right:4px}
+
+.pairs{display:grid;grid-template-columns:1fr;gap:10px}.pc{background:#171b26;border:2px solid #333;border-radius:12px;padding:10px;cursor:pointer;display:flex;gap:10px;align-items:center}
+.pc.sel{border-color:#f5c542;box-shadow:0 0 12px rgba(245,197,66,.4)}.pc.used{opacity:.45;cursor:default}.pc img{width:72px;height:72px;border-radius:8px;object-fit:cover}
+.warn{background:#2a1a08;border:2px solid #f5c542;border-radius:10px;padding:12px;margin:12px 0}
+.coins{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.coin{aspect-ratio:1;background:#0b0d12;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:2.6em;color:#f5c542;border:3px solid #f5c542}
+.coin img{width:100%;height:100%;object-fit:cover}.coin.spinning{animation:coin 0.6s linear infinite}
+.navl{color:#f5c542;font-weight:800;text-decoration:none}
+</style></head><body>
+<div class="topbar"><div class="plug"><img src="img/the_plug.png" alt="THE plug, Crypto Bros &amp; Ho's Trading Company"></div><div class="tb-info"><a class="chip navl" href="index.html">PAIR SPIN</a><span class="chip"><small>STASH</small><span id="stash">…</span></span></div></div>
+<h1>🐉 THE VAULT 🐉</h1>
+<div class="note"><b>Unite the TwiNs to unlock the power.</b> Hold BOTH Polaroid #N and 3D TwiN #N (with the gold coin on) in one wallet, and you can use that pair's <b>3 free Mickel Nickel spins</b> in one tap. Every spin has a chance at <b>Gold</b>. Spins are optional: a coin-on pair keeps its spins if you sell it.</div>
+<a class="btn" id="connect" style="display:none" href="#">🔗 Connect Xaman (sign in)</a>
+<label>Your Xaman address</label>
+<input id="w" placeholder="r... (your address)" autocomplete="off">
+<h3>Your pairs</h3><div class="pairs" id="pairs"><div class="small">Connect to see your matched pairs.</div></div>
+<div class="warn" id="warn" style="display:none">⚠️ <b>Heads up:</b> the gold coin in the corner will be removed once you use your spins. Until then your NFT holds the value of your free Mickel spins.<label style="display:block;margin-top:8px"><input type="checkbox" id="ok" style="width:auto"> I understand</label></div>
+<div class="machine"><div class="coins"><div class="coin" id="c0">?</div><div class="coin" id="c1">?</div><div class="coin" id="c2">?</div></div>
+<button class="spin" id="spin" disabled>Pick a pair</button></div>
+<div id="status"></div>
+<div id="qr"><div class="small" id="qrt">Scan with Xaman:</div><img id="qri" width="220" height="220" alt="QR"></div>
+<div id="claim"></div>
+<p class="small">The spin request is a 0.000001 XRP proof payment you sign (it proves you hold the pair). Fair pick: spin i = SHA-256(proof tx hash + validating ledger hash + i) mod coins left in the stash, so odds follow what's left. Public log: <a href="vault_results.json" style="color:#8ab">vault_results.json</a>. Pieces are NFTs.</p>
+<script src="config.js"></script>
+<script>
+const SELLER="rNxAwKP3rdNTfe4ZNw1SntXCfW2U4r2XuB",WSS=["wss://xrplcluster.com","wss://s1.ripple.com","wss://s2.ripple.com"],EXP="https://livenet.xrpl.org",NET='MAINNET',PAGE=location.origin+location.pathname,GW="https://gateway.pinata.cloud/ipfs/";
+const $=id=>document.getElementById(id);let VP=null,RES={used_pairs:{}},XM=null,connected=false,sel=null,ws=null,wsi=0,reqId=1,pend={},spinT=null,watchT=null,known=new Set();
+const isMobile=/iPhone|iPad|Android/i.test(navigator.userAgent),valid=a=>/^r[1-9A-HJ-NP-Za-km-z]{24,34}$/.test(a);
+const hex2s=h=>{try{return decodeURIComponent(h.replace(/(..)/g,'%$1'))}catch(e){return''}},s2hex=s=>Array.from(new TextEncoder().encode(s)).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
+function conn(){return new Promise((res,rej)=>{if(ws&&ws.readyState===1)return res(ws);const s=new WebSocket(WSS[wsi%WSS.length]);s.onopen=()=>{ws=s;res(s)};s.onerror=()=>{wsi++;rej(new Error('ws'))};s.onclose=()=>{ws=null};s.onmessage=e=>{const m=JSON.parse(e.data);if(m.id&&pend[m.id]){pend[m.id](m);delete pend[m.id]}}})}
+async function rq(o){for(let k=0;k<3;k++){try{const s=await conn();return await new Promise(r=>{const id=reqId++;pend[id]=r;s.send(JSON.stringify({...o,id}))})}catch(e){await new Promise(r=>setTimeout(r,800))}}throw new Error('ledger')}
+async function nfts(a){let out=[],marker;do{const r=(await rq({command:'account_nfts',account:a,limit:400,marker})).result||{};out=out.concat(r.account_nfts||[]);marker=r.marker}while(marker);return out}
+const img=u=>u&&u.startsWith('ipfs://')?GW+u.slice(7):u;
+async function coinInfo(uri){try{let r=await fetch(img(uri));if(!r.ok)r=await fetch(img(uri.replace(/\/0+(\d+\.json)$/,'/$1')));const j=await r.json();return{name:j.name,img:img(j.image),metal:((j.attributes||[]).find(a=>/metal/i.test(a.trait_type))||{}).value}}catch(e){return{name:uri.split('/').pop(),img:''}}}
+let VOPEN=false;async function load(){try{VOPEN=(await (await fetch('vault.json?'+Date.now())).json()).open===true}catch(e){VOPEN=false}if(!VOPEN){$('stash').textContent='SOON'}VP=await (await fetch('vault_pool.json?'+Date.now())).json();try{RES=await (await fetch('vault_results.json?'+Date.now())).json();if(VOPEN)$('stash').textContent=RES.stash_left}catch(e){}}
+async function myPairs(){const a=$('w').value.trim();if(!valid(a))return;const have={};for(const n of await nfts(a))if(n.Issuer===SELLER)have[hex2s(n.URI||'')]=n;
+ const L=[];for(const [N,p] of Object.entries(VP.pairs)){const P=have[p.polaroid.uri_coin],T=have[p.twin.uri_coin];const Pn=have[p.polaroid.uri_nocoin],Tn=have[p.twin.uri_nocoin];
+  if(P&&T)L.push({N,name:p.name,img:p.polaroid.img,ok:!RES.used_pairs[N]});else if((P||Pn)&&(T||Tn))L.push({N,name:p.name,img:p.polaroid.img,ok:false,why:'spins used'});else if(P||T)L.push({N,name:p.name,img:p.polaroid.img,ok:false,why:'need both Polaroid + TwiN #'+N})}
+ for(const [N,p] of Object.entries(VP.d1||{}))if(have[p.polaroid_uri]&&have[p.twin_uri])L.push({N,name:p.name+' (D1)',img:p.img,ok:!RES.used_pairs[N],why:RES.used_pairs[N]?'spins used':''});
+ $('pairs').innerHTML=L.length?L.map(x=>`<div class="pc ${x.ok?'':'used'} ${sel===x.N?'sel':''}" data-n="${x.N}" data-ok="${x.ok}"><img src="${x.img}" alt=""><div><b>${x.name}</b><div class="small">${x.ok?'🪙 coin on · 3 spins ready':(x.why||'spins used')}</div></div></div>`).join(''):'<div class="small">No matched pairs found in this wallet.</div>';
+ document.querySelectorAll('.pc').forEach(e=>e.onclick=()=>{if(e.dataset.ok!=='true')return;sel=e.dataset.n;myPairs();gate()});gate()}
+function gate(){const b=$('spin');if(!VOPEN){b.disabled=true;b.textContent='THE VAULT opens soon';b.style.filter='grayscale(1)';b.style.opacity='.5';return}b.style.filter='';b.style.opacity='';$('warn').style.display=sel?'block':'none';const walletOk=XM?connected:valid($('w').value.trim());
+ if(!sel){b.disabled=true;b.textContent='Pick a pair';return}if(!$('ok').checked){b.disabled=true;b.textContent='Tick “I understand” first';return}
+ if(!walletOk||!XM){b.disabled=true;b.textContent='Connect Xaman to spin';return}b.disabled=false;b.textContent='🐉 UNITE THE TWINS · USE 3 SPINS'}
+$('ok').onchange=gate;
+async function xamanSign(txjson,instruction){const ret=PAGE+'?wallet='+encodeURIComponent($('w').value.trim());
+ const sub=await XM.payload.createAndSubscribe({txjson,options:{force_network:NET,return_url:{app:ret,web:ret}},custom_meta:{instruction}},e=>{if('signed' in e.data)return e.data});
+ if(!sub||!sub.created)throw new Error('Xaman did not create the sign request');if(isMobile)location.href=sub.created.next.always;else{$('qri').src=sub.created.refs.qr_png;$('qr').style.display='block'}return sub.resolved}
+function startC(){for(let i=0;i<3;i++){$('c'+i).classList.add('spinning');$('c'+i).textContent='🪙'}}
+function stopC(list){for(let i=0;i<3;i++){const c=$('c'+i);c.classList.remove('spinning');c.innerHTML=list[i]?(list[i].img?`<img src="${list[i].img}" title="${list[i].name}">`:'✔'):'?'}}
+async function pendingCoins(){const a=$('w').value.trim();const r=(await rq({command:'account_objects',account:SELLER,type:'nft_offer',limit:400})).result||{};
+ const held={};for(const n of await nfts(SELLER))if(n.NFTokenTaxon===3)held[n.NFTokenID]=hex2s(n.URI||'');
+ return (r.account_objects||[]).filter(o=>o.Destination===a&&o.Amount==='0'&&held[o.NFTokenID]).map(o=>({offer:o.index,uri:held[o.NFTokenID]}))}
+async function showClaims(){const L=await pendingCoins();if(!L.length){$('claim').innerHTML='';return L}const info=await Promise.all(L.map(x=>coinInfo(x.uri)));
+ $('claim').innerHTML='<h3>Your Mickel Nickels to claim</h3><div class="claim">'+L.map((x,i)=>`<a class="btn cl" href="#" onclick='claimOne("${x.offer}");return false'>CLAIM ${info[i].metal||''} ${info[i].name}</a>`).join('')+'</div><div class="small">Claiming costs 0 XRP. Or accept them in Xaman → Events → Requests.</div>';return L.map((x,i)=>({...x,...info[i]}))}
+async function claimOne(o){if(!XM)return;try{await xamanSign({TransactionType:'NFTokenAcceptOffer',NFTokenSellOffer:o},'Claim your Mickel Nickel (0 XRP)')}catch(e){$('status').textContent='Xaman: '+e.message}setTimeout(showClaims,5000)}
+$('spin').onclick=async()=>{if(!VOPEN||$('spin').disabled)return;const N=sel;const before=new Set((await pendingCoins()).map(x=>x.offer));startC();
+ $('status').innerHTML=`Opening Xaman… check it says <b>${NET}</b> and <b>0.000001 XRP</b>, then sign. That proves you hold pair #${N}.`;
+ try{if(!VOPEN)throw new Error('THE VAULT opens soon');await xamanSign({TransactionType:'Payment',Destination:SELLER,Amount:'1',Memos:[{Memo:{MemoType:s2hex('CBH-VAULT'),MemoData:s2hex(N)}}]},`THE VAULT: use 3 spins on pair #${N}`)}catch(e){stopC([]);$('status').textContent='Xaman: '+e.message;return}
+ clearInterval(watchT);let k=0;watchT=setInterval(async()=>{k++;try{const L=(await showClaims())||[];const nw=L.filter(x=>!before.has(x.offer));
+  if(nw.length>=3){clearInterval(watchT);stopC(nw);const g=nw.filter(x=>/gold/i.test((x.metal||'')+x.name)).length;$('status').innerHTML=(g?'🏆 GOLD! ':'🎉 ')+'Your 3 spins are in. Claim your coins below. The coin on pair #'+N+' is now off.';sel=null;await load();myPairs()}
+  else if(k>45){clearInterval(watchT);stopC([]);$('status').innerHTML='No spins came back. Check <a href="vault_results.json" style="color:#8ab">the public log</a> (the pair may not qualify).'}}catch(e){}},4000)};
+if(window.CBH_XAMAN_API_KEY){const sc=document.createElement('script');sc.src='https://xumm.app/assets/cdn/xumm.min.js';sc.onload=()=>{XM=new Xumm(window.CBH_XAMAN_API_KEY);$('connect').style.display='block';$('w').readOnly=true;
+ $('connect').onclick=e=>{e.preventDefault();if(connected)XM.logout();else XM.authorize()};XM.on('logout',()=>{connected=false;$('connect').textContent='🔗 Connect Xaman (sign in)';gate()});
+ XM.on('success',async()=>{const a=await XM.user.account;$('w').value=a;connected=true;$('connect').textContent='✅ Connected: '+a.slice(0,6)+'…'+a.slice(-4);myPairs();showClaims()})};document.head.appendChild(sc)}
+load().then(()=>{const q=new URLSearchParams(location.search).get('wallet');if(q&&valid(q)&&!$('w').value)$('w').value=q;myPairs().catch(()=>{});showClaims().catch(()=>{})});
+$('w').addEventListener('change',()=>myPairs().catch(()=>{}));
+</script><div class="footer" style="margin:30px -16px -16px;padding:22px 10px 26px;border-top:2px solid #f5c542;background:linear-gradient(0deg,#1a1508,#0d0f14)"><div class="title" data-text="Crypto Bros&amp;Ho's Trading Company" role="heading" aria-level="1">Crypto Bros&amp;Ho's Trading Company</div>
+</div>
+</body></html>
