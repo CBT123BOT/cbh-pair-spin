@@ -1,10 +1,26 @@
 {
  "network": "XRPL MAINNET",
  "wallet": "rNxAwKP3rdNTfe4ZNw1SntXCfW2U4r2XuB",
- "spins_per_pair": 3,
- "stash_left": 1,
+ "spins_per_pair": {
+  "d1": 3,
+  "d2_plus": 2
+ },
+ "stash_left": 41,
  "used_pairs": {},
+ "mn": {
+  "open": false,
+  "total": 14160,
+  "minted_total": 69,
+  "remaining": 14091,
+  "first_wave_until": 4248,
+  "left_at_first_price": 4179,
+  "first_price_xrp": "1.11",
+  "normal_price_xrp": "3.33",
+  "price_now_xrp": "1.11",
+  "wave": "first",
+  "max_per_tx": 10
+ },
  "events": [],
- "rule": "pick i = SHA-256(proof tx hash + validating ledger hash + i) mod stash size (sorted NFTokenIDs, shrinks each pick)",
- "updated": "2026-10-17T19:27:10.353998+00:00"
+ "rule": "pick i = SHA-256(proof/payment tx hash + validating ledger hash + byte i) mod pool size; pool = stash NFTokenIDs sorted (vault spins, used first), then never-minted coin numbers sorted (mn_remaining.json); pool shrinks each pick",
+ "updated": "2026-10-17T21:49:36.073220+00:00"
 }
