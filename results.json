@@ -1,1 +1,12 @@
-{"network":"XRPL MAINNET","events":[]}
+{
+ "network": "XRPL MAINNET",
+ "seller": "rNxAwKP3rdNTfe4ZNw1SntXCfW2U4r2XuB",
+ "wave": "D2",
+ "price_xrp": "11.82",
+ "pairs_sold": 0,
+ "pairs_total": 1,
+ "pairs_left": 1,
+ "fair_random": "index = int(SHA-256(bytes(payment_tx_hash + validating_ledger_hash))) mod len(remaining pool sorted by piece #)",
+ "updated": "2026-10-17T17:31:58.236250+00:00",
+ "events": []
+}
