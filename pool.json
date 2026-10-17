@@ -1,0 +1,13 @@
+{
+ "network": "XRPL MAINNET",
+ "price_xrp": "11.82",
+ "pairs": [
+  {
+   "piece": "0248",
+   "polaroid": {"name": "Chip Botsworth #0248", "img": "img/polaroid_0248.webp",
+     "uri": "ipfs://bafybeiabvdsx324zs2lajqbfx4gscfxwuxtynfeaghu6ioxiax77dhdt5u/540.json"},
+   "twin": {"name": "Chip Botsworth #0248 \u2022 3D TwiN", "img": "img/twin_0248.webp",
+     "uri": "ipfs://bafybeicdldbzoezxp5chbuazduvsja5knd6r3wbtec6rnpcocs4tdwhmnm/0248.json"}
+  }
+ ]
+}
