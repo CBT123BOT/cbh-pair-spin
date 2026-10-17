@@ -44,9 +44,9 @@ a.sec{background:#2a3145;color:#cfe;font-weight:600}
 .mnbox{background:linear-gradient(#10241a,#171b26);border:3px solid #f5c542;border-radius:16px;padding:14px;margin:18px 0}.qty{display:flex;gap:10px;align-items:center;justify-content:center;margin:10px 0}.qty button{width:48px;height:48px;font-size:1.5em;font-weight:900;border-radius:10px;border:0;background:#2a3145;color:#f5c542}.qty b{font-size:1.8em;min-width:2em;text-align:center}.big{font-size:1.6em;color:#f5c542;font-weight:900;text-align:center}
 .navl{color:#f5c542;font-weight:800;text-decoration:none}
 </style></head><body>
-<div class="topbar"><div class="plug"><img src="img/the_plug.png" alt="THE plug, Crypto Bros &amp; Ho's Trading Company"></div><div class="tb-info"><a class="chip navl" href="index.html">PAIR SPIN</a><span class="chip"><small>STASH</small><span id="stash">…</span></span></div></div>
+<div class="topbar"><div class="plug"><img src="img/the_plug.png" alt="THE plug, Crypto Bros &amp; Ho's Trading Company"></div><div class="tb-info"><a class="chip navl" href="index.html">PAIR SPIN</a><span class="chip"><small>COINS LEFT</small><span id="stash">…</span></span></div></div>
 <h1>🐉 THE VAULT 🐉</h1>
-<div class="note"><b>Unite the TwiNs to unlock the power.</b> Hold BOTH Polaroid #N and 3D TwiN #N (with the gold coin on) in one wallet, and you can use that pair's free Mickel Nickel spins in one tap: <b>D1 pairs get 3 spins</b>, <b>D2+ pairs get 2 spins</b>. Every spin has a chance at <b>Gold</b>. Spins are optional: a coin-on pair keeps its spins if you sell it.</div>
+<div class="note"><b>Unite the TwiNs to unlock the power.</b> Hold BOTH Polaroid #N and 3D TwiN #N (with the gold coin on) in one wallet, and you can use that pair's free Mickel Nickel spins in one tap: <b>D1 pairs get 3 spins</b>, <b>D2+ pairs get 2 spins</b>. Every spin mints a fresh, never-minted coin with a chance at <b>Gold</b>. Spins are optional: a coin-on pair keeps its spins if you sell it.</div>
 <a class="btn" id="connect" style="display:none" href="#">🔗 Connect Xaman (sign in)</a>
 <label>Your Xaman address</label>
 <input id="w" placeholder="r... (your address)" autocomplete="off">
@@ -63,7 +63,7 @@ a.sec{background:#2a3145;color:#cfe;font-weight:600}
 <div class="qty"><button id="mnminus">−</button><b id="mnq">1</b><button id="mnplus">+</button></div>
 <div style="text-align:center"><b id="mntot">…</b> XRP</div>
 <button class="spin" id="mnbuy" disabled>Mint opens soon</button></div>
-<p class="small">The spin request is a 0.000001 XRP proof payment you sign (it proves you hold the pair). Fair pick: spin i = SHA-256(proof tx hash + validating ledger hash + i) mod the pool, using coins already in the stash first, then never-minted coins (<a href="mn_remaining.json" style="color:#8ab">mn_remaining.json</a>), so odds follow what's left. Paid mints use the same rule with the payment tx hash. A payment at the wrong price is refunded. Public log: <a href="vault_results.json" style="color:#8ab">vault_results.json</a>. Pieces are NFTs.</p>
+<p class="small">The spin request is a 0.000001 XRP proof payment you sign (it proves you hold the pair). Fair pick: spin i = SHA-256(proof tx hash + validating ledger hash + i) mod the never-minted coins (<a href="mn_remaining.json" style="color:#8ab">mn_remaining.json</a>), so odds follow what's left. Paid mints use the same rule with the payment tx hash. A payment at the wrong price is refunded. Public log: <a href="vault_results.json" style="color:#8ab">vault_results.json</a>. Pieces are NFTs.</p>
 <script src="config.js"></script>
 <script>
 const SELLER="rNxAwKP3rdNTfe4ZNw1SntXCfW2U4r2XuB",WSS=["wss://xrplcluster.com","wss://s1.ripple.com","wss://s2.ripple.com"],EXP="https://livenet.xrpl.org",NET='MAINNET',PAGE=location.origin+location.pathname,GW="https://gateway.pinata.cloud/ipfs/";
