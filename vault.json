@@ -1,4 +1,5 @@
 {
  "open": true,
- "note": "THE VAULT switch. Set open:true only after the stash has coins and the vault watcher STOP file is removed."
+ "note": "THE VAULT switch. Set open:true only after the stash has coins and the vault watcher STOP file is removed.",
+ "spin_fee_drops": "100000"
 }
