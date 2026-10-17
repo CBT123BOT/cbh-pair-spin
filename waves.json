@@ -1,4 +1,5 @@
 {
+ "open": false,
  "note": "Spin caps per wave. until_pairs_sold counts ALL pairs sold on this page incl. the #0248 test pair (sold=1). D2 = 333 spins, D3 = 333 spins, D4 = rest (final 10%).",
  "network": "XRPL MAINNET",
  "start_ledger": 107721927,
