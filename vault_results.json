@@ -1,0 +1,10 @@
+{
+ "network": "XRPL MAINNET",
+ "wallet": "rNxAwKP3rdNTfe4ZNw1SntXCfW2U4r2XuB",
+ "spins_per_pair": 3,
+ "stash_left": 1,
+ "used_pairs": {},
+ "events": [],
+ "rule": "pick i = SHA-256(proof tx hash + validating ledger hash + i) mod stash size (sorted NFTokenIDs, shrinks each pick)",
+ "updated": "2026-10-17T19:27:10.353998+00:00"
+}
