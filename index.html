@@ -62,7 +62,7 @@ a.sec{background:#2a3145;color:#cfe;font-weight:600}
 const SELLER="rNxAwKP3rdNTfe4ZNw1SntXCfW2U4r2XuB",WSS=["wss://xrplcluster.com","wss://s1.ripple.com","wss://s2.ripple.com"],EXP="https://livenet.xrpl.org",PAGE=location.origin+location.pathname;
 const $=id=>document.getElementById(id);$('sel').textContent=SELLER;
 let POOL=[],WAVES=null,byUri={},ws=null,wsi=0,reqId=1,pend={},spinTimer=null,watching=null,known=null;
-let PRICE=null,PRICE_XRP=null,WAVE=null,left=0,priceOk=false,connected=false,XM=null;const isMobile=/iPhone|iPad|Android/i.test(navigator.userAgent);
+let PAUSED=true,PRICE=null,PRICE_XRP=null,WAVE=null,left=0,priceOk=false,connected=false,XM=null;const isMobile=/iPhone|iPad|Android/i.test(navigator.userAgent);
 function conn(){return new Promise((res,rej)=>{if(ws&&ws.readyState===1)return res(ws);const s=new WebSocket(WSS[wsi%WSS.length]);
  s.onopen=()=>{ws=s;res(s)};s.onerror=()=>{wsi++;rej(new Error('ws'))};s.onclose=()=>{ws=null};
  s.onmessage=e=>{const m=JSON.parse(e.data);if(m.id&&pend[m.id]){pend[m.id](m);delete pend[m.id]}}})}
@@ -80,7 +80,7 @@ async function loadPrice(out){try{if(!WAVES)WAVES=await (await fetch('waves.json
  const w=WAVES.waves.find(w=>sold<Number(w.until_pairs_sold));const last=WAVES.waves[WAVES.waves.length-1];
  left=w?Math.max(0,Math.min(Number(w.until_pairs_sold),(POOL.length||Infinity))-sold):0;$('left').textContent=left;
  if(w){WAVE=w.id;PRICE_XRP=w.price_xrp;PRICE=drops(w.price_xrp);priceOk=/^\d+(\.\d{1,6})?$/.test(w.price_xrp)&&Number(PRICE)>0}else{WAVE='SOLD OUT';priceOk=true;left=0}
- $('wv').textContent=WAVE;$('leftlbl').textContent=(w?w.id+' ':'')+'spins left';$('wv2').textContent=WAVE;document.querySelectorAll('.pz').forEach(e=>e.textContent=PRICE_XRP||'—');
+ PAUSED=WAVES.open===false;$('wv').textContent=WAVE;$('leftlbl').textContent=(w?w.id+' ':'')+'spins left';$('wv2').textContent=PAUSED?WAVE+' COMING SOON':WAVE;document.querySelectorAll('.pz').forEach(e=>e.textContent=PRICE_XRP||'—');
 }catch(e){priceOk=false;$('left').textContent='?'}gateBtn()}
 async function scan(addr,out){out=out||await history_();loadPrice(out);const pays={};
  for(const {tx,meta,h} of out){if(tx.TransactionType==='Payment'&&tx.Destination===SELLER&&tx.Account===addr&&meta.TransactionResult==='tesSUCCESS')pays[h]={h,amt:meta.delivered_amount,mints:[],refund:null,date:tx.date}}
@@ -123,19 +123,19 @@ async function claimOne(btn,offer){if(!XM)return;try{await xamanSign({Transactio
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(markClaimed,1500)});
 async function claimAll(offers){if(!XM)return;try{for(const o of offers){await xamanSign({TransactionType:'NFTokenAcceptOffer',NFTokenSellOffer:o},'Claim your CB&H NFT (0 XRP)')}}catch(e){$('status').textContent='Xaman: '+e.message}refresh().catch(()=>{})}
 const valid=a=>/^r[1-9A-HJ-NP-Za-km-z]{24,34}$/.test(a);
-function gateBtn(){const a=$('w').value.trim(),b=$('spin');const walletOk=XM?connected&&valid(a):valid(a);
+function gateBtn(){const a=$('w').value.trim(),b=$('spin');if(PAUSED){b.disabled=true;b.textContent=(WAVE&&WAVE!=='SOLD OUT'?WAVE:'D2')+' opens soon';b.style.filter='grayscale(1)';b.style.opacity='.5';return}b.style.filter='';b.style.opacity='';const walletOk=XM?connected&&valid(a):valid(a);
  if(priceOk&&(left<=0||!PRICE_XRP)){b.disabled=true;b.textContent='SOLD OUT';return}
  if(!priceOk){b.disabled=true;b.textContent='Loading price…';return}
  if(!walletOk){b.disabled=true;b.textContent=XM?'Connect Xaman to SPIN':'Enter your address to SPIN';return}
  b.disabled=false;b.textContent=`SPIN · ${PRICE_XRP} XRP`}
 async function refresh(){const a=$('w').value.trim();if(!valid(a)){loadPrice();return null}const L=await scan(a);render(L);return L}
 const payLink=()=>`https://xaman.app/detect/request:${SELLER}?amount=${PRICE_XRP}`;
-$('spin').onclick=async()=>{const a=$('w').value.trim();if($('spin').disabled)return;
+$('spin').onclick=async()=>{const a=$('w').value.trim();if(PAUSED||$('spin').disabled)return;
  const before=PRICE;await loadPrice();if(!priceOk||!PRICE||PRICE!==before){$('status').textContent='Price just changed to '+(PRICE_XRP||'sold out')+'. Check it and tap SPIN again.';return}
  history.replaceState(null,'','?wallet='+a);$('claim').innerHTML='';$('q1').textContent=$('q2').textContent='?';$('l1').textContent='POLAROID';$('l2').textContent='3D TwiN';
  let L;try{L=await scan(a)}catch(e){$('status').textContent='Could not reach the XRP Ledger, try again.';return}known=new Set(L.map(p=>p.h));
  startReels();$('status').innerHTML=`Opening Xaman… check it says <b>XRPL Mainnet</b> and <b>${PRICE_XRP}</b>, then sign. Waiting for your payment…`;
- if(XM){try{await xamanSign({TransactionType:'Payment',Destination:SELLER,Amount:PRICE,Memos:[{Memo:{MemoType:'4342482D50414952',MemoData:'5350494E'}}]},`CB&H pair SPIN ${WAVE}: ${PRICE_XRP} XRP`)}catch(e){stopReels(null);$('status').textContent='Xaman error: '+e.message;return}}
+ if(XM){try{await (PAUSED?Promise.reject(new Error('paused')):0)||xamanSign({TransactionType:'Payment',Destination:SELLER,Amount:PRICE,Memos:[{Memo:{MemoType:'4342482D50414952',MemoData:'5350494E'}}]},`CB&H pair SPIN ${WAVE}: ${PRICE_XRP} XRP`)}catch(e){stopReels(null);$('status').textContent='Xaman error: '+e.message;return}}
  else{window.open(payLink(),'_blank');$('xl').href=payLink();$('qri').src='https://api.qrserver.com/v1/create-qr-code/?size=220x220&data='+encodeURIComponent(payLink());$('qr').style.display='block';$('manual').style.display='block'}
  watch()};
 function watch(){clearInterval(watching);watching=setInterval(async()=>{let L;try{L=await refresh()}catch(e){return}if(!L)return;
