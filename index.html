@@ -80,7 +80,7 @@ async function loadPrice(out){try{if(!WAVES)WAVES=await (await fetch('waves.json
  const w=WAVES.waves.find(w=>sold<Number(w.until_pairs_sold));const last=WAVES.waves[WAVES.waves.length-1];
  left=w?Math.max(0,Math.min(Number(w.until_pairs_sold),(POOL.length||Infinity))-sold):0;$('left').textContent=left;
  if(w){WAVE=w.id;PRICE_XRP=w.price_xrp;PRICE=drops(w.price_xrp);priceOk=/^\d+(\.\d{1,6})?$/.test(w.price_xrp)&&Number(PRICE)>0}else{WAVE='SOLD OUT';priceOk=true;left=0}
- PAUSED=WAVES.open===false;$('wv').textContent=WAVE;$('leftlbl').textContent=(w?w.id+' ':'')+'spins left';$('wv2').textContent=PAUSED?WAVE+' COMING SOON':WAVE;document.querySelectorAll('.pz').forEach(e=>e.textContent=PRICE_XRP||'—');
+ PAUSED=WAVES.open===false;$('wv').textContent=WAVE;{const nx=w?WAVES.waves[WAVES.waves.indexOf(w)+1]:null;$('leftlbl').textContent=w?(w.id+' spins left · '+(nx?'then '+nx.id+' at '+nx.price_xrp+' XRP':'final wave')):'spins left'}$('wv2').textContent=PAUSED?WAVE+' COMING SOON':WAVE;document.querySelectorAll('.pz').forEach(e=>e.textContent=PRICE_XRP||'—');
 }catch(e){priceOk=false;$('left').textContent='?'}gateBtn()}
 async function scan(addr,out){out=out||await history_();loadPrice(out);const pays={};
  for(const {tx,meta,h} of out){if(tx.TransactionType==='Payment'&&tx.Destination===SELLER&&tx.Account===addr&&meta.TransactionResult==='tesSUCCESS')pays[h]={h,amt:meta.delivered_amount,mints:[],refund:null,date:tx.date}}
