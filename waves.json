@@ -1,5 +1,22 @@
 {
- "note": "MAINNET one-pair real-XRP test. Pool = 1 pair. Price = D2 pair price.",
+ "note": "Spin caps per wave. until_pairs_sold counts ALL pairs sold on this page incl. the #0248 test pair (sold=1). D2 = 333 spins, D3 = 333 spins, D4 = rest (final 10%).",
  "network": "XRPL MAINNET",
- "waves": [ {"id": "D2", "price_xrp": "11.82", "until_pairs_sold": 1} ]
+ "start_ledger": 107721927,
+ "waves": [
+  {
+   "id": "D2",
+   "price_xrp": "11.82",
+   "until_pairs_sold": 334
+  },
+  {
+   "id": "D3",
+   "price_xrp": "14.22",
+   "until_pairs_sold": 667
+  },
+  {
+   "id": "D4",
+   "price_xrp": "34.74",
+   "until_pairs_sold": 780
+  }
+ ]
 }
