@@ -1,0 +1,5 @@
+{
+ "note": "MAINNET one-pair real-XRP test. Pool = 1 pair. Price = D2 pair price.",
+ "network": "XRPL MAINNET",
+ "waves": [ {"id": "D2", "price_xrp": "11.82", "until_pairs_sold": 1} ]
+}
