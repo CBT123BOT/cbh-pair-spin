@@ -5,9 +5,9 @@
   "d1": 3,
   "d2_plus": 2
  },
- "stash_left": 14086,
- "coins_left": 14086,
- "giveaway_stash_in_wallet": 46,
+ "stash_left": 14084,
+ "coins_left": 14084,
+ "giveaway_stash_in_wallet": 48,
  "used_pairs": {
   "0907": {
    "holder": "rHcxvJeFh8Jk6kjrGjASrtZfgcYgB3rewT",
@@ -20,15 +20,21 @@
    "proof_tx": "DDE263BAA06F8317F5714B324AD252D34FB4AED0EFBA04EDC8E85C7BA9636DB6",
    "kind": "dynamic",
    "status": "paid"
+  },
+  "0248": {
+   "holder": "rHcxvJeFh8Jk6kjrGjASrtZfgcYgB3rewT",
+   "proof_tx": "CC9135B48438F0196CD934575008489D9DB4D921E4339991F1F91CD0584D7E55",
+   "kind": "dynamic",
+   "status": "paid"
   }
  },
  "mn": {
   "open": true,
   "total": 14160,
-  "minted_total": 74,
-  "remaining": 14086,
+  "minted_total": 76,
+  "remaining": 14084,
   "first_wave_until": 4248,
-  "left_at_first_price": 4174,
+  "left_at_first_price": 4172,
   "first_price_xrp": "1.11",
   "normal_price_xrp": "3.33",
   "price_now_xrp": "1.11",
@@ -210,8 +216,88 @@
      "result": "tesSUCCESS"
     }
    }
+  },
+  {
+   "t": 1792275403.8004735,
+   "time_utc": "2026-10-17T22:16:43.800476+00:00",
+   "proof_tx": "CC9135B48438F0196CD934575008489D9DB4D921E4339991F1F91CD0584D7E55",
+   "ledger_index": 107726333,
+   "holder": "rHcxvJeFh8Jk6kjrGjASrtZfgcYgB3rewT",
+   "piece": "0248",
+   "action": "spins",
+   "kind": "dynamic",
+   "spins": 2,
+   "ledger_hash": "83AEFBD3D49E8B85A9FC4349CC176C06F752470C31E9475C601D14D3DD77E9DD",
+   "picks": [
+    {
+     "i": 0,
+     "type": "mint",
+     "coin": 3945,
+     "metal": "Copper",
+     "uri": "ipfs://bafybeidmhjsm45ld37ve7xcajuvmkzwetdifhxiyylr7mfqusgczga7hzi/3945.json",
+     "pool_size": 14086,
+     "index": 3930,
+     "status": "offered",
+     "attempts": [
+      {
+       "hash": "43B1E2B38E4F9A2C526186A771C3A2DBDF45F0C5E3CB025CB67104F9137E1268",
+       "lls": 107726354,
+       "seq": 107409058
+      }
+     ],
+     "nft_id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373FF67588D0666EBF3",
+     "offer_id": "C223E2B68443BB504EC4CB3F26E16D5AA6FDC3E4815095DD6C960B4E7265E2B1",
+     "mint_tx": "43B1E2B38E4F9A2C526186A771C3A2DBDF45F0C5E3CB025CB67104F9137E1268"
+    },
+    {
+     "i": 1,
+     "type": "mint",
+     "coin": 10536,
+     "metal": "Copper",
+     "uri": "ipfs://bafybeidmhjsm45ld37ve7xcajuvmkzwetdifhxiyylr7mfqusgczga7hzi/10536.json",
+     "pool_size": 14085,
+     "index": 10485,
+     "status": "offered",
+     "attempts": [
+      {
+       "hash": "A76932BF31D93EC6833485C743132BBB5F3269F6C62C25DC3BB971C027AED9FD",
+       "lls": 107726356,
+       "seq": 107409059
+      }
+     ],
+     "nft_id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373164D298C0666EBF4",
+     "offer_id": "B71B3F7DE25CEAFDDD29F66A66AF614E06D49996882C232ACD2E8C60FAB7A06F",
+     "mint_tx": "A76932BF31D93EC6833485C743132BBB5F3269F6C62C25DC3BB971C027AED9FD"
+    }
+   ],
+   "coin_removed": {
+    "polaroid": {
+     "attempts": [
+      {
+       "hash": "B3A0D0DEEBB242CD6EB7D1004FDA9D61D33E0B143DB038726F4D7661670405C4",
+       "lls": 107726358,
+       "seq": 107409060
+      }
+     ],
+     "nft_id": "00181770992DB95F47B7A516192A895CCF7E2789C11673739D6A57590666EBC2",
+     "tx": "B3A0D0DEEBB242CD6EB7D1004FDA9D61D33E0B143DB038726F4D7661670405C4",
+     "result": "tesSUCCESS"
+    },
+    "twin": {
+     "attempts": [
+      {
+       "hash": "CED56952B5163A09013E03E69B2D56D3EC60238A5AD26DFB9B3A69C773C1F4D8",
+       "lls": 107726360,
+       "seq": 107409061
+      }
+     ],
+     "nft_id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373B450285B0666EBC3",
+     "tx": "CED56952B5163A09013E03E69B2D56D3EC60238A5AD26DFB9B3A69C773C1F4D8",
+     "result": "tesSUCCESS"
+    }
+   }
   }
  ],
  "rule": "pick i = SHA-256(proof/payment tx hash + validating ledger hash + byte i) mod pool size; pool = never-minted coin numbers sorted (mn_remaining.json); pool shrinks each pick",
- "updated": "2026-10-17T22:15:42.173666+00:00"
+ "updated": "2026-10-17T22:17:20.587869+00:00"
 }
