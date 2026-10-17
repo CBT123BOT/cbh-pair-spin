@@ -1,0 +1,156 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="img/favicon.png">
+<title>Crypto Bros&amp;Ho's Trading Company · Pair SPIN</title>
+<style>
+body{font-family:system-ui,sans-serif;background:#0d0f14;color:#eee;margin:0 auto;padding:16px;max-width:760px}
+.title{position:relative;display:block;width:fit-content;margin:6px auto 14px;font-family:Georgia,'Times New Roman',serif;font-size:clamp(1.55em,7.4vw,2.6em);font-weight:900;line-height:1.12;text-align:center;letter-spacing:.5px;color:#6b4a0c;
+text-shadow:0 1px 0 #8a6414,0 2px 0 #7a5810,0 3px 0 #6b4a0c,0 4px 0 #5a3d08,0 5px 0 #4a3106,0 6px 1px rgba(0,0,0,.55),0 8px 6px rgba(0,0,0,.55),0 14px 18px rgba(0,0,0,.6)}
+.title::after{content:attr(data-text);position:absolute;inset:0;
+background:linear-gradient(180deg,#fff6c9 0%,#ffe27a 18%,#f5c542 38%,#c8921c 55%,#f7d262 70%,#fff0b0 82%,#b9801a 100%);
+-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-stroke:.6px rgba(255,240,180,.55);text-shadow:none;
+filter:drop-shadow(0 -1px 0 rgba(255,255,230,.6))}
+h1{font-size:1.25em;color:#f5c542;margin:.5em 0}
+.tn{background:#b3261e;color:#fff;font-weight:800;text-align:center;padding:8px;border-radius:8px;letter-spacing:.5px}
+.note{background:#1c2130;border-left:4px solid #f5c542;padding:10px;border-radius:6px;font-size:.95em;word-break:break-word;margin:10px 0}
+input{width:100%;box-sizing:border-box;padding:12px;font-size:1em;border-radius:8px;border:1px solid #444;background:#151922;color:#fff;margin:8px 0}
+.stats{display:flex;gap:10px;margin:10px 0}.stats div{flex:1;background:#171b26;border-radius:10px;padding:10px;text-align:center}.stats b{display:block;font-size:1.5em;color:#f5c542}
+.machine{background:linear-gradient(#2a2410,#171b26);border:3px solid #f5c542;border-radius:16px;padding:14px;margin:14px 0}
+.reels{display:grid;grid-template-columns:1fr 1fr;gap:12px}.reel{background:#0b0d12;border-radius:10px;overflow:hidden;position:relative;aspect-ratio:1}
+.reel img{width:100%;height:100%;object-fit:cover;display:block}.reel .lab{position:absolute;bottom:0;left:0;right:0;background:#000a;font-size:.8em;padding:5px;text-align:center}
+.reel .q{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:4em;color:#f5c542;text-shadow:0 0 12px #000}
+.spinning img{filter:blur(7px) brightness(.7)}
+button.spin{display:block;width:100%;margin-top:12px;padding:16px;font-size:1.4em;font-weight:900;border:0;border-radius:12px;background:#f5c542;color:#111;cursor:pointer;letter-spacing:2px}
+button.spin:disabled{background:#6b5a22;color:#333}
+#status{margin:10px 0;font-size:1.05em;min-height:1.3em}
+a.btn{display:block;margin-top:8px;padding:12px;border-radius:8px;text-decoration:none;font-weight:700;text-align:center;background:#f5c542;color:#111}
+a.sec{background:#2a3145;color:#cfe;font-weight:600}
+.small{font-size:.8em;color:#8a93a8;word-break:break-all}
+.hist .row{background:#171b26;border-radius:10px;padding:10px;margin:8px 0}
+#qr{display:none;text-align:center;margin:10px 0}#qr img{background:#fff;padding:8px;border-radius:8px}
+.claim{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:14px;margin:-16px -16px 14px;padding:12px 16px;background:linear-gradient(180deg,#1a1508,#0d0f14);border-bottom:2px solid #f5c542;box-shadow:0 4px 18px rgba(245,197,66,.18)}
+.plug{width:96px;height:96px;flex:0 0 96px;perspective:400px}.plug img{width:100%;height:100%;border-radius:50%;animation:coin 6s linear infinite;filter:drop-shadow(0 0 6px rgba(245,197,66,.55))}
+@keyframes coin{from{transform:rotateY(0)}to{transform:rotateY(360deg)}}
+@media (prefers-reduced-motion:reduce){.plug img{animation:none}}
+.tb-info{flex:1;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.chip{border:1.5px solid #f5c542;border-radius:999px;padding:7px 16px;font-weight:900;color:#f5c542;background:rgba(245,197,66,.08);font-size:1.25em;white-space:nowrap;letter-spacing:.5px}
+.chip small{color:#cdb46a;font-weight:600;margin-right:4px}
+</style></head><body>
+<div class="topbar"><div class="plug"><img src="img/the_plug.png" alt="THE plug, Crypto Bros &amp; Ho's Trading Company"></div><div class="tb-info"><span class="chip"><small>DROP</small><span id="wv2">…</span></span><span class="chip"><small>MINT</small><span class="pz">…</span> XRP</span></div></div>
+<h1>Pair SPIN 🎰 <span id="wv">…</span></h1>
+<div class="note">Pay the pair price (<b><span class="pz">…</span> XRP</b>, locked in the Xaman request), then the reels pick a random matched <b>Polaroid + 3D TwiN</b> pair. Nobody sees which pair you get until your payment is confirmed on the ledger. Wrong amount = no spin, your XRP goes back.<br>
+<span class="small">Seller (project wallet): <b id="sel"></b></span></div>
+<div class="stats"><div><b id="left">…</b>pairs left</div><div><b class="pz">…</b>XRP / pair</div></div>
+<a class="btn" id="connect" style="display:none" href="#">🔗 Connect Xaman (sign in)</a>
+<label>Your Xaman address</label>
+<input id="w" placeholder="r... (your XRPL address)" autocomplete="off">
+<div class="machine">
+ <div class="reels">
+  <div class="reel" id="r1"><img id="i1" alt=""><div class="q" id="q1">?</div><div class="lab" id="l1">POLAROID</div></div>
+  <div class="reel" id="r2"><img id="i2" alt=""><div class="q" id="q2">?</div><div class="lab" id="l2">3D TwiN</div></div>
+ </div>
+ <button class="spin" id="spin" disabled>Connect wallet to SPIN</button>
+</div>
+<div id="status"></div>
+<div id="qr"><div class="small" id="qrt">On a computer? Scan with Xaman:</div><img id="qri" width="220" height="220" alt="QR"></div>
+<div id="manual" class="note" style="display:none">Xaman didn't open? <span class="small">The amount is locked at <span class="pz">…</span> in the request, you don't type anything.</span><a class="btn" id="xl" target="_blank" rel="noopener">Open payment in Xaman</a></div>
+<div id="claim"></div>
+<h3>Your spins</h3><div class="hist" id="hist"><div class="small">Enter your address to see your spins and claim links.</div></div>
+<p class="small">Fair pick: index = SHA-256(payment tx hash + validating ledger hash) mod remaining pool (sorted). Public log: <a href="results.json" style="color:#8ab">results.json</a>. Pieces are NFTs.</p>
+<script src="config.js"></script>
+<script>
+const SELLER="rNxAwKP3rdNTfe4ZNw1SntXCfW2U4r2XuB",WSS=["wss://xrplcluster.com","wss://s1.ripple.com","wss://s2.ripple.com"],EXP="https://livenet.xrpl.org",PAGE=location.origin+location.pathname;
+const $=id=>document.getElementById(id);$('sel').textContent=SELLER;
+let POOL=[],WAVES=null,byUri={},ws=null,wsi=0,reqId=1,pend={},spinTimer=null,watching=null,known=null;
+let PRICE=null,PRICE_XRP=null,WAVE=null,left=0,priceOk=false,connected=false,XM=null;const isMobile=/iPhone|iPad|Android/i.test(navigator.userAgent);
+function conn(){return new Promise((res,rej)=>{if(ws&&ws.readyState===1)return res(ws);const s=new WebSocket(WSS[wsi%WSS.length]);
+ s.onopen=()=>{ws=s;res(s)};s.onerror=()=>{wsi++;rej(new Error('ws'))};s.onclose=()=>{ws=null};
+ s.onmessage=e=>{const m=JSON.parse(e.data);if(m.id&&pend[m.id]){pend[m.id](m);delete pend[m.id]}}})}
+async function rq(o){for(let k=0;k<3;k++){try{const s=await conn();return await new Promise(r=>{const id=reqId++;pend[id]=r;s.send(JSON.stringify({...o,id}))})}catch(e){await new Promise(r=>setTimeout(r,800))}}throw new Error('ledger connection failed')}
+const hex2s=h=>{try{return decodeURIComponent(h.replace(/(..)/g,'%$1'))}catch(e){return''}};
+const xrp=d=>typeof d==='string'?(Number(d)/1e6).toString():'(non-XRP)';
+const drops=x=>String(Math.round(Number(x)*1e6));
+function memoOf(tx){try{return hex2s(tx.Memos[0].Memo.MemoData)}catch(e){return''}}
+async function history_(){let out=[],marker,n=0;do{const r=await rq({command:'account_tx',account:SELLER,limit:200,marker});const R=r.result||{};
+ for(const it of R.transactions||[]){if(!it.validated)continue;const tx=it.tx_json||it.tx,meta=it.meta,h=it.hash||tx.hash;out.push({tx,meta,h})}marker=R.marker;n++}while(marker&&n<5);return out}
+// ---- wave price: from the shared waves.json + pairs sold on the ledger (Polaroid mints by the seller) ----
+async function loadPrice(out){try{if(!WAVES)WAVES=await (await fetch('waves.json?'+Date.now())).json();out=out||await history_();
+ const sold=out.filter(({tx,meta})=>tx.Account===SELLER&&tx.TransactionType==='NFTokenMint'&&tx.NFTokenTaxon===4&&meta.TransactionResult==='tesSUCCESS').length;
+ const w=WAVES.waves.find(w=>sold<Number(w.until_pairs_sold));const last=WAVES.waves[WAVES.waves.length-1];
+ left=Math.max(0,Math.min(POOL.length||Infinity,Number(last.until_pairs_sold))-sold);$('left').textContent=left;
+ if(w){WAVE=w.id;PRICE_XRP=w.price_xrp;PRICE=drops(w.price_xrp);priceOk=/^\d+(\.\d{1,6})?$/.test(w.price_xrp)&&Number(PRICE)>0}else{WAVE='SOLD OUT';priceOk=true;left=0}
+ $('wv').textContent=WAVE;$('wv2').textContent=WAVE;document.querySelectorAll('.pz').forEach(e=>e.textContent=PRICE_XRP||'—');
+}catch(e){priceOk=false;$('left').textContent='?'}gateBtn()}
+async function scan(addr,out){out=out||await history_();loadPrice(out);const pays={};
+ for(const {tx,meta,h} of out){if(tx.TransactionType==='Payment'&&tx.Destination===SELLER&&tx.Account===addr&&meta.TransactionResult==='tesSUCCESS')pays[h]={h,amt:meta.delivered_amount,mints:[],refund:null,date:tx.date}}
+ for(const {tx,meta,h} of out){if(tx.Account!==SELLER)continue;const m=memoOf(tx);const ph=Object.keys(pays).find(k=>m.includes(k));if(!ph)continue;
+  if(tx.TransactionType==='Payment'&&tx.Destination===addr)pays[ph].refund={h,amt:meta.delivered_amount,why:m.split(' ')[1]};
+  if(tx.TransactionType==='NFTokenMint'&&meta.TransactionResult==='tesSUCCESS'){const uri=hex2s(tx.URI||'');pays[ph].mints.push({h,uri,nft:meta.nftoken_id,offer:meta.offer_id,p:byUri[uri]})}
+  if(tx.TransactionType==='NFTokenCreateOffer'&&meta.TransactionResult==='tesSUCCESS'){const mm=pays[ph].mints.find(x=>x.nft===tx.NFTokenID);if(mm)mm.offer=meta.offer_id}}
+ return Object.values(pays).sort((a,b)=>b.date-a.date)}
+const done=p=>!!p.refund||p.mints.length>=2;
+function claimHtml(p){const s=[...p.mints].sort((a,b)=>(a.p&&a.p.kind==='polaroid'?0:1)-(b.p&&b.p.kind==='polaroid'?0:1)).map(m=>`<div><img src="${m.p?m.p.img:''}" style="width:100%;border-radius:8px"><b class="small" style="color:#eee">${m.p?m.p.name:m.uri}</b>
+ ${m.offer?`<a class="btn sec" target="_blank" rel="noopener" href="https://bithomp.com/en/nft-offer/${m.offer}">offer on Bithomp</a>`:'<div class="small">offer pending…</div>'}
+ <a class="btn sec" target="_blank" rel="noopener" href="${EXP}/nft/${m.nft}">view on explorer</a></div>`).join('');
+ const cb=(XM&&connected)?[...p.mints].sort((a,b)=>(a.p&&a.p.kind==='polaroid'?0:1)-(b.p&&b.p.kind==='polaroid'?0:1)).filter(m=>m.offer).map(m=>`<a class="btn cl" data-offer="${m.offer}" href="#" onclick='claimOne(this,"${m.offer}");return false'>CLAIM ${m.p&&m.p.kind==='twin'?'3D TwiN':'POLAROID'} in Xaman</a>`).join(''):'';setTimeout(markClaimed,60);
+ return cb+`<div class="claim">${s}</div><div class="note"><b>Claim both:</b> ${cb?'tap each CLAIM button and sign it in Xaman (one at a time), or ':''}in Xaman open <b>Events → Requests</b> and accept the 2 NFT offers for <b>0 XRP</b> from <span class="small">${SELLER}</span>. Claiming never costs XRP.</div>`}
+function render(list){const H=$('hist');if(!list.length){H.innerHTML='<div class="small">No spins for this address yet.</div>';return}
+ H.innerHTML=list.map(p=>{let st;if(p.refund)st=`↩️ Refunded ${xrp(p.refund.amt)} XRP (${p.refund.why||''}) · <a style="color:#8ab" target="_blank" href="${EXP}/transactions/${p.refund.h}">refund tx</a>`;
+  else if(p.mints.length>=2)st='✅ Pair ready to claim';else st='🎰 Checking / minting your pair…';
+  return `<div class="row"><div>Paid <b>${xrp(p.amt)}</b> XRP · <a style="color:#8ab" target="_blank" href="${EXP}/transactions/${p.h}">payment tx</a></div><div>${st}</div>${p.mints.length?claimHtml(p):''}</div>`}).join('')}
+function startReels(){$('r1').classList.add('spinning');$('r2').classList.add('spinning');$('q1').style.display=$('q2').style.display='flex';let k=0;clearInterval(spinTimer);
+ spinTimer=setInterval(()=>{if(!POOL.length)return;k++;$('i1').src=POOL[k%POOL.length].polaroid.img;$('i2').src=POOL[(k*3+1)%POOL.length].twin.img},110)}
+function stopReels(p){clearInterval(spinTimer);$('r1').classList.remove('spinning');$('r2').classList.remove('spinning');
+ if(p){const P=p.mints.find(m=>m.p&&m.p.kind==='polaroid'),T=p.mints.find(m=>m.p&&m.p.kind==='twin');$('q1').style.display=$('q2').style.display='none';
+  if(P){$('i1').src=P.p.img;$('l1').textContent=P.p.name}if(T){$('i2').src=T.p.img;$('l2').textContent=T.p.name}}
+ else{$('q1').textContent=$('q2').textContent='✖';$('i1').removeAttribute('src');$('i2').removeAttribute('src')}}
+// ---- Xaman connect + sign requests (public API key only; payloads forced to MAINNET; amount fixed in the request) ----
+async function xamanSign(txjson,instruction){
+ const ret=PAGE+'?wallet='+encodeURIComponent($('w').value.trim());
+ const sub=await XM.payload.createAndSubscribe({txjson,options:{force_network:'MAINNET',return_url:{app:ret,web:ret}},custom_meta:{instruction}},e=>{if('signed' in e.data)return e.data});
+ if(!sub||!sub.created)throw new Error('Xaman did not create the sign request');window.LAST_PAYLOAD=sub.created;
+ if(isMobile)location.href=sub.created.next.always;else{$('qrt').textContent='Scan with Xaman (or tap the push notification on your phone):';$('qri').src=sub.created.refs.qr_png;$('qr').style.display='block'}
+ return sub.resolved}
+if(window.CBH_XAMAN_API_KEY){const sc=document.createElement('script');sc.src='https://xumm.app/assets/cdn/xumm.min.js';sc.onload=()=>{
+ XM=new Xumm(window.CBH_XAMAN_API_KEY);window.XM=XM;gateBtn();$('connect').style.display='block';$('w').readOnly=true;$('w').placeholder='Tap Connect Xaman above';
+ $('connect').onclick=e=>{e.preventDefault();if(connected)XM.logout();else XM.authorize()};
+ XM.on('logout',()=>{connected=false;$('connect').textContent='🔗 Connect Xaman (sign in)';gateBtn()});
+ XM.on('success',async()=>{const a=await XM.user.account;$('w').value=a;connected=true;$('connect').textContent='✅ Connected: '+a.slice(0,6)+'…'+a.slice(-4)+' (tap to disconnect)';gateBtn();resume()})};
+ sc.onerror=()=>{XM=null;$('w').readOnly=false;gateBtn()};document.head.appendChild(sc)}
+async function markClaimed(){for(const b of document.querySelectorAll('a.cl')){try{const r=await rq({command:'ledger_entry',index:b.dataset.offer});if(r.error==='entryNotFound'||(r.result&&r.result.error==='entryNotFound')){b.textContent='✅ '+b.textContent.replace('CLAIM','CLAIMED').replace(' in Xaman','');b.style.opacity='.55';b.onclick=e=>{e.preventDefault();return false}}}catch(e){}}}
+async function claimOne(btn,offer){if(!XM)return;try{await xamanSign({TransactionType:'NFTokenAcceptOffer',NFTokenSellOffer:offer},'Claim your CB&H NFT (0 XRP)')}catch(e){$('status').textContent='Xaman: '+e.message}setTimeout(markClaimed,4000)}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(markClaimed,1500)});
+async function claimAll(offers){if(!XM)return;try{for(const o of offers){await xamanSign({TransactionType:'NFTokenAcceptOffer',NFTokenSellOffer:o},'Claim your CB&H NFT (0 XRP)')}}catch(e){$('status').textContent='Xaman: '+e.message}refresh().catch(()=>{})}
+const valid=a=>/^r[1-9A-HJ-NP-Za-km-z]{24,34}$/.test(a);
+function gateBtn(){const a=$('w').value.trim(),b=$('spin');const walletOk=XM?connected&&valid(a):valid(a);
+ if(priceOk&&(left<=0||!PRICE_XRP)){b.disabled=true;b.textContent='SOLD OUT';return}
+ if(!priceOk){b.disabled=true;b.textContent='Loading price…';return}
+ if(!walletOk){b.disabled=true;b.textContent=XM?'Connect Xaman to SPIN':'Enter your address to SPIN';return}
+ b.disabled=false;b.textContent=`SPIN · ${PRICE_XRP} XRP`}
+async function refresh(){const a=$('w').value.trim();if(!valid(a)){loadPrice();return null}const L=await scan(a);render(L);return L}
+const payLink=()=>`https://xaman.app/detect/request:${SELLER}?amount=${PRICE_XRP}`;
+$('spin').onclick=async()=>{const a=$('w').value.trim();if($('spin').disabled)return;
+ const before=PRICE;await loadPrice();if(!priceOk||!PRICE||PRICE!==before){$('status').textContent='Price just changed to '+(PRICE_XRP||'sold out')+'. Check it and tap SPIN again.';return}
+ history.replaceState(null,'','?wallet='+a);$('claim').innerHTML='';$('q1').textContent=$('q2').textContent='?';$('l1').textContent='POLAROID';$('l2').textContent='3D TwiN';
+ let L;try{L=await scan(a)}catch(e){$('status').textContent='Could not reach the XRP Ledger, try again.';return}known=new Set(L.map(p=>p.h));
+ startReels();$('status').innerHTML=`Opening Xaman… check it says <b>XRPL Mainnet</b> and <b>${PRICE_XRP}</b>, then sign. Waiting for your payment…`;
+ if(XM){try{await xamanSign({TransactionType:'Payment',Destination:SELLER,Amount:PRICE,Memos:[{Memo:{MemoType:'4342482D50414952',MemoData:'5350494E'}}]},`CB&H pair SPIN ${WAVE}: ${PRICE_XRP} XRP`)}catch(e){stopReels(null);$('status').textContent='Xaman error: '+e.message;return}}
+ else{window.open(payLink(),'_blank');$('xl').href=payLink();$('qri').src='https://api.qrserver.com/v1/create-qr-code/?size=220x220&data='+encodeURIComponent(payLink());$('qr').style.display='block';$('manual').style.display='block'}
+ watch()};
+function watch(){clearInterval(watching);watching=setInterval(async()=>{let L;try{L=await refresh()}catch(e){return}if(!L)return;
+ const p=L.find(x=>!known.has(x.h));if(!p)return;
+ if(p.refund){stopReels(null);clearInterval(watching);$('status').innerHTML=(p.refund.why==='SOLD_OUT'?'Sold out.':`❌ Wrong amount (${xrp(p.amt)} XRP). No spin.`)+` Refunded ✔ <a style="color:#8ab" target="_blank" href="${EXP}/transactions/${p.refund.h}">refund tx</a>`;return}
+ if(p.mints.length<2){$('status').textContent='✅ Payment seen on the ledger! Spinning…';return}
+ clearInterval(watching);setTimeout(()=>{stopReels(p);$('status').innerHTML='🎉 You got <b>'+(p.mints[0].p?p.mints[0].p.name.split(' #')[0]:'your pair')+'</b>! Claim both below.';$('claim').innerHTML=claimHtml(p);$('qr').style.display='none';$('manual').style.display='none'},1200)},4000)}
+async function resume(){let L;try{L=await refresh()}catch(e){return}if(!L)return; // came back from Xaman: keep spinning for an unfinished payment
+ const pending=L.filter(p=>!done(p)&&(Date.now()/1000-(p.date+946684800))<900);known=new Set(L.filter(p=>!pending.includes(p)).map(p=>p.h));
+ if(pending.length){startReels();$('status').textContent='✅ Payment seen on the ledger! Spinning…';watch()}}
+fetch('pool.json?'+Date.now()).then(r=>r.json()).then(j=>{POOL=j.pairs;for(const p of POOL){byUri[p.polaroid.uri]={...p.polaroid,kind:'polaroid'};byUri[p.twin.uri]={...p.twin,kind:'twin'}}
+ $('i1').src=POOL[0].polaroid.img;$('i2').src=POOL[1%POOL.length].twin.img;$('r1').classList.add('spinning');$('r2').classList.add('spinning');
+ const q=new URLSearchParams(location.search).get('wallet');if(q&&valid(q)&&!$('w').value)$('w').value=q;gateBtn();resume()});
+setInterval(()=>loadPrice(),30000);
+$('w').addEventListener('input',gateBtn);$('w').addEventListener('change',()=>refresh().catch(()=>{}));
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)resume()});window.addEventListener('pageshow',e=>{if(e.persisted)resume()});
+</script><div class="footer" style="margin:30px -16px -16px;padding:22px 10px 26px;border-top:2px solid #f5c542;background:linear-gradient(0deg,#1a1508,#0d0f14)"><div class="title" data-text="Crypto Bros&amp;Ho's Trading Company" role="heading" aria-level="1">Crypto Bros&amp;Ho's Trading Company</div>
+</div>
+</body></html>
