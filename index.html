@@ -146,7 +146,7 @@ function watch(){clearInterval(watching);watching=setInterval(async()=>{let L;tr
 async function resume(){let L;try{L=await refresh()}catch(e){return}if(!L)return; // came back from Xaman: keep spinning for an unfinished payment
  const pending=L.filter(p=>!done(p)&&(Date.now()/1000-(p.date+946684800))<900);known=new Set(L.filter(p=>!pending.includes(p)).map(p=>p.h));
  if(pending.length){startReels();$('status').textContent='✅ Payment seen on the ledger! Spinning…';watch()}}
-fetch('pool.json?'+Date.now()).then(r=>r.json()).then(j=>{POOL=j.pairs;for(const p of POOL){byUri[p.polaroid.uri]={...p.polaroid,kind:'polaroid'};byUri[p.twin.uri]={...p.twin,kind:'twin'}}
+fetch('pool.json?'+Date.now()).then(r=>r.json()).then(j=>{POOL=j.pairs;for(const p of POOL){for(const k of ['polaroid','twin'])for(const u of [p[k].uri,p[k].uri_coin,p[k].uri_nocoin])if(u)byUri[u]={...p[k],kind:k};byUri[p.polaroid.uri]={...p.polaroid,kind:'polaroid'};byUri[p.twin.uri]={...p.twin,kind:'twin'}}
  $('i1').src=POOL[0].polaroid.img;$('i2').src=POOL[1%POOL.length].twin.img;$('r1').classList.add('spinning');$('r2').classList.add('spinning');
  const q=new URLSearchParams(location.search).get('wallet');if(q&&valid(q)&&!$('w').value)$('w').value=q;gateBtn();resume()});
 setInterval(()=>loadPrice(),30000);
