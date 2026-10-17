@@ -1,4 +1,4 @@
 {
- "open": false,
+ "open": true,
  "note": "THE VAULT switch. Set open:true only after the stash has coins and the vault watcher STOP file is removed."
 }
