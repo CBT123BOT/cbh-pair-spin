@@ -1,20 +1,20 @@
 {
 "network": "XRPL MAINNET",
-"note": "#0248 = first test pair (sold). D2 pool: 779 unminted matched pairs, #0600/#0915 reserved/excluded. uri = URI used at mint (coin-on for new D2 mints). uri_nocoin = after Vault spins. #0248 minted no-coin; uri_coin = proposed NFTokenModify target.",
+"note": "#0248 = first test pair (sold). D2 pool: 779 unminted matched pairs, #0600/#0915 reserved/excluded. uri = URI used at mint (coin-on for new D2 mints). uri_nocoin = after Vault spins. #0248 modified to coin-on Oct 17 2:00 PM CT.",
 "pairs": [
 {
 "piece": "0248",
 "polaroid": {
 "name": "Chip Botsworth #0248",
-"img": "img/polaroid_0248.webp",
-"uri": "ipfs://bafybeiabvdsx324zs2lajqbfx4gscfxwuxtynfeaghu6ioxiax77dhdt5u/540.json",
+"img": "https://gateway.pinata.cloud/ipfs/bafybeiaohbv7rm6svejvienye4koon5m633dam3lttrdlamsuwmgo65jyi/0248.webp",
+"uri": "ipfs://bafybeigy2zbjntxbpm4s3g2l6trxocpyxqr2cvluql6bfuvicoyvibqaj4/0248.json",
 "uri_nocoin": "ipfs://bafybeiabvdsx324zs2lajqbfx4gscfxwuxtynfeaghu6ioxiax77dhdt5u/540.json",
 "uri_coin": "ipfs://bafybeigy2zbjntxbpm4s3g2l6trxocpyxqr2cvluql6bfuvicoyvibqaj4/0248.json"
 },
 "twin": {
 "name": "Chip Botsworth #0248 \u2022 3D TwiN",
-"img": "img/twin_0248.webp",
-"uri": "ipfs://bafybeicdldbzoezxp5chbuazduvsja5knd6r3wbtec6rnpcocs4tdwhmnm/0248.json",
+"img": "https://gateway.pinata.cloud/ipfs/bafybeidc45zfoamtxuf5pfkhfvowjfmmzmuowwng7gk5gq6puroxcr5wai/0248.webp",
+"uri": "ipfs://bafybeif5mefjaoyfj3gkzshgqalzis4lugyfo4vctrlo2tvj4olx4odqke/0248.json",
 "uri_nocoin": "ipfs://bafybeicdldbzoezxp5chbuazduvsja5knd6r3wbtec6rnpcocs4tdwhmnm/0248.json",
 "uri_coin": "ipfs://bafybeif5mefjaoyfj3gkzshgqalzis4lugyfo4vctrlo2tvj4olx4odqke/0248.json"
 }
