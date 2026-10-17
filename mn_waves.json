@@ -1,7 +1,10 @@
 {
- "open": false,
+ "open": true,
  "note": "Paid Mickel Nickel mint on THE VAULT page. Price = first_wave price while total MN minted (Cafe + Vault spins + paid site mints) < until_total_minted (30% of 14,160), then normal_price_xrp. open:false = button shows 'Mint opens soon'; the watcher refunds CBH-MN payments while closed.",
- "first_wave": {"price_xrp": "1.11", "until_total_minted": 4248},
+ "first_wave": {
+  "price_xrp": "1.11",
+  "until_total_minted": 4248
+ },
  "normal_price_xrp": "3.33",
  "max_per_tx": 10,
  "total": 14160
