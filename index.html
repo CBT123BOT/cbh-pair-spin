@@ -40,7 +40,7 @@ a.sec{background:#2a3145;color:#cfe;font-weight:600}
 <h1>Pair SPIN 🎰 <span id="wv">…</span></h1>
 <div class="note">Pay the pair price (<b><span class="pz">…</span> XRP</b>, locked in the Xaman request), then the reels pick a random matched <b>Polaroid + 3D TwiN</b> pair. Nobody sees which pair you get until your payment is confirmed on the ledger. Wrong amount = no spin, your XRP goes back.<br>
 <span class="small">Seller (project wallet): <b id="sel"></b></span></div>
-<div class="stats"><div><b id="left">…</b>pairs left</div><div><b class="pz">…</b>XRP / pair</div></div>
+<div class="stats"><div><b id="left">…</b><span id="leftlbl">spins left</span></div><div><b class="pz">…</b>XRP / pair</div></div>
 <a class="btn" id="connect" style="display:none" href="#">🔗 Connect Xaman (sign in)</a>
 <label>Your Xaman address</label>
 <input id="w" placeholder="r... (your XRPL address)" autocomplete="off">
@@ -70,16 +70,17 @@ async function rq(o){for(let k=0;k<3;k++){try{const s=await conn();return await 
 const hex2s=h=>{try{return decodeURIComponent(h.replace(/(..)/g,'%$1'))}catch(e){return''}};
 const xrp=d=>typeof d==='string'?(Number(d)/1e6).toString():'(non-XRP)';
 const drops=x=>String(Math.round(Number(x)*1e6));
+const START_LEDGER=107721927;function isPair(tx){try{return (tx.Memos||[]).some(m=>(m.Memo.MemoType||'').toUpperCase()==='4342482D50414952')}catch(e){return false}}
 function memoOf(tx){try{return hex2s(tx.Memos[0].Memo.MemoData)}catch(e){return''}}
-async function history_(){let out=[],marker,n=0;do{const r=await rq({command:'account_tx',account:SELLER,limit:200,marker});const R=r.result||{};
- for(const it of R.transactions||[]){if(!it.validated)continue;const tx=it.tx_json||it.tx,meta=it.meta,h=it.hash||tx.hash;out.push({tx,meta,h})}marker=R.marker;n++}while(marker&&n<5);return out}
+async function history_(){let out=[],marker,n=0;do{const r=await rq({command:'account_tx',account:SELLER,ledger_index_min:START_LEDGER,ledger_index_max:-1,limit:200,marker});const R=r.result||{};
+ for(const it of R.transactions||[]){if(!it.validated)continue;const tx=it.tx_json||it.tx,meta=it.meta,h=it.hash||tx.hash;out.push({tx,meta,h})}marker=R.marker;n++}while(marker&&n<60);return out}
 // ---- wave price: from the shared waves.json + pairs sold on the ledger (Polaroid mints by the seller) ----
 async function loadPrice(out){try{if(!WAVES)WAVES=await (await fetch('waves.json?'+Date.now())).json();out=out||await history_();
- const sold=out.filter(({tx,meta})=>tx.Account===SELLER&&tx.TransactionType==='NFTokenMint'&&tx.NFTokenTaxon===4&&meta.TransactionResult==='tesSUCCESS').length;
+ const sold=out.filter(({tx,meta})=>tx.Account===SELLER&&tx.TransactionType==='NFTokenMint'&&tx.NFTokenTaxon===4&&meta.TransactionResult==='tesSUCCESS'&&isPair(tx)).length;
  const w=WAVES.waves.find(w=>sold<Number(w.until_pairs_sold));const last=WAVES.waves[WAVES.waves.length-1];
- left=Math.max(0,Math.min(POOL.length||Infinity,Number(last.until_pairs_sold))-sold);$('left').textContent=left;
+ left=w?Math.max(0,Math.min(Number(w.until_pairs_sold),(POOL.length||Infinity))-sold):0;$('left').textContent=left;
  if(w){WAVE=w.id;PRICE_XRP=w.price_xrp;PRICE=drops(w.price_xrp);priceOk=/^\d+(\.\d{1,6})?$/.test(w.price_xrp)&&Number(PRICE)>0}else{WAVE='SOLD OUT';priceOk=true;left=0}
- $('wv').textContent=WAVE;$('wv2').textContent=WAVE;document.querySelectorAll('.pz').forEach(e=>e.textContent=PRICE_XRP||'—');
+ $('wv').textContent=WAVE;$('leftlbl').textContent=(w?w.id+' ':'')+'spins left';$('wv2').textContent=WAVE;document.querySelectorAll('.pz').forEach(e=>e.textContent=PRICE_XRP||'—');
 }catch(e){priceOk=false;$('left').textContent='?'}gateBtn()}
 async function scan(addr,out){out=out||await history_();loadPrice(out);const pays={};
  for(const {tx,meta,h} of out){if(tx.TransactionType==='Payment'&&tx.Destination===SELLER&&tx.Account===addr&&meta.TransactionResult==='tesSUCCESS')pays[h]={h,amt:meta.delivered_amount,mints:[],refund:null,date:tx.date}}
