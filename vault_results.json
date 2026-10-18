@@ -744,5 +744,5 @@
   }
  ],
  "rule": "pick i = SHA-256(proof/payment tx hash + validating ledger hash + byte i) mod pool size; pool = never-minted coin numbers sorted (mn_remaining.json); pool shrinks each pick",
- "updated": "2026-10-18T14:09:33.030785+00:00"
+ "updated": "2026-10-18T14:13:41.311400+00:00"
 }
