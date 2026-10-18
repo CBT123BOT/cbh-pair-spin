@@ -55,3 +55,14 @@
 .sl-combo{display:flex;justify-content:center;gap:.3rem;background:var(--ink);border-radius:.7rem;padding:.3rem;margin:0 auto .2rem;width:max-content;max-width:100%}.sl-combo span{background:var(--cream);border:2px solid var(--gold);border-radius:.5rem;width:3.4rem;height:3.4rem;display:grid;place-items:center}.sl-combo img{width:2.9rem!important;height:2.9rem!important;object-fit:contain}
 .sl-prize.gr{background:linear-gradient(135deg,#ffd84d,#f4b400)}
 @media (max-width:420px){.sl-combo span{width:3rem;height:3rem}.sl-combo img{width:2.55rem!important;height:2.55rem!important}}
+
+/* own slots page (Oct 18 ~10:10 AM CT): one button, compact prize list, collapsible info */
+.sl-page{margin:0}.sl-acts.one{grid-template-columns:1fr}.sl-acts.one .sl-btn{min-height:70px;font-size:1.5rem}
+.sl-banner.wait{background:var(--ink2);color:var(--gold);animation:slpulse 1.2s ease-in-out infinite}@keyframes slpulse{50%{opacity:.6}}
+.sl-list{list-style:none;margin:0;padding:0;display:grid;gap:.4rem}.sl-list li{display:flex;align-items:center;gap:.6rem;background:var(--cream);border:3px solid var(--ink);border-radius:.9rem;padding:.3rem .5rem;color:var(--ink)}
+.sl-list li.jp{background:var(--gold)}.sl-list li b{font-family:"Luckiest Guy",sans-serif;font-weight:400;font-size:1rem;line-height:1.1}.sl-list .sl-combo{margin:0;flex:none}
+.sl-list .sl-combo span{width:2.5rem;height:2.5rem}.sl-list .sl-combo img{width:2.1rem!important;height:2.1rem!important}
+.sl-more{background:var(--cream);color:var(--ink);border:3px solid var(--ink);border-radius:.9rem;margin-top:.5rem;padding:.45rem .7rem;font-size:.85rem;line-height:1.45}
+.sl-more summary{cursor:pointer;font-weight:900}.sl-more a{color:var(--pinkd)}.sl-more input{width:100%;box-sizing:border-box;padding:8px;border:2px solid var(--ink);border-radius:8px;margin:6px 0;font-family:monospace}
+.sl-more button{border:2px solid var(--ink);background:var(--gold);border-radius:999px;padding:.4rem 1rem;font-weight:800}
+.sl-page .sl-mascot{width:auto;height:min(24vh,180px)}
