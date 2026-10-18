@@ -8,7 +8,7 @@
  "free_spins": {
   "rHcxvJeFh8Jk6kjrGjASrtZfgcYgB3rewT": {
    "granted": 1,
-   "used": 1
+   "used": 0
   }
  },
  "prizes_left": 102,
@@ -50,7 +50,8 @@
    "reason": "NO_FREE_SPIN_LEFT",
    "month": null,
    "granted": 1,
-   "used": 1
+   "used": 1,
+   "owner_refund_tx": "DCB5D8F14585F0E590FF9C33E5140C8C4B72DEC66D701F37EBA767EABB2F7C21"
   },
   {
    "t": 1792335456.5239842,
@@ -79,5 +80,5 @@
    "offers": []
   }
  ],
- "updated": "2026-10-18T14:57:36.772503+00:00"
+ "updated": "2026-10-18T15:00:39.898394+00:00"
 }
