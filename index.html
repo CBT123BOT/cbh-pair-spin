@@ -1,5 +1,5 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
-<script>window.IX_BUILD="20261018-1125";/* stale-page guard: GitHub Pages caches pages for 10 min. If a newer build is out, reload once with ?v=<build> (a new URL, so the phone fetches it fresh). */
+<script>window.IX_BUILD="20261018-1130";/* stale-page guard: GitHub Pages caches pages for 10 min. If a newer build is out, reload once with ?v=<build> (a new URL, so the phone fetches it fresh). */
 (function(){try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){var b=j&&j.index;if(!b||b===window.IX_BUILD)return;var u=new URL(location.href);if(u.searchParams.get("v")===b)return;u.searchParams.set("v",b);location.replace(u.toString())}).catch(function(){})}catch(e){}})();</script><link rel="icon" href="img/favicon.png">
 <title>Crypto Bros&amp;Ho's Trading Company · Pair SPIN</title>
 <style>
@@ -68,7 +68,7 @@ a.sec{background:#2a3145;color:#cfe;font-weight:600}
 <div id="claim"></div>
 <h3>Your spins</h3><div class="hist" id="hist"><div class="small">Enter your address to see your spins and claim links.</div></div>
 <p class="small">Fair pick: index = SHA-256(payment tx hash + validating ledger hash) mod remaining pool (sorted). Public log: <a href="results.json" style="color:#8ab">results.json</a>. Pieces are NFTs.</p>
-<script src="config.js?v=20261018-1125"></script>
+<script src="config.js?v=20261018-1130"></script>
 <script>
 const SELLER="rNxAwKP3rdNTfe4ZNw1SntXCfW2U4r2XuB",WSS=["wss://xrplcluster.com","wss://s1.ripple.com","wss://s2.ripple.com"],EXP="https://livenet.xrpl.org",PAGE=location.origin+location.pathname,GW="https://gateway.pinata.cloud/ipfs/";
 const $=id=>document.getElementById(id);$('sel').textContent=SELLER;
@@ -116,13 +116,15 @@ async function _loadPrice(out){try{if(!WAVES||NOW()-wavesAt>60000){WAVES=await f
 }catch(e){if(!priceOk){$('left').textContent='…'}}gateBtn()}
 async function scan(addr,out){out=out||await history_();if(!out.quick)loadPrice(out);const pays={};
  for(const {tx,meta,h} of out){if(tx.TransactionType==='Payment'&&tx.Destination===SELLER&&tx.Account===addr&&meta.TransactionResult==='tesSUCCESS')pays[h]={h,amt:meta.delivered_amount,mints:[],refund:null,date:tx.date,tag:isPair(tx)}}
- for(const {tx,meta,h} of out){if(tx.Account!==SELLER)continue;const m=memoOf(tx);const ph=Object.keys(pays).find(k=>m.includes(k));if(!ph)continue;
-  if(tx.TransactionType==='Payment'&&tx.Destination===addr)pays[ph].refund={h,amt:meta.delivered_amount,why:m.split(' ')[1]};
+ for(const {tx,meta,h} of out){if(tx.Account!==SELLER)continue;const m=memoOf(tx);const ph=Object.keys(pays).find(k=>m.includes(k))||Object.keys(KEPT).find(k=>pays[k]&&KEPT[k].refund===h);if(!ph)continue;
+  if(tx.TransactionType==='Payment'&&tx.Destination===addr)pays[ph].refund={h,amt:meta.delivered_amount,why:(KEPT[ph]&&KEPT[ph].refund===h)?KEPT[ph].why:m.split(' ')[1]};
   if(tx.TransactionType==='NFTokenMint'&&meta.TransactionResult==='tesSUCCESS'){const uri=hex2s(tx.URI||'');pays[ph].mints.push({h,uri,taxon:tx.NFTokenTaxon,nft:meta.nftoken_id,offer:meta.offer_id,p:byUri[uri]?{...byUri[uri],kind:tx.NFTokenTaxon===5?'twin':'polaroid'}:null})}
   if(tx.TransactionType==='NFTokenCreateOffer'&&meta.TransactionResult==='tesSUCCESS'){const mm=pays[ph].mints.find(x=>x.nft===tx.NFTokenID);if(mm)mm.offer=meta.offer_id}}
  // 2XuB also takes SLOTS and VAULT payments now: only a Pair Spin payment counts here, same rule as the pair watcher
  // (CBH-PAIR memo, or the exact pair price), plus anything the watcher already answered (mint / refund for that payment)
  return Object.values(pays).filter(p=>p.tag||p.mints.length||p.refund||(PRICE&&p.amt===PRICE)).sort((a,b)=>b.date-a.date)}
+// Owner-approved refunds whose memo has no payment hash (Rusty Oct 18 11:14 AM CT: Norm #0161 kept as a slot GRAND prize)
+const KEPT={'98D9F72778551D9BE424E593DB96448A0216A3E58E568F8414ACB5A306BAA3AD':{refund:'8EC054CC21FE247F47227F0DFC133BBCC0ABE35D3CF0A18EB6DE51FFEB861F84',why:'kept as slot prize'}};
 const done=p=>!!p.refund||p.mints.length>=2;
 const kindOf=m=>m.taxon===5?'twin':m.taxon===4?'polaroid':(m.p&&m.p.kind)||'polaroid';
 const ordered=p=>[...p.mints].sort((a,b)=>(kindOf(a)==='polaroid'?0:1)-(kindOf(b)==='polaroid'?0:1));
@@ -133,9 +135,9 @@ function claimHtml(p){const s=ordered(p).map(m=>`<div><img src="${m.p?m.p.img:''
  return cb+`<div class="claim">${s}</div><div class="note"><b>Claim both:</b> ${cb?'tap each CLAIM button and sign it in Xaman (one at a time), or ':''}in Xaman open <b>Events → Requests</b> and accept the 2 NFT offers for <b>0 XRP</b> from <span class="small">${SELLER}</span>. Claiming never costs XRP.</div>`}
 let lastHist='';
 function render(list){const H=$('hist');let html;if(!list.length)html='<div class="small">No spins for this address yet.</div>';
- else html=list.map(p=>{let st;if(p.refund)st=`↩️ Refunded ${xrp(p.refund.amt)} XRP (${p.refund.why||''}) · <a style="color:#8ab" target="_blank" href="${EXP}/transactions/${p.refund.h}">refund tx</a>`;
+ else html=list.map(p=>{let st;if(p.refund)st=p.refund.why==='kept as slot prize'?`↩️ Refunded: kept as slot prize (${xrp(p.refund.amt)} XRP back) · <a style="color:#8ab" target="_blank" href="${EXP}/transactions/${p.refund.h}">refund tx</a>`:`↩️ Refunded ${xrp(p.refund.amt)} XRP (${p.refund.why||''}) · <a style="color:#8ab" target="_blank" href="${EXP}/transactions/${p.refund.h}">refund tx</a>`;
   else if(p.mints.length>=2)st='✅ Pair ready to claim';else st='🎰 Checking / minting your pair…';
-  return `<div class="row"><div>Paid <b>${xrp(p.amt)}</b> XRP · <a style="color:#8ab" target="_blank" href="${EXP}/transactions/${p.h}">payment tx</a></div><div>${st}</div>${p.mints.length?claimHtml(p):''}</div>`}).join('');
+  return `<div class="row"><div>Paid <b>${xrp(p.amt)}</b> XRP · <a style="color:#8ab" target="_blank" href="${EXP}/transactions/${p.h}">payment tx</a></div><div>${st}</div>${p.mints.length&&!p.refund?claimHtml(p):''}</div>`}).join('');
  if(html!==lastHist){lastHist=html;H.innerHTML=html}}  // only touch the DOM when something changed (no image reloads every poll)
 // ---- reels: a light CSS symbol strip spins while we wait; real art is only shown once it is the picked pair AND fully downloaded ----
 const SYM=['❓','🐺','🦝','🐉','🪙','💎','🐻','🦊'];
@@ -226,7 +228,7 @@ function watch(h){WATCH_H=h;clearInterval(watching);let busy=false;const t0=NOW(
   const p=WATCH_H?L.find(x=>x.h===WATCH_H):L.find(x=>!kn.has(x.h)&&(x.date+946684800)*1000>=since);
   if(!p){if(P&&!P.txid&&NOW()-P.t0>4*60e3){setPP(null);clearInterval(watching);watching=null;stopReels(null);$('status').textContent='No signed payment was found. Nothing was charged; you can spin again.';gateBtn()}return}
   WATCH_H=p.h;SPIN_H=p.h;if(P&&(!P.txid||!P.seen)){P.txid=p.h;P.seen=1;setPP(P)}
-  if(p.refund){setPP(null);clearInterval(watching);watching=null;stopReels(null);gateBtn();REVEALED.add(p.h);$('status').innerHTML=(p.refund.why==='SOLD_OUT'?'Sold out.':`❌ Wrong amount (${xrp(p.amt)} XRP). No spin.`)+` Refunded ✔ <a style="color:#8ab" target="_blank" href="${EXP}/transactions/${p.refund.h}">refund tx</a>`;refresh().catch(()=>{});return}
+  if(p.refund){setPP(null);clearInterval(watching);watching=null;stopReels(null);gateBtn();REVEALED.add(p.h);$('status').innerHTML=(p.refund.why==='SOLD_OUT'?'Sold out.':p.refund.why==='kept as slot prize'?'🎰 Kept as a slot prize.':`❌ Wrong amount (${xrp(p.amt)} XRP). No spin.`)+` Refunded ✔ <a style="color:#8ab" target="_blank" href="${EXP}/transactions/${p.refund.h}">refund tx</a>`;refresh().catch(()=>{});return}
   if(p.mints.length<2){$('status').textContent='✅ Payment seen on the ledger! Picking your pair fairly…';return}
   clearInterval(watching);watching=null;setPP(null);$('status').textContent='🎰 Pair picked! Landing the reels…';REVEALED.delete(p.h);await to(reveal(p,true),20000);gateBtn();loadPrice(null,true);refresh().catch(()=>{})
  }catch(e){}finally{busy=false}},3000);gateBtn()}
@@ -257,5 +259,5 @@ setInterval(()=>{if(!document.hidden)loadPrice()},30000);
 $('w').addEventListener('input',gateBtn);$('w').addEventListener('change',()=>{showRemembered();refresh().catch(()=>{})});
 let visT=null;document.addEventListener('visibilitychange',()=>{if(document.hidden)return;clearTimeout(visT);visT=setTimeout(()=>{resume();markClaimed()},getPP()?200:1200)});window.addEventListener('pageshow',e=>{if(e.persisted)resume()});
 </script><div class="footer" style="margin:30px -16px -16px;padding:22px 10px 26px;border-top:2px solid #f5c542;background:linear-gradient(0deg,#1a1508,#0d0f14)"><div class="title" data-text="Crypto Bros&amp;Ho's Trading Company" role="heading" aria-level="1">Crypto Bros&amp;Ho's Trading Company</div>
-<p id="ixbuild" style="text-align:center;font-size:11px;color:#8a93a8;opacity:.7;margin:10px 0 0;letter-spacing:.04em">build 20261018-1125</p></div>
+<p id="ixbuild" style="text-align:center;font-size:11px;color:#8a93a8;opacity:.7;margin:10px 0 0;letter-spacing:.04em">build 20261018-1130</p></div>
 </body></html>
