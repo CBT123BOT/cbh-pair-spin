@@ -21,6 +21,7 @@ body{font-family:system-ui,sans-serif;background:#0d0f14;color:#eee;margin:0 aut
 <p class="sl-banner" id="slban" aria-live="polite">Land a prize combo to win!</p>
 <div class="sl-reels" id="slreels"></div>
 <div class="sl-acts one"><button type="button" class="sl-btn sl-spin" id="slspin" disabled><span>SPIN</span><small>loading…</small></button></div>
+<div class="sl-multi" id="slmulti" hidden role="group" aria-label="Spins per payment"><button type="button" data-n="1">x1 · 0.5</button><button type="button" data-n="2">x2 · 1.0</button><button type="button" data-n="3">x3 · 1.5</button></div>
 <div class="sl-month"><span>Free Spins</span><span class="n" id="slmn">–</span><small id="slms">Bonus Halloween snapshot Oct 31, then 12:00 AM CT on the 1st of every month.</small></div>
 <div id="qr"><div class="small">Scan with Xaman:</div><img id="qri" width="200" height="200" alt="QR"></div>
 <div id="claim"></div>
@@ -30,10 +31,10 @@ body{font-family:system-ui,sans-serif;background:#0d0f14;color:#eee;margin:0 aut
 <details class="sl-more"><summary>More info: how it works</summary><div>
 • Land a prize combo to win. Anything else is a miss.<br>• Odds vary from spin to spin and are set by the ledger, never by your phone.<br>
 • Free spins: 1 for every 3 matched Polaroid + 3D TwiN pairs in one wallet at each snapshot. Bonus Halloween snapshot Oct 31, then 12:00 AM CT on the 1st of every month. Each free spin still pays the 0.1 XRP fee.<br>
-• Paid spin: 0.4 XRP + 0.1 XRP fee = one 0.5 XRP payment. Paid spins are OFF for now.<br>• The 0.1 XRP fee stops spam and bots.<br>
+• Paid spin: 0.4 XRP + 0.1 XRP fee = 0.5 XRP. Buy 1, 2 or 3 spins in one payment (0.5 / 1.0 / 1.5 XRP, one signature). Any other amount is refunded. Paid spins are OFF for now.<br>• The 0.1 XRP fee stops spam and bots.<br>
 • After you sign, the reels keep spinning until the ledger result is in (about a minute). Leaving for Xaman and coming back is fine; the page remembers your spin.<br>
 • Your matched pairs: <b id="slpairs">connect to see</b> · Prizes left in the pool: <b id="slleft">…</b></div></details>
-<details class="sl-more"><summary>More info: fair &amp; checkable</summary><div>The result comes from your payment's tx hash + the hash of the ledger that confirmed it. Nobody, not even us, can pick it. Pieces are NFTs. Public log: <a href="slots_results.json">slots_results.json</a> · prize list: <a href="slots_prizes.json">slots_prizes.json</a>.</div></details>
+<details class="sl-more"><summary>More info: fair &amp; checkable</summary><div>The result comes from your payment's tx hash + the hash of the ledger that confirmed it. Nobody, not even us, can pick it. With 2 or 3 spins in one payment, spin 1 uses the tx hash and spin 2 / 3 use SHA-256(tx hash + "CBH-SLOT:SPIN" + spin number); a prize won on an earlier spin leaves the pool. Pieces are NFTs. Public log: <a href="slots_results.json">slots_results.json</a> · prize list: <a href="slots_prizes.json">slots_prizes.json</a>.</div></details>
 <details class="sl-more"><summary>More info: verify a spin</summary><div>Paste a CBH-SLOT payment tx hash. Your browser looks up the ledger and re-checks the prize pick.<input id="sltx" placeholder="64-character tx hash" autocomplete="off"><button type="button" id="slver">Verify</button><div id="slvr" class="sl-mono"></div></div></details>
 </div>
 <script src="config.js"></script>
