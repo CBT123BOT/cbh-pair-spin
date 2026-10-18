@@ -178,6 +178,7 @@ async function claimAll(offers){if(!XM)return;try{for(const o of offers){await x
 const valid=a=>/^r[1-9A-HJ-NP-Za-km-z]{24,34}$/.test(a);
 function gateBtn(){const a=$('w').value.trim(),b=$('spin');if(PAUSED&&!priceAt&&!watching&&!TAP){b.disabled=true;b.textContent='Loading…';return}   // not 'opens soon' while the price is still loading
  if(PAUSED&&!watching&&!TAP&&!getPP()){b.disabled=true;b.textContent=(WAVE&&WAVE!=='SOLD OUT'?WAVE:'D2')+' opens soon';b.style.filter='grayscale(1)';b.style.opacity='.5';return}b.style.filter='';b.style.opacity='';const walletOk=XM?connected&&valid(a):valid(a);
+ if(watching||TAP){b.disabled=true;b.textContent='Spinning…';return}   // locked while a spin is rolling (no second payment)
  if(priceOk&&(left<=0||!PRICE_XRP)){b.disabled=true;b.textContent='SOLD OUT';return}
  if(!priceOk){b.disabled=true;b.textContent='Loading price…';return}
  if((watching||TAP)&&valid(a)){b.disabled=true;b.textContent='Spinning…';return}
