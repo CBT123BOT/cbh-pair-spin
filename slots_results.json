@@ -6,6 +6,10 @@
  "first_snapshot_ct": "2026-10-31T00:00:00-05:00",
  "next_snapshot_ct": "2026-10-31T00:00:00-05:00",
  "free_spins": {
+  "rMhugA9wrZuRK5RUsvLczbJNfZActp4e5k": {
+   "granted": 1,
+   "used": 0
+  },
   "rHcxvJeFh8Jk6kjrGjASrtZfgcYgB3rewT": {
    "granted": 1,
    "used": 1
@@ -248,5 +252,5 @@
    "offers": []
   }
  ],
- "updated": "2026-10-18T16:38:32.533333+00:00"
+ "updated": "2026-10-18T17:38:17.346364+00:00"
 }
