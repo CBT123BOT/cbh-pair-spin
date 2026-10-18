@@ -1,9 +1,9 @@
 {
  "wallet": "rNxAwKP3rdNTfe4ZNw1SntXCfW2U4r2XuB",
  "rule": "PRIZE = SHA-256(tx || ledger_hash || 'CBH-SLOT:PRIZE') mod total_tickets; walk 'prizes' in this order",
- "built": "2026-10-18T14:24:59.521428+00:00",
+ "built": "2026-10-18T16:16:18.267432+00:00",
  "checked_onchain": true,
- "total_tickets": 104,
+ "total_tickets": 105,
  "prizes": [
   {
    "id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373AC101E770666EBD9",
@@ -1036,7 +1036,23 @@
    "tickets": 3,
    "grand": false,
    "semi_grand": true
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C11673731052D7D90666EC42+00181770992DB95F47B7A516192A895CCF7E2789C11673732738A8DB0666EC43",
+   "type": "pair",
+   "N": "0161",
+   "name": "GRAND: Norm Bearfoot #0161 pair (2 Vault spins included)",
+   "img": "https://gateway.pinata.cloud/ipfs/bafybeiaohbv7rm6svejvienye4koon5m633dam3lttrdlamsuwmgo65jyi/0161.webp",
+   "nft_ids": [
+    "00181770992DB95F47B7A516192A895CCF7E2789C11673731052D7D90666EC42",
+    "00181770992DB95F47B7A516192A895CCF7E2789C11673732738A8DB0666EC43"
+   ],
+   "tier": "jackpot",
+   "spins_left": 2,
+   "tickets": 1,
+   "grand": true,
+   "semi_grand": false
   }
  ],
- "pool_sha256": "4fb13508175542441118571475b6ba380a7d680b59a323908b31053dd8aef92f"
+ "pool_sha256": "45c9b2e356d48ae4bf8581b5bdab73f8533a0564bdb34df9de46e504c1456cd5"
 }
