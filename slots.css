@@ -41,7 +41,7 @@
 .sl-stats{display:grid;grid-template-columns:.7fr 1.3fr;gap:.45rem;margin-top:.6rem}.sl-stat{background:var(--cream);color:var(--ink);border-radius:.85rem;padding:.4rem .6rem .5rem}
 .sl-stat span{display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.03em}.sl-stat b{display:block;font-family:"Luckiest Guy",sans-serif;font-weight:400;font-size:1.6rem;color:var(--green);line-height:1.05}
 .sl-h2{text-align:center;color:var(--cream);text-shadow:0 3px 0 var(--ink);font-size:1.6rem;margin:.8rem 0 .4rem}
-.sl-gal{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}.sl-prize{background:var(--cream);border:3px solid var(--ink);border-radius:1rem;padding:.55rem;text-align:center}
+.sl-gal{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:.55rem}.sl-prize{background:var(--cream);border:3px solid var(--ink);border-radius:1rem;padding:.55rem;text-align:center}
 .sl-prize.jp{background:var(--gold);box-shadow:5px 5px 0 var(--ink)}.sl-prize img{width:3.6rem;height:3.6rem;object-fit:contain}.sl-prize h3{margin:.1rem 0 0;font-size:1.15rem;line-height:1.05}.sl-prize p{margin:.25rem 0 0;font-size:.74rem;line-height:1.35}
 .sl-flag{display:inline-block;background:var(--ink);color:var(--gold);border-radius:999px;padding:.1rem .5rem;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;margin-top:.25rem}
 .sl-box{background:var(--cream);border:3px solid var(--ink);border-radius:1rem;box-shadow:6px 6px 0 var(--gold);padding:.7rem .85rem;margin-top:.8rem;font-size:.86rem;line-height:1.45}
@@ -50,4 +50,8 @@
 .sl-mono{font-family:monospace;font-size:.72rem;word-break:break-all}
 .sl-conf{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:4}.sl-conf i{position:absolute;top:-12px;width:8px;height:12px;border-radius:2px;animation:slfall 1.6s linear forwards}
 @keyframes slfall{to{transform:translate3d(var(--dx),300px,0) rotate(var(--rot));opacity:.15}}
-@media (prefers-reduced-motion:reduce){
+@media (prefers-reduced-motion:reduce){.sl-conf{display:none}.sl-banner.win,.sl-banner.jack{animation:none}}
+/* prize gallery: each card shows its exact 3-reel combo (Oct 18 ~9:40 AM CT) */
+.sl-combo{display:flex;justify-content:center;gap:.3rem;background:var(--ink);border-radius:.7rem;padding:.3rem;margin:0 auto .2rem;width:max-content;max-width:100%}.sl-combo span{background:var(--cream);border:2px solid var(--gold);border-radius:.5rem;width:3.4rem;height:3.4rem;display:grid;place-items:center}.sl-combo img{width:2.9rem!important;height:2.9rem!important;object-fit:contain}
+.sl-prize.gr{background:linear-gradient(135deg,#ffd84d,#f4b400)}
+@media (max-width:420px){.sl-combo span{width:3rem;height:3rem}.sl-combo img{width:2.55rem!important;height:2.55rem!important}}
