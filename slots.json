@@ -1,0 +1,14 @@
+{
+ "name": "MICKEL NICKEL SLOTS",
+ "note": "PUBLIC switches. paid_spins_enabled stays FALSE until the legal check is cleared; free_spins_enabled stays FALSE until Rusty approves go-live. While both are false the page runs DEMO mode only (no payments, no prizes).",
+ "paid_spins_enabled": false,
+ "free_spins_enabled": false,
+ "spin_xrp": "0.4",
+ "fee_xrp": "0.1",
+ "paid_spin_drops": "500000",
+ "free_spin_drops": "100000",
+ "memo_type": "CBH-SLOT",
+ "jackpot_one_in_wins": 7,
+ "free_spins_per_pairs": 3,
+ "snapshot": "00:00 America/Chicago on the 1st of each month"
+}
