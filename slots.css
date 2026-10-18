@@ -66,3 +66,8 @@
 .sl-more summary{cursor:pointer;font-weight:900}.sl-more a{color:var(--pinkd)}.sl-more input{width:100%;box-sizing:border-box;padding:8px;border:2px solid var(--ink);border-radius:8px;margin:6px 0;font-family:monospace}
 .sl-more button{border:2px solid var(--ink);background:var(--gold);border-radius:999px;padding:.4rem 1rem;font-weight:800}
 .sl-page .sl-mascot{width:auto;height:min(24vh,180px)}
+/* x1/x2/x3 spins per paid payment (paid only) */
+.sl-multi{display:flex;gap:8px;justify-content:center;margin:10px 0 2px}
+.sl-multi[hidden]{display:none}
+.sl-multi button{flex:1;max-width:110px;padding:8px 6px;border-radius:12px;border:2px solid #ffc72c;background:transparent;color:#ffc72c;font:700 14px/1 inherit;cursor:pointer}
+.sl-multi button.on{background:#ffc72c;color:#1a0f14}
