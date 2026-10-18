@@ -150,7 +150,53 @@
    "grand": false,
    "semi_grand": false,
    "offers": []
+  },
+  {
+   "t": 1792339227.9564705,
+   "tx": "4D4D7F22348F5B626453CAF5E935FEED42B1A3A22E6FCF9F23CC4B7D4FF1BC1C",
+   "ledger_index": 107742754,
+   "wallet": "rHcxvJeFh8Jk6kjrGjASrtZfgcYgB3rewT",
+   "mode": "PAID",
+   "delivered": "500000",
+   "test": true,
+   "action": "lose",
+   "n": 1,
+   "spins": [
+    {
+     "i": 0,
+     "hash": "4D4D7F22348F5B626453CAF5E935FEED42B1A3A22E6FCF9F23CC4B7D4FF1BC1C",
+     "win": false,
+     "reels": [
+      "silver",
+      "bro",
+      "copper"
+     ],
+     "prize": {},
+     "ticket": null,
+     "jackpot": false,
+     "grand": false,
+     "semi_grand": false,
+     "pool": null,
+     "offers": []
+    }
+   ],
+   "ledger_hash": "4488456A0251CCC5DFC85494653DCFB8F8ED9B89A40FA77983D0950150A39FDD",
+   "close_unix": 1792339221,
+   "pool_size": 102,
+   "pool_sha256": "4fb13508175542441118571475b6ba380a7d680b59a323908b31053dd8aef92f",
+   "pool": null,
+   "reels": [
+    "silver",
+    "bro",
+    "copper"
+   ],
+   "prize": {},
+   "ticket": null,
+   "jackpot": false,
+   "grand": false,
+   "semi_grand": false,
+   "offers": []
   }
  ],
- "updated": "2026-10-18T15:31:58.398162+00:00"
+ "updated": "2026-10-18T16:00:28.310064+00:00"
 }
