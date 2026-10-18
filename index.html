@@ -70,6 +70,7 @@ a.sec{background:#2a3145;color:#cfe;font-weight:600}
 <script>
 const SELLER="rNxAwKP3rdNTfe4ZNw1SntXCfW2U4r2XuB",WSS=["wss://xrplcluster.com","wss://s1.ripple.com","wss://s2.ripple.com"],EXP="https://livenet.xrpl.org",PAGE=location.origin+location.pathname,GW="https://gateway.pinata.cloud/ipfs/";
 const $=id=>document.getElementById(id);$('sel').textContent=SELLER;
+const GIFT=new URLSearchParams(location.search).get('gift')==='1',GIFT_DROPS='100000'; // gift link: page only builds the 0.1 XRP fee payment, the watcher checks the wallet
 let POOL=[],WAVES=null,wavesAt=0,byUri={},ws=null,wsi=0,reqId=1,pend={},watching=null,known=null,WATCH_H=null,SPIN_H=null;
 let PAUSED=true,PRICE=null,PRICE_XRP=null,WAVE=null,left=0,priceOk=false,connected=false,XM=null;const isMobile=/iPhone|iPad|Android/i.test(navigator.userAgent);
 const NOW=()=>Date.now(),sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -153,7 +154,7 @@ async function reveal(p,animate){if(REVEALED.has(p.h))return;REVEALED.add(p.h);c
  $('status').innerHTML='🎉 You got <b>'+(P?P.name.split(' #')[0]+' #'+(P.name.split(' #')[1]||''):'your pair')+'</b>! Claim both below.';$('claim').innerHTML=claimHtml(p);$('qr').style.display='none';$('manual').style.display='none'}
 // ---- Xaman connect + sign requests (public API key only; payloads forced to MAINNET; amount fixed in the request) ----
 async function xamanSign(txjson,instruction){
- const ret=PAGE+'?wallet='+encodeURIComponent($('w').value.trim());
+ const ret=PAGE+'?wallet='+encodeURIComponent($('w').value.trim())+(GIFT?'&gift=1':'');
  const sub=await XM.payload.createAndSubscribe({txjson,options:{force_network:'MAINNET',return_url:{app:ret,web:ret}},custom_meta:{instruction}},e=>{if('signed' in e.data)return e.data});
  if(!sub||!sub.created)throw new Error('Xaman did not create the sign request');window.LAST_PAYLOAD=sub.created;
  if(isMobile)location.href=sub.created.next.always;else{$('qrt').textContent='Scan with Xaman (or tap the push notification on your phone):';$('qri').src=sub.created.refs.qr_png;$('qr').style.display='block'}
@@ -174,15 +175,16 @@ function gateBtn(){const a=$('w').value.trim(),b=$('spin');if(PAUSED){b.disabled
  if(!priceOk){b.disabled=true;b.textContent='Loading price…';return}
  if(!walletOk){b.disabled=true;b.textContent=XM?'Connect Xaman to SPIN':'Enter your address to SPIN';return}
  if(watching){b.disabled=true;b.textContent='Spinning…';return}
- b.disabled=false;b.textContent=`SPIN · ${PRICE_XRP} XRP`}
+ b.disabled=false;b.textContent=GIFT?'🎁 FREE PAIR SPIN · 0.1 XRP fee':`SPIN · ${PRICE_XRP} XRP`}
 async function refresh(){const a=$('w').value.trim();if(!valid(a)){loadPrice();return null}const L=await scan(a);render(L);return L}
 const payLink=()=>`https://xaman.app/detect/request:${SELLER}?amount=${PRICE_XRP}`;
 $('spin').onclick=async()=>{const a=$('w').value.trim();if(PAUSED||$('spin').disabled)return;
  const before=PRICE;await loadPrice(null,true);if(!priceOk||!PRICE||PRICE!==before){$('status').textContent='Price just changed to '+(PRICE_XRP||'sold out')+'. Check it and tap SPIN again.';return}
- history.replaceState(null,'','?wallet='+a);$('claim').innerHTML='';idleReels();
+ history.replaceState(null,'','?wallet='+a+(GIFT?'&gift=1':''));$('claim').innerHTML='';idleReels();
  let L;try{L=await scan(a)}catch(e){$('status').textContent='Could not reach the XRP Ledger, try again.';return}known=new Set(L.map(p=>p.h));render(L);
- startReels();$('status').innerHTML=`Opening Xaman… check it says <b>XRPL Mainnet</b> and <b>${PRICE_XRP}</b>, then sign. Waiting for your payment…`;
- if(XM){try{await (PAUSED?Promise.reject(new Error('paused')):0)||xamanSign({TransactionType:'Payment',Destination:SELLER,Amount:PRICE,Memos:[{Memo:{MemoType:'4342482D50414952',MemoData:'5350494E'}}]},`CB&H pair SPIN ${WAVE}: ${PRICE_XRP} XRP`)}catch(e){stopReels(null);$('status').textContent='Xaman error: '+e.message;return}}
+ startReels();$('status').innerHTML=`Opening Xaman… check it says <b>XRPL Mainnet</b> and <b>${GIFT?'0.1':PRICE_XRP}</b>, then sign. Waiting for your payment…`;
+ if(XM){try{await (PAUSED?Promise.reject(new Error('paused')):0)||xamanSign({TransactionType:'Payment',Destination:SELLER,Amount:GIFT?GIFT_DROPS:PRICE,Memos:[{Memo:{MemoType:'4342482D50414952',MemoData:'5350494E'}}]},GIFT?'CB&H FREE gift pair SPIN: 0.1 XRP spin fee':`CB&H pair SPIN ${WAVE}: ${PRICE_XRP} XRP`)}catch(e){stopReels(null);$('status').textContent='Xaman error: '+e.message;return}}
+ else if(GIFT){stopReels(null);$('status').textContent='Gift spins need Xaman connected (the gift payment carries a CBH-PAIR memo). Reload the page, or use the gift sign link you were sent.';return}
  else{window.open(payLink(),'_blank');$('xl').href=payLink();$('qri').src='https://api.qrserver.com/v1/create-qr-code/?size=220x220&data='+encodeURIComponent(payLink());$('qr').style.display='block';$('manual').style.display='block'}
  watch(null)};
 // poll lightly: newest 60 ledger txs every 5 s while waiting (not the whole history), stop after 10 min
@@ -208,6 +210,7 @@ async function _resume(){const L=await refresh();if(!L)return;
 function onPool(j){POOL=j.pairs;for(const p of POOL){for(const k of ['polaroid','twin'])for(const u of [p[k].uri,p[k].uri_coin,p[k].uri_nocoin])if(u)byUri[u]={...p[k],kind:k}}}
 const q0=new URLSearchParams(location.search).get('wallet');if(q0&&valid(q0)&&!$('w').value)$('w').value=q0;
 showRemembered();gateBtn();
+if(GIFT){const n=document.createElement('div');n.className='note';n.innerHTML='<b>You have 1 free Pair Spin 🎁 (just the 0.1 XRP spin fee)</b><br><span class="small">Gift wallets only. Any other wallet paying 0.1 XRP is refunded, no spin.</span>';$('spin').before(n)}
 fetch('pool.json?v=20261017b').then(r=>r.json()).then(onPool).catch(()=>{}).finally(()=>{loadPrice(null,true);resume()});
 setInterval(()=>{if(!document.hidden)loadPrice()},30000);
 $('w').addEventListener('input',gateBtn);$('w').addEventListener('change',()=>{showRemembered();refresh().catch(()=>{})});
