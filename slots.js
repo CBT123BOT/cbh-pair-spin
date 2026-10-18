@@ -34,12 +34,21 @@ async function outcome(tx,lh,pool,odds,jp){tx=tx.toUpperCase();lh=lh.toUpperCase
  return{win:true,jackpot:tier(p)==='jackpot',grand:!!p.grand,semi_grand:!!p.semi_grand,prize:p,ticket:t,total_tickets:tot,reels:await reelsFor(tx,lh,comboFor(p))}}
 const DEMO_ODDS=6;   // demo only; real odds are set server-side and not published
 // ---------- monthly free spins ----------
-function nextSnap(){const p=ctParts(Date.now());const y=p.m===12?p.y+1:p.y,m=p.m===12?1:p.m+1;return ctMs(y,m,1,0,0)}
+// snapshots: bonus Halloween Oct 31 2026, then 12:00 AM CT on the 1st of every month (same schedule as the watcher)
+function snapTimes(){const p=ctParts(Date.now()),first=CFG.snapshot_first_ct||'2026-10-31',md=CFG.snapshot_monthly_day||1,out=[];
+ for(const b of CFG.snapshot_bonus_ct||[]){const[y,m,d]=b.split('-').map(Number);out.push([b,ctMs(y,m,d,0,0)])}
+ let y=p.y,m=p.m;for(let k=0;k<3;k++){const ds=`${y}-${String(m).padStart(2,'0')}-${String(md).padStart(2,'0')}`;out.push([ds,ctMs(y,m,md,0,0)]);m++;if(m>12){m=1;y++}}
+ return out.filter(x=>x[0]>=first).sort((a,b)=>a[1]-b[1])}
+function nextSnap(){const now=Date.now();const t=snapTimes().find(x=>x[1]>now);return t?t[1]:now}
+function firstSnapDone(){const f=CFG.snapshot_first_ct||'2026-10-31',[y,m,d]=f.split('-').map(Number);return Date.now()>=ctMs(y,m,d,0,0)}
+let testOK=false,lastW='';
+async function testCheck(){const a=wal();if(!a||!(CFG.test_wallet_sha256||[]).length){testOK=false;return}
+ const h=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(a))),x=>x.toString(16).padStart(2,'0')).join('');testOK=CFG.test_wallet_sha256.includes(h)}
 const wal=()=>{const a=g('w').value.trim();return valid(a)?a:''};
 function freeLeft(){const a=wal(),f=a&&(RS.free_spins||{})[a];return f?Math.max(0,f.granted-f.used):0}
 function drawMonth(){if(!CFG)return;const n=freeLeft(),ns=nextSnap(),per=CFG.free_spins_per_pairs||3;g('slmn').textContent=n;
  const held=myPairsN==null?'':` · you hold ${myPairsN} pair${myPairsN===1?'':'s'} (${myPairsN%per}/${per} to the next one)`;
- g('slms').textContent=`1 per ${per} matched pairs${held} · next snapshot in ${dur(ns-Date.now())} (${new Date(ns).toLocaleDateString('en-US',{timeZone:'America/Chicago',month:'short',day:'numeric'})}, 12:00 AM CT)`}
+ g('slms').textContent=`1 per ${per} matched pairs${held} · ${firstSnapDone()?'':'Bonus Halloween snapshot Oct 31, then 12:00 AM CT on the 1st of every month · '}next snapshot in ${dur(ns-Date.now())} (${new Date(ns).toLocaleDateString('en-US',{timeZone:'America/Chicago',month:'short',day:'numeric'})}, 12:00 AM CT)`}
 async function countPairs(){const a=wal();if(!a){myPairsN=null;drawMonth();return}for(let k=0;k<40&&!VP;k++)await sleep(250);
  try{const have=new Set();for(const n of await nfts(a))if(n.Issuer===SELLER)have.add(hex2s(n.URI||''));let c=0;const P=VP||{pairs:{},d1:{}};
   for(const p of Object.values(P.pairs||{}))if((have.has(p.polaroid.uri_coin)||have.has(p.polaroid.uri_nocoin))&&(have.has(p.twin.uri_coin)||have.has(p.twin.uri_nocoin)))c++;
@@ -84,10 +93,11 @@ async function liveSpin(mode){if(!XM||!connected)return;busy=true;gate();const a
  clearInterval(loopT);banner('lose','No result yet. Check the public log slots_results.json.');busy=false;gate()}
 function gate(){if(!CFG)return;const s=g("slspin"),f=g("slfree"),c=!!XM&&connected;
  if(DEMO){s.disabled=busy;s.innerHTML='<span>DEMO SPIN</span><small>free · no real prizes</small>'}
- else if(!CFG.paid_spins_enabled){s.disabled=true;s.innerHTML='<span>SPIN</span><small>paid spins coming soon</small>'}
+ else if(!CFG.paid_spins_enabled&&!testOK){s.disabled=true;s.innerHTML='<span>SPIN</span><small>paid spins coming soon</small>'}
+ else if(!CFG.paid_spins_enabled){s.disabled=busy||!c;s.innerHTML=`<span>SPIN</span><small>${c?'0.5 XRP · owner test':'connect Xaman'}</small>`}
  else{s.disabled=busy||!c;s.innerHTML=`<span>SPIN</span><small>${c?'0.5 XRP':'connect Xaman'}</small>`}
  if(!CFG.free_spins_enabled){f.disabled=true;f.innerHTML='<span>FREE SPIN</span><small>opens soon</small>'}
- else{const n=freeLeft();f.disabled=busy||!c||n<1;f.innerHTML=`<span>FREE SPIN</span><small>${n?n+' left · 0.1 XRP fee':'none this month'}</small>`}}
+ else{const n=freeLeft();f.disabled=busy||!c||n<1;f.innerHTML=`<span>FREE SPIN</span><small>${n?n+' left · 0.1 XRP fee':(c?'none until the next snapshot':'connect Xaman')}</small>`}}
 // ---------- verify ----------
 async function verify(){const h=g('sltx').value.trim().toUpperCase(),out=g('slvr');if(!/^[0-9A-F]{64}$/.test(h)){out.textContent='Paste a 64-character tx hash.';return}out.textContent='Looking it up on the ledger…';
  try{const t=(await rq({command:'tx',transaction:h})).result;if(!t||!t.validated)throw new Error('not a validated tx');const L=(await rq({command:'ledger',ledger_index:t.ledger_index})).result.ledger;
@@ -101,8 +111,9 @@ async function boot(){try{CFG=await fj('slots.json')}catch(e){CFG={paid_spins_en
  try{PRZ=await fj('slots_prizes.json')}catch(e){}try{RS=await fj('slots_results.json')}catch(e){}
  g('slmode').textContent=DEMO?'Demo mode · no payments · no real prizes':'Live on XRPL mainnet';
  g('slleft').textContent=RS.prizes_left!=null?RS.prizes_left:PRZ.prizes.filter(p=>p.type==='coin').length;
- g('slrules').innerHTML=`<b>How it works</b><br>• Every spin can win. Odds vary from spin to spin and are set by the ledger, never by your phone.<br>• Three of a kind pays (or Polaroid + Polaroid + 3D glasses):<br>&nbsp;&nbsp;3 Copper = Copper Mickel Nickel<br>&nbsp;&nbsp;3 Silver = Silver Mickel Nickel<br>&nbsp;&nbsp;3 Hats = 🎩 SEMI-GRAND: Ruby #0108 pair<br>&nbsp;&nbsp;3 Gold = 👑 GRAND: Gold Mickel Nickel #5515<br>&nbsp;&nbsp;Polaroid + Polaroid + 3D glasses = 👑 GRAND: Patsy #0023 pair (2 Vault spins)<br>• Anything else is a miss.<br>• Paid spin: 0.4 XRP + 0.1 XRP fee = one 0.5 XRP payment. ${CFG.paid_spins_enabled?'':'<b>Paid spins are OFF for now.</b>'}<br>• Free spins: 1 a month for every 3 matched pairs in one wallet (snapshot 12:00 AM CT on the 1st). Each still pays the 0.1 fee.<br>• Fair and checkable: the result comes from your payment's tx hash + the ledger hash that confirmed it. Nobody, not even us, can pick it. Pieces are NFTs.`;
+ g('slrules').innerHTML=`<b>How it works</b><br>• Every spin can win. Odds vary from spin to spin and are set by the ledger, never by your phone.<br>• Three of a kind pays (or Polaroid + Polaroid + 3D glasses):<br>&nbsp;&nbsp;3 Copper = Copper Mickel Nickel<br>&nbsp;&nbsp;3 Silver = Silver Mickel Nickel<br>&nbsp;&nbsp;3 Hats = 🎩 SEMI-GRAND: Ruby #0108 pair<br>&nbsp;&nbsp;3 Gold = 👑 GRAND: Gold Mickel Nickel #5515<br>&nbsp;&nbsp;Polaroid + Polaroid + 3D glasses = 👑 GRAND: Patsy #0023 pair (2 Vault spins)<br>• Anything else is a miss.<br>• Paid spin: 0.4 XRP + 0.1 XRP fee = one 0.5 XRP payment. ${CFG.paid_spins_enabled?'':'<b>Paid spins are OFF for now.</b>'}<br>• Free spins: 1 for every 3 matched pairs in one wallet at each snapshot. Bonus Halloween snapshot Oct 31, then 12:00 AM CT on the 1st of every month. Until the first snapshot everyone has 0. Each still pays the 0.1 fee.<br>• Fair and checkable: the result comes from your payment's tx hash + the ledger hash that confirmed it. Nobody, not even us, can pick it. Pieces are NFTs.`;
  buildReels(['goldx','gold','polaroid']);gate();drawMonth();countPairs();
+ setInterval(async()=>{const a=wal(),k=a+'|'+(typeof connected!=='undefined'&&connected);if(k!==lastW){lastW=k;await testCheck();countPairs();gate()}},1500);
  setInterval(drawMonth,1000);setInterval(async()=>{try{RS=await fj('slots_results.json');gate()}catch(e){}},30000)}
 g('slspin').onclick=()=>{if(busy)return;DEMO?demoSpin():liveSpin('PAID')};g('slfree').onclick=()=>{if(!busy&&!DEMO)liveSpin('FREE')};
 g('slmute').onclick=()=>{mute=!mute;localStorage.setItem('sl_mute',mute?'1':'0');g('slmute').textContent=mute?'🔇':'🔊';g('slmute').setAttribute('aria-pressed',mute)};g('slmute').textContent=mute?'🔇':'🔊';
