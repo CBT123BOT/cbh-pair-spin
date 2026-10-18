@@ -1,6 +1,5 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="img/favicon.png">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><script>if(location.hash==="#slots")location.replace("slots.html"+location.search)</script><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="img/favicon.png">
 <title>Crypto Bros&amp;Ho's Trading Company · THE VAULT</title>
-<link rel="stylesheet" href="slots.css">
 <style>
 body{font-family:system-ui,sans-serif;background:#0d0f14;color:#eee;margin:0 auto;padding:16px;max-width:760px}
 .title{position:relative;display:block;width:fit-content;margin:6px auto 14px;font-family:Georgia,'Times New Roman',serif;font-size:clamp(1.55em,7.4vw,2.6em);font-weight:900;line-height:1.12;text-align:center;letter-spacing:.5px;color:#6b4a0c;
@@ -45,14 +44,12 @@ a.sec{background:#2a3145;color:#cfe;font-weight:600}
 .mnbox{background:linear-gradient(#10241a,#171b26);border:3px solid #f5c542;border-radius:16px;padding:14px;margin:18px 0}.qty{display:flex;gap:10px;align-items:center;justify-content:center;margin:10px 0}.qty button{width:48px;height:48px;font-size:1.5em;font-weight:900;border-radius:10px;border:0;background:#2a3145;color:#f5c542}.qty b{font-size:1.8em;min-width:2em;text-align:center}.big{font-size:1.6em;color:#f5c542;font-weight:900;text-align:center}
 .navl{color:#f5c542;font-weight:800;text-decoration:none}
 </style></head><body>
-<div class="topbar"><div class="plug"><img src="img/the_plug.png" alt="THE plug, Crypto Bros &amp; Ho's Trading Company"></div><div class="tb-info"><a class="chip navl" href="index.html">PAIR SPIN</a><span class="chip"><small>COINS LEFT</small><span id="stash">…</span></span></div></div>
+<div class="topbar"><div class="plug"><img src="img/the_plug.png" alt="THE plug, Crypto Bros &amp; Ho's Trading Company"></div><div class="tb-info"><a class="chip navl" href="index.html">PAIR SPIN</a><a class="chip navl" href="slots.html">🎰 SLOTS</a><span class="chip"><small>COINS LEFT</small><span id="stash">…</span></span></div></div>
+<h1>🐉 THE VAULT 🐉</h1>
+<div class="note"><b>Unite the TwiNs to unlock the power.</b> Hold BOTH Polaroid #N and 3D TwiN #N (with the gold coin on) in one wallet, and you can use that pair's free Mickel Nickel spins in one tap: <b>D1 pairs get 3 spins</b>, <b>D2+ pairs get 2 spins</b>. Every spin mints a fresh, never-minted coin with a chance at <b>Gold</b>. Spins are optional: a coin-on pair keeps its spins if you sell it.</div>
 <a class="btn" id="connect" style="display:none" href="#">🔗 Connect Xaman (sign in)</a>
 <label>Your Xaman address</label>
 <input id="w" placeholder="r... (your address)" autocomplete="off">
-<nav class="tabs"><a href="#vault" data-tab="vault" class="on">🐉 THE VAULT</a><a href="#slots" data-tab="slots">🎰 SLOTS</a></nav>
-<div id="tab-vault">
-<h1>🐉 THE VAULT 🐉</h1>
-<div class="note"><b>Unite the TwiNs to unlock the power.</b> Hold BOTH Polaroid #N and 3D TwiN #N (with the gold coin on) in one wallet, and you can use that pair's free Mickel Nickel spins in one tap: <b>D1 pairs get 3 spins</b>, <b>D2+ pairs get 2 spins</b>. Every spin mints a fresh, never-minted coin with a chance at <b>Gold</b>. Spins are optional: a coin-on pair keeps its spins if you sell it.</div>
 <h3>Your pairs</h3><div class="pairs" id="pairs"><div class="small">Connect to see your matched pairs.</div></div>
 <div class="warn" id="warn" style="display:none">⚠️ <b>Heads up:</b> the gold coin in the corner will be removed once you use your spins. Until then your NFT holds the value of your free Mickel spins.<label style="display:block;margin-top:8px"><input type="checkbox" id="ok" style="width:auto"> I understand</label></div>
 <div class="machine"><div class="coins"><div class="coin" id="c0">?</div><div class="coin" id="c1">?</div><div class="coin" id="c2" style="display:none">?</div></div>
@@ -67,32 +64,6 @@ a.sec{background:#2a3145;color:#cfe;font-weight:600}
 <div style="text-align:center"><b id="mntot">…</b> XRP</div>
 <button class="spin" id="mnbuy" disabled>Mint opens soon</button></div>
 <p class="small">Each spin request costs a 0.1 XRP spin fee, paid in one payment you sign (it also proves you hold the pair). Fair pick: spin i = SHA-256(proof tx hash + validating ledger hash + i) mod the never-minted coins (<a href="mn_remaining.json" style="color:#8ab">mn_remaining.json</a>), so odds follow what's left. Paid mints use the same rule with the payment tx hash. A payment at the wrong price is refunded. Public log: <a href="vault_results.json" style="color:#8ab">vault_results.json</a>. Pieces are NFTs.</p>
-</div>
-<div id="tab-slots" hidden>
-<div class="sl-head"><div class="sl-brand"><h2 class="sl-word sl-disp">MICKEL NICKEL SLOTS</h2><p class="sl-tag">Crypto Bros &amp; Ho's</p><p class="sl-demo" id="slmode">Demo mode · no payments · no real prizes</p></div><button type="button" class="sl-mute" id="slmute" aria-label="Mute" aria-pressed="false">🔊</button></div>
-<div class="sl-stage"><img class="sl-mascot" src="img/slots/mascot.webp" alt="Mickel, the Rusty Coins mascot, flipping a gold X coin" width="170" height="325">
-<section class="sl-cab" id="slcab" aria-busy="false"><div class="sl-marq" aria-hidden="true"></div>
-<div class="sl-odds"><span class="sl-chip">Every spin can win</span><span class="sl-chip">JACKPOT = matched pair</span></div>
-<p class="sl-banner" id="slban" aria-live="polite">Land a prize combo to win. Every combo is shown under Prizes below.</p>
-<div class="sl-reels" id="slreels"></div>
-<div class="sl-acts"><button type="button" class="sl-btn sl-spin" id="slspin"><span>SPIN</span><small>0.5 XRP</small></button><button type="button" class="sl-btn sl-free" id="slfree" disabled><span>FREE SPIN</span><small>0.1 XRP fee</small></button></div>
-<div class="sl-month" id="slmonth"><span>Free Spins</span><span class="n" id="slmn">0</span><small id="slms">Bonus Halloween snapshot Oct 31, then 12:00 AM CT on the 1st of every month.</small></div>
-<p class="sl-price" id="slprice">0.4 XRP spin + 0.1 XRP fee = 0.5 XRP, one payment</p>
-<p class="sl-fee">The 0.1 XRP fee stops spam and bots. Free spins still pay the 0.1 fee.</p>
-<div class="sl-stats"><div class="sl-stat"><span>Spins</span><b id="slspins">0</b></div><div class="sl-stat"><span>Prizes left in the pool</span><b id="slleft">…</b></div></div>
-</section>
-<h2 class="sl-h2 sl-disp">Prizes</h2>
-<div class="sl-gal">
-<article class="sl-prize"><div class="sl-combo" aria-label="copper + copper + copper"><span><img src="img/slots/copper.webp" alt="copper"></span><span><img src="img/slots/copper.webp" alt="copper"></span><span><img src="img/slots/copper.webp" alt="copper"></span></div><span class="sl-flag">Mickel Nickel</span><h3 class="sl-disp">Copper Mickel Nickel</h3><p>3 Copper = a Copper Mickel Nickel.</p></article>
-<article class="sl-prize"><div class="sl-combo" aria-label="silver + silver + silver"><span><img src="img/slots/silver.webp" alt="silver"></span><span><img src="img/slots/silver.webp" alt="silver"></span><span><img src="img/slots/silver.webp" alt="silver"></span></div><span class="sl-flag">Mickel Nickel</span><h3 class="sl-disp">Silver Mickel Nickel</h3><p>3 Silver = a Silver Mickel Nickel.</p></article>
-<article class="sl-prize jp"><div class="sl-combo" aria-label="hat + hat + hat"><span><img src="img/slots/hat.webp" alt="hat"></span><span><img src="img/slots/hat.webp" alt="hat"></span><span><img src="img/slots/hat.webp" alt="hat"></span></div><span class="sl-flag">Semi-Grand</span><h3 class="sl-disp">SEMI-GRAND: Ruby Pair</h3><p>3 Hats = Ruby Drippington #0108 matched pair (Vault spins already used).</p></article>
-<article class="sl-prize jp gr"><div class="sl-combo" aria-label="gold + gold + gold"><span><img src="img/slots/gold.webp" alt="gold"></span><span><img src="img/slots/gold.webp" alt="gold"></span><span><img src="img/slots/gold.webp" alt="gold"></span></div><span class="sl-flag">👑 Grand</span><h3 class="sl-disp">GRAND: Gold Mickel Nickel</h3><p>3 Gold = Gold Mickel Nickel #5515.</p></article>
-<article class="sl-prize jp gr"><div class="sl-combo" aria-label="polaroid + polaroid + glasses"><span><img src="img/slots/polaroid.webp" alt="polaroid"></span><span><img src="img/slots/polaroid.webp" alt="polaroid"></span><span><img src="img/slots/glasses.webp" alt="glasses"></span></div><span class="sl-flag">👑 Grand</span><h3 class="sl-disp">GRAND: Patsy Pair</h3><p>Polaroid + Polaroid + 3D glasses = Patsy Jpegson #0023 matched pair with 2 Vault spins.</p></article>
-</div>
-<div class="sl-box" id="slrules">…</div>
-<div class="sl-box"><b>Verify a spin</b><div>Paste a CBH-SLOT payment tx hash. Your browser looks up the ledger and re-checks the prize pick.</div><input id="sltx" placeholder="64-character tx hash" autocomplete="off"><button type="button" id="slver">Verify</button><div id="slvr" class="sl-mono"></div></div>
-</div>
-</div>
 <script src="config.js"></script>
 <script>
 const SELLER="rNxAwKP3rdNTfe4ZNw1SntXCfW2U4r2XuB",WSS=["wss://xrplcluster.com","wss://s1.ripple.com","wss://s2.ripple.com"],EXP="https://livenet.xrpl.org",NET='MAINNET',PAGE=location.origin+location.pathname,GW="https://gateway.pinata.cloud/ipfs/";
@@ -164,7 +135,6 @@ $('mnbuy').onclick=async()=>{const S=mnState();if(!S.open||$('mnbuy').disabled)r
   else if(k>60){clearInterval(watchT);$('status').innerHTML='Nothing came back yet. Check <a href="vault_results.json" style="color:#8ab">the public log</a> (a wrong-price payment is refunded).'}}catch(e){}},4000)};
 setInterval(()=>load().then(mnGate).catch(()=>{}),30000);loadMN();
 $('w').addEventListener('change',()=>myPairs().catch(()=>{}));
-</script>
-<script src="slots.js"></script><div class="footer" style="margin:30px -16px -16px;padding:22px 10px 26px;border-top:2px solid #f5c542;background:linear-gradient(0deg,#1a1508,#0d0f14)"><div class="title" data-text="Crypto Bros&amp;Ho's Trading Company" role="heading" aria-level="1">Crypto Bros&amp;Ho's Trading Company</div>
+</script><div class="footer" style="margin:30px -16px -16px;padding:22px 10px 26px;border-top:2px solid #f5c542;background:linear-gradient(0deg,#1a1508,#0d0f14)"><div class="title" data-text="Crypto Bros&amp;Ho's Trading Company" role="heading" aria-level="1">Crypto Bros&amp;Ho's Trading Company</div>
 </div>
 </body></html>
