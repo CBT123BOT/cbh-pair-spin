@@ -76,6 +76,6 @@ if(window.CBH_XAMAN_API_KEY){const sc=document.createElement('script');sc.src='h
  $('connect').onclick=e=>{e.preventDefault();if(connected)XM.logout();else XM.authorize()};XM.on('logout',()=>{connected=false;$('connect').textContent='🔗 Connect Xaman'});
  XM.on('success',async()=>{const a=await XM.user.account;$('w').value=a;connected=true;$('connect').textContent='✅ '+a.slice(0,6)+'…'+a.slice(-4)+' · disconnect';showClaims()})};document.head.appendChild(sc)}
 </script>
-<script src="slots.js?v=20261018-1050"></script>
 <p class="sl-build" id="slbuild">build 20261018-1050</p>
+<script src="slots.js?v=20261018-1050"></script>
 </body></html>
