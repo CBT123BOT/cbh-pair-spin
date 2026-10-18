@@ -32,6 +32,10 @@ async function outcome(tx,lh,pool,odds,jp){tx=tx.toUpperCase();lh=lh.toUpperCase
  const tier=p=>p.tier||(p.type==='pair'?'jackpot':'common');const J=big(await H(tx,lh,'CBH-SLOT:JACKPOT'))%BigInt(jp)===0n,cat=J?'jackpot':'common';let sub=pool.filter(p=>tier(p)===cat);if(!sub.length)sub=pool.filter(p=>tier(p)!==cat);
  const tot=sub.reduce((a,p)=>a+(p.tickets||1),0),t=Number(big(await H(tx,lh,'CBH-SLOT:PRIZE'))%BigInt(tot));let acc=0,p=sub[sub.length-1];for(const x of sub){acc+=x.tickets||1;if(t<acc){p=x;break}}
  return{win:true,jackpot:tier(p)==='jackpot',grand:!!p.grand,semi_grand:!!p.semi_grand,prize:p,ticket:t,total_tickets:tot,reels:await reelsFor(tx,lh,comboFor(p))}}
+// multi-spin (1-3 spins per paid payment): spin 0 = the tx hash itself; spin i = SHA-256(tx || "CBH-SLOT:SPIN" || i). A prize won earlier in the same payment leaves the pool.
+async function spinHash(tx,i){tx=tx.toUpperCase();if(!i)return tx;const a=hexb(tx),c=new TextEncoder().encode('CBH-SLOT:SPIN'),u=new Uint8Array(a.length+c.length+1);u.set(a);u.set(c,a.length);u[u.length-1]=i;
+ return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',u)),x=>x.toString(16).padStart(2,'0')).join('').toUpperCase()}
+async function multiOutcome(tx,lh,pool,n,oddsFor,jp){let left=pool.slice();const out=[];for(let i=0;i<n;i++){const h=await spinHash(tx,i),o=await outcome(h,lh,left,oddsFor(h),jp);o.i=i;o.hash=h;if(o.win){const id=o.prize.id;left=left.filter(p=>p.id!==id)}out.push(o)}return out}
 const DEMO_ODDS=6;   // demo only; real odds are set server-side and not published
 // ---------- free spins (bonus Halloween snapshot Oct 31, then 12:00 AM CT on the 1st of every month) ----------
 function snapTimes(){const p=ctParts(Date.now()),first=CFG.snapshot_first_ct||'2026-10-31',md=CFG.snapshot_monthly_day||1,out=[];
@@ -101,7 +105,7 @@ async function resume(){if(resuming)return;if(!getP())return;resuming=true;busy=
   const R=await to(fj('slots_results.json'),10000,null);if(R)RS=R;
   const ev=findEv(P);
   if(ev){setP(null);done=true;resuming=false;
-   if(ev.action==='win'||ev.action==='lose'){await land(ev.reels);busy=false;gate();showResult({win:ev.action==='win',jackpot:ev.jackpot,grand:!!ev.grand,semi_grand:!!ev.semi_grand,prize:ev.prize},false);if(ev.action==='win'&&window.showClaims)setTimeout(window.showClaims,1500)}
+   if(ev.action==='win'||ev.action==='lose'){await playSpins(ev);if(ev.action==='win'&&window.showClaims)setTimeout(window.showClaims,1500)}
    else{clearInterval(loopT);banner('lose','Not spun: '+(WHY[ev.reason]||ev.reason||ev.action)+(ev.owner_refund_tx?' · refunded':''))}break}
   if(!P.txid&&Date.now()-P.t0>4*60e3){setP(null);clearInterval(loopT);banner('lose','No signed payment was found. Nothing was charged; you can spin again.');done=true;break}
   await sleep(3000)}
@@ -110,6 +114,16 @@ async function resume(){if(resuming)return;if(!getP())return;resuming=true;busy=
   banner('wait',P&&P.seen?`✔ Your spin is confirmed on the ledger (tx ${P.txid.slice(0,8)}…). The result is still being posted. Tap CHECK RESULT, or <a href="#" id="slvlink">verify it</a>.`:'Still looking for your payment. Tap CHECK RESULT in a moment.');
   const vl=g('slvlink');if(vl&&P)vl.onclick=e=>{e.preventDefault();const d=g('sltx').closest('details');if(d)d.open=true;g('sltx').value=P.txid;verify();g('sltx').scrollIntoView({behavior:'smooth',block:'center'})}}
  busy=false;gate();drawFree()}
+// one payment can carry 1-3 spins: each one stops left, middle, right, then the next one starts
+async function playSpins(ev){const S=(ev.spins&&ev.spins.length)?ev.spins:[{win:ev.action==='win',reels:ev.reels,jackpot:ev.jackpot,grand:ev.grand,semi_grand:ev.semi_grand,prize:ev.prize}],n=S.length,won=[];
+ for(let k=0;k<n;k++){const sp=S[k];if(k){startLoop();banner('wait',`🎰 Spin ${k+1} of ${n}…`);await sleep(900)}
+  await land(sp.reels);if(sp.win)won.push(sp);
+  if(n>1&&k<n-1){if(sp.win)for(let i=0;i<3;i++)g('slw'+i).classList.add('hit');banner(sp.win?'win':'lose',`Spin ${k+1} of ${n}: `+(sp.win?'🎉 WIN! '+((sp.prize||{}).name||'a prize'):'no win'));await sleep(1800)}}
+ busy=false;gate();
+ if(n===1){const sp=S[0];showResult({win:!!sp.win,jackpot:sp.jackpot,grand:!!sp.grand,semi_grand:!!sp.semi_grand,prize:sp.prize},false);return}
+ if(!won.length){banner('lose',`No win in ${n} spins this time. Spin again!`);return}
+ const top=won.find(x=>x.grand)||won.find(x=>x.semi_grand)||won.find(x=>x.jackpot)||won[0];if(top!==S[n-1]){await sleep(700);buildReels(top.reels)}   // finish on the winning combo, never a miss under a WIN banner
+ showResult({win:true,jackpot:top.jackpot,grand:!!top.grand,semi_grand:!!top.semi_grand,prize:{name:won.map(x=>`${(x.prize||{}).name||'a prize'} (spin ${S.indexOf(x)+1} of ${n})`).join(' + ')}},false)}
 // ---------- spin ----------
 async function demoSpin(){busy=true;gate();if(!demoN&&+qs.get('demo_from')>1)demoN=Math.floor(+qs.get('demo_from'))-1;   // demo-only: start the demo sequence at #N (preview/testing)
  demoN++;startLoop();banner('','Spinning…');
@@ -118,10 +132,11 @@ async function demoSpin(){busy=true;gate();if(!demoN&&+qs.get('demo_from')>1)dem
  let pool=PRZ.prizes.slice();if(!pool.some(p=>p.type==='pair'))pool.push({id:'demo-pair',type:'pair',tier:'jackpot',name:'Matched pair #0248 (demo example)',tickets:1});
  const o=await outcome(tx,lh,pool,DEMO_ODDS,+CFG.jackpot_one_in_wins||7);await sleep(500);await land(o.reels);showResult(o,true);
  if(g('slvr'))g('slvr').textContent=`demo #${demoN} · tx ${tx.slice(0,12)}… · ledger ${lh.slice(0,12)}… → ${o.win?(o.jackpot?'JACKPOT ':'WIN ')+o.prize.name:'no win'} (demo)`;busy=false;gate()}
-async function liveSpin(mode){if(getP())return resume();if(!isConn()||busy)return;busy=true;gate();const amt=mode==='FREE'?CFG.free_spin_drops:CFG.paid_spin_drops,me=wal();
+let multiN=1;
+async function liveSpin(mode){if(getP())return resume();if(!isConn()||busy)return;busy=true;gate();const n=mode==='PAID'?multiN:1,amt=mode==='FREE'?+CFG.free_spin_drops:n*+CFG.paid_spin_drops,me=wal();
  banner('',`Opening Xaman… check it says <b>MAINNET</b> and <b>${Number(amt)/1e6} XRP</b>, then sign.`);let r=null;
  try{r=await xamanSign({TransactionType:'Payment',Destination:SELLER,Amount:String(amt),Memos:[{Memo:{MemoType:s2hex(CFG.memo_type||'CBH-SLOT'),MemoData:s2hex(mode)}}]},
-   mode==='FREE'?'MICKEL NICKEL SLOTS: free spin (0.1 XRP fee)':'MICKEL NICKEL SLOTS: 1 spin (0.4 + 0.1 fee)',uuid=>setP({mode,wallet:me,t0:Date.now(),uuid}))}
+   mode==='FREE'?'MICKEL NICKEL SLOTS: free spin (0.1 XRP fee)':`MICKEL NICKEL SLOTS: ${n} spin${n>1?'s':''} (0.5 XRP each)`,uuid=>setP({mode,n,wallet:me,t0:Date.now(),uuid}))}
  catch(e){setP(null);banner('lose','Xaman: '+e.message);busy=false;gate();return}
  // desktop (QR) flow resolves here; on a phone the page usually reloads from Xaman's return link and resume() runs on load
  const P=getP();if(r&&r.signed===false){setP(null);clearInterval(loopT);banner('lose','Cancelled in Xaman. No payment was made.');busy=false;gate();return}
@@ -132,15 +147,20 @@ function gate(){if(!CFG)return;const s=g('slspin'),c=isConn(),n=freeLeft(),P=get
  else if(P){mode='check';big='CHECK RESULT';sm='your spin is confirmed';s.disabled=false}
  else if(!c){mode='connect';big='CONNECT XAMAN';sm='sign in to play';s.disabled=!XM}
  else if(CFG.free_spins_enabled&&n>0){mode='FREE';big='FREE SPIN';sm=`${n} left · 0.1 XRP fee`;s.disabled=false}
- else if(CFG.paid_spins_enabled||testOK){mode='PAID';big='SPIN';sm='0.5 XRP'+(CFG.paid_spins_enabled?'':' · owner test');s.disabled=false}
+ else if(CFG.paid_spins_enabled||testOK){mode='PAID';big=multiN>1?`SPIN x${multiN}`:'SPIN';sm=`${(multiN*+CFG.paid_spin_drops/1e6).toFixed(1)} XRP`+(CFG.paid_spins_enabled?'':' · owner test');s.disabled=false}
  else{big='NO FREE SPIN';sm=`next snapshot ${snapDate(nextSnap())}`;s.disabled=true}
- s.dataset.mode=mode;s.innerHTML=`<span>${big}</span><small>${sm}</small>`;s.classList.toggle('sl-free',mode==='FREE')}
+ s.dataset.mode=mode;s.innerHTML=`<span>${big}</span><small>${sm}</small>`;s.classList.toggle('sl-free',mode==='FREE');
+ const mx=g('slmulti');if(mx){mx.hidden=mode!=='PAID';mx.querySelectorAll('button').forEach(b=>b.classList.toggle('on',+b.dataset.n===multiN))}}
 // ---------- verify ----------
 async function verify(){const h=g('sltx').value.trim().toUpperCase(),out=g('slvr');if(!/^[0-9A-F]{64}$/.test(h)){out.textContent='Paste a 64-character tx hash.';return}out.textContent='Looking it up on the ledger…';
  try{const t=(await rq({command:'tx',transaction:h})).result;if(!t||!t.validated)throw new Error('not a validated tx');const L=(await rq({command:'ledger',ledger_index:t.ledger_index})).result.ledger;
-  const ev=(RS.events||[]).find(e=>e.tx===h);let chk='';
-  if(ev&&ev.action==='win'&&ev.pool){const pool=ev.pool.map(([id,tier,tickets])=>({id,tier,tickets})),o=await outcome(h,L.ledger_hash,pool,1,+CFG.jackpot_one_in_wins||7);chk=o.prize&&ev.prize.id&&ev.prize.id.endsWith(o.prize.id)?' · prize pick re-checked ✔':' · prize pick does NOT match ✖'}
-  out.innerHTML=`ledger ${t.ledger_index} · hash ${L.ledger_hash}${ev?`<br>public log: ${ev.action}${ev.prize&&ev.prize.name?' · '+ev.prize.name:''}${chk}`:'<br>(not in the public log yet)'}`}
+  const ev=(RS.events||[]).find(e=>String(e.tx||'').toUpperCase()===h),jp=+CFG.jackpot_one_in_wins||7;let log='<br>(not in the public log yet)';
+  if(ev){const S=(ev.spins&&ev.spins.length)?ev.spins:[{i:0,hash:h,win:ev.action==='win',reels:ev.reels,prize:ev.prize,pool:ev.pool}];const rows=[];
+   for(const sp of S){const hh=await spinHash(h,sp.i||0);let r=`${S.length>1?`spin ${(sp.i||0)+1}: `:''}${sp.win?'WIN · '+((sp.prize||{}).name||''):'no win'}${sp.reels?' · '+sp.reels.join('/'):''}`;
+    if(sp.hash&&sp.hash.toUpperCase()!==hh)r+=' · spin hash does NOT match ✖';else if(S.length>1)r+=` · spin hash ${hh.slice(0,10)}… ✔`;
+    if(sp.win&&sp.pool){const o=await outcome(hh,L.ledger_hash,sp.pool.map(([id,tier,tickets])=>({id,tier,tickets})),1,jp);r+=o.prize&&sp.prize&&sp.prize.id&&sp.prize.id.endsWith(o.prize.id)?' · prize pick re-checked ✔':' · prize pick does NOT match ✖'}rows.push(r)}
+   log=`<br>public log: ${ev.action}${ev.reason?' · '+ev.reason:''}<br>`+rows.join('<br>')}
+  out.innerHTML=`ledger ${t.ledger_index} · hash ${L.ledger_hash}${log}`}
  catch(e){out.textContent='Could not verify: '+e.message}}
 // ---------- boot ----------
 async function boot(){try{CFG=await fj('slots.json')}catch(e){CFG={paid_spins_enabled:false,free_spins_enabled:false,jackpot_one_in_wins:7,paid_spin_drops:'500000',free_spin_drops:'100000',free_spins_per_pairs:3}}
@@ -158,6 +178,7 @@ async function boot(){try{CFG=await fj('slots.json')}catch(e){CFG={paid_spins_en
 g('slspin').onclick=()=>{const m=g('slspin').dataset.mode;if(busy&&m!=='connect')return;if(m==='demo')demoSpin();else if(m==='connect'){if(XM)XM.authorize()}else if(m==='check')resume();else if(m==='FREE'||m==='PAID')liveSpin(m)};
 g('slmute').onclick=()=>{mute=!mute;localStorage.setItem('sl_mute',mute?'1':'0');g('slmute').textContent=mute?'🔇':'🔊';g('slmute').setAttribute('aria-pressed',mute)};g('slmute').textContent=mute?'🔇':'🔊';
 if(g('slver'))g('slver').onclick=verify;
-window.CBH_SLOTS={outcome,getP,gate};   // exposed for the parity / flow tests
+if(g('slmulti'))g('slmulti').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(busy)return;multiN=Math.min(3,Math.max(1,+b.dataset.n||1));gate()});
+window.CBH_SLOTS={outcome,multiOutcome,spinHash,getP,gate};   // exposed for the parity / flow tests
 boot();
 })();
