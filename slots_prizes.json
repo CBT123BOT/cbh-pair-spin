@@ -1,0 +1,1042 @@
+{
+ "wallet": "rNxAwKP3rdNTfe4ZNw1SntXCfW2U4r2XuB",
+ "rule": "PRIZE = SHA-256(tx || ledger_hash || 'CBH-SLOT:PRIZE') mod total_tickets; walk 'prizes' in this order",
+ "built": "2026-10-18T14:24:59.521428+00:00",
+ "checked_onchain": true,
+ "total_tickets": 104,
+ "prizes": [
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373AC101E770666EBD9",
+   "type": "coin",
+   "coin": 120,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #120",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373F9019B620666EBC6",
+   "type": "coin",
+   "coin": 171,
+   "metal": "Silver",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #171",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C11673735078DA730666EBD5",
+   "type": "coin",
+   "coin": 246,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #246",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373423E7ED70666EC39",
+   "type": "coin",
+   "coin": 280,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #280",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373675EAB720666EBD6",
+   "type": "coin",
+   "coin": 288,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #288",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373CFC169CC0666EC34",
+   "type": "coin",
+   "coin": 402,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #402",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373808A34A90666EC0F",
+   "type": "coin",
+   "coin": 466,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #466",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C116737324F2F0A50666EC0B",
+   "type": "coin",
+   "coin": 702,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #702",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373700A20D50666EC3B",
+   "type": "coin",
+   "coin": 922,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #922",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373952A4D700666EBD8",
+   "type": "coin",
+   "coin": 1011,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #1011",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373D9DBC0750666EBDB",
+   "type": "coin",
+   "coin": 1156,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #1156",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C116737307A7627B0666EBDD",
+   "type": "coin",
+   "coin": 1165,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #1165",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373EAC73FC60666EC2A",
+   "type": "coin",
+   "coin": 1499,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #1499",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373B4BB93DA0666EC3E",
+   "type": "coin",
+   "coin": 1503,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #1503",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373C2F5EF760666EBDA",
+   "type": "coin",
+   "coin": 1510,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #1510",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373E21BCA630666EBC5",
+   "type": "coin",
+   "coin": 1856,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #1856",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C116737359244FD60666EC3A",
+   "type": "coin",
+   "coin": 2136,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #2136",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C116737386EFF1D40666EC3C",
+   "type": "coin",
+   "coin": 2290,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #2290",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373D80173BA0666EC1E",
+   "type": "coin",
+   "coin": 2494,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #2494",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373935000B50666EC1B",
+   "type": "coin",
+   "coin": 3067,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #3067",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C11673737A24777E0666EBE2",
+   "type": "coin",
+   "coin": 3209,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #3209",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C11673737C6A2FB60666EC1A",
+   "type": "coin",
+   "coin": 3252,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #3252",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373F96D06DF0666EC41",
+   "type": "coin",
+   "coin": 3392,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #3392",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C11673730E0D1FA60666EC0A",
+   "type": "coin",
+   "coin": 3406,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #3406",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C116737320D2EBB20666EC16",
+   "type": "coin",
+   "coin": 3478,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #3478",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C11673734838D0850666EBEB",
+   "type": "coin",
+   "coin": 3555,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #3555",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373A1F5C7CE0666EC32",
+   "type": "coin",
+   "coin": 3556,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #3556",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373616459BC0666EC24",
+   "type": "coin",
+   "coin": 4114,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #4114",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C11673739DD5C2DB0666EC3D",
+   "type": "coin",
+   "coin": 4257,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #4257",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C11673733BD8C1A40666EC0C",
+   "type": "coin",
+   "coin": 4363,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #4363",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373B8DB98CD0666EC33",
+   "type": "coin",
+   "coin": 4395,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #4395",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373A7F0197C0666EBE4",
+   "type": "coin",
+   "coin": 4491,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #4491",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C11673734E9E8DB00666EC18",
+   "type": "coin",
+   "coin": 4588,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #4588",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373A615CCC10666EC27",
+   "type": "coin",
+   "coin": 4684,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #4684",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C116737365845EB70666EC19",
+   "type": "coin",
+   "coin": 4695,
+   "metal": "Silver",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #4695",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C11673732B58ADD00666EC38",
+   "type": "coin",
+   "coin": 4797,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #4797",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C11673730FE76C610666EBC7",
+   "type": "coin",
+   "coin": 5272,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #5272",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373BCFB9DC00666EC28",
+   "type": "coin",
+   "coin": 5515,
+   "metal": "Gold",
+   "tier": "jackpot",
+   "grand": true,
+   "name": "GRAND: Gold Mickel Nickel #5515",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C116737352BE92AB0666EC0D",
+   "type": "coin",
+   "coin": 5671,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #5671",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C116737337B8BCB10666EC17",
+   "type": "coin",
+   "coin": 5713,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #5713",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373C53BA7AE0666EC12",
+   "type": "coin",
+   "coin": 5934,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #5934",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373977005A80666EC10",
+   "type": "coin",
+   "coin": 5983,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #5983",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C11673735D4454C90666EC2F",
+   "type": "coin",
+   "coin": 6188,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #6188",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C11673733152FF860666EBEA",
+   "type": "coin",
+   "coin": 6341,
+   "metal": "Silver",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #6341",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373C11BA2BB0666EC1D",
+   "type": "coin",
+   "coin": 6545,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #6545",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C116737303875D800666EBE8",
+   "type": "coin",
+   "coin": 6645,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #6645",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373FD8D0BD20666EC36",
+   "type": "coin",
+   "coin": 6850,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #6850",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373F4E1966F0666EBD1",
+   "type": "coin",
+   "coin": 7040,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #7040",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373D5BBBB820666EBE6",
+   "type": "coin",
+   "coin": 7049,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #7049",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373E28735D80666EC40",
+   "type": "coin",
+   "coin": 7127,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #7127",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C116737309ED1AB30666EC15",
+   "type": "coin",
+   "coin": 7192,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #7192",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373ECA18C810666EBE7",
+   "type": "coin",
+   "coin": 7275,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #7275",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373F7274EA70666EC09",
+   "type": "coin",
+   "coin": 7601,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #7601",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C11673733993096C0666EBD4",
+   "type": "coin",
+   "coin": 7661,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #7661",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C116737301AD10C50666EC2B",
+   "type": "coin",
+   "coin": 7972,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #7972",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373CBA164D90666EC3F",
+   "type": "coin",
+   "coin": 8076,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #8076",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373EEE744B90666EC1F",
+   "type": "coin",
+   "coin": 8141,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #8141",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C11673738F2FFBC20666EC26",
+   "type": "coin",
+   "coin": 8316,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #8316",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373633EA67F0666EBE1",
+   "type": "coin",
+   "coin": 8398,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #8398",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C11673734A7E88BD0666EC23",
+   "type": "coin",
+   "coin": 8446,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #8446",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373AA35D1B40666EC1C",
+   "type": "coin",
+   "coin": 8484,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #8484",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C11673733398B7BE0666EC22",
+   "type": "coin",
+   "coin": 8502,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #8502",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373E6A73AD30666EC35",
+   "type": "coin",
+   "coin": 8608,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #8608",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373F0C191740666EBDC",
+   "type": "coin",
+   "coin": 8658,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #8658",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373DDFBC5680666EBD0",
+   "type": "coin",
+   "coin": 8685,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #8685",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373910A487D0666EBE3",
+   "type": "coin",
+   "coin": 8888,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #8888",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C116737326CD3D600666EBC8",
+   "type": "coin",
+   "coin": 9572,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #9572",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C11673730BC7676E0666EBD2",
+   "type": "coin",
+   "coin": 9978,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #9978",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C116737322AD386D0666EBD3",
+   "type": "coin",
+   "coin": 10010,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #10010",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C11673733DB30E670666EBC9",
+   "type": "coin",
+   "coin": 10194,
+   "metal": "Silver",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #10194",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373DC2178AD0666EC13",
+   "type": "coin",
+   "coin": 10280,
+   "metal": "Silver",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #10280",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373D3E16EC70666EC29",
+   "type": "coin",
+   "coin": 10327,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #10327",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C11673731472DCD10666EC37",
+   "type": "coin",
+   "coin": 10519,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #10519",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373CB35F95C0666EBC4",
+   "type": "coin",
+   "coin": 10564,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #10564",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C11673732F78B2CB0666EC2D",
+   "type": "coin",
+   "coin": 10581,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #10581",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373784A2AC30666EC25",
+   "type": "coin",
+   "coin": 10598,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #10598",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C11673731E8D337A0666EBDE",
+   "type": "coin",
+   "coin": 10763,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #10763",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C116737369A463AA0666EC0E",
+   "type": "coin",
+   "coin": 10953,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #10953",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373994A526B0666EBCD",
+   "type": "coin",
+   "coin": 11135,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #11135",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373826481640666EBCC",
+   "type": "coin",
+   "coin": 11265,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #11265",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C11673736B3FE3BF0666E921",
+   "type": "coin",
+   "coin": 11418,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #11418",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373BED5EA830666EBE5",
+   "type": "coin",
+   "coin": 11819,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #11819",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C116737305CD15B80666EC20",
+   "type": "coin",
+   "coin": 11901,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #11901",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C11673734C58D5780666EBE0",
+   "type": "coin",
+   "coin": 12031,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #12031",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C11673731CB2E6BF0666EC21",
+   "type": "coin",
+   "coin": 12039,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #12039",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C11673738B0FF6CF0666EC31",
+   "type": "coin",
+   "coin": 12153,
+   "metal": "Silver",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #12153",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373AE55D6AF0666EC11",
+   "type": "coin",
+   "coin": 12214,
+   "metal": "Silver",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #12214",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C11673731A6D2E870666EBE9",
+   "type": "coin",
+   "coin": 12319,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #12319",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C11673735498DF660666EBCA",
+   "type": "coin",
+   "coin": 12342,
+   "metal": "Silver",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #12342",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373C715F4690666EBCF",
+   "type": "coin",
+   "coin": 12352,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #12352",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373465E83CA0666EC2E",
+   "type": "coin",
+   "coin": 12381,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #12381",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373B030236A0666EBCE",
+   "type": "coin",
+   "coin": 12414,
+   "metal": "Silver",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #12414",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373E0417DA00666EC08",
+   "type": "coin",
+   "coin": 12693,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #12693",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373357304790666EBDF",
+   "type": "coin",
+   "coin": 12950,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #12950",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373742A25C80666EC30",
+   "type": "coin",
+   "coin": 13096,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #13096",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C11673737E447C710666EBD7",
+   "type": "coin",
+   "coin": 13245,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #13245",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373F30749AC0666EC14",
+   "type": "coin",
+   "coin": 13637,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #13637",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C11673736B7EB0650666EBCB",
+   "type": "coin",
+   "coin": 13724,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #13724",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C1167373C95BACA10666EC07",
+   "type": "coin",
+   "coin": 13773,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #13773",
+   "tickets": 1
+  },
+  {
+   "id": "00181388992DB95F47B7A516192A895CCF7E2789C11673731892E1C40666EC2C",
+   "type": "coin",
+   "coin": 13819,
+   "metal": "Copper",
+   "tier": "common",
+   "grand": false,
+   "name": "Mickel Nickel #13819",
+   "tickets": 1
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C11673732D32FA940666EBF5+00181770992DB95F47B7A516192A895CCF7E2789C11673734418CB940666EBF6",
+   "type": "pair",
+   "N": "0023",
+   "name": "GRAND: Patsy Jpegson #0023 pair (2 Vault spins included)",
+   "img": "https://gateway.pinata.cloud/ipfs/bafybeiaohbv7rm6svejvienye4koon5m633dam3lttrdlamsuwmgo65jyi/0023.webp",
+   "nft_ids": [
+    "00181770992DB95F47B7A516192A895CCF7E2789C11673732D32FA940666EBF5",
+    "00181770992DB95F47B7A516192A895CCF7E2789C11673734418CB940666EBF6"
+   ],
+   "tier": "jackpot",
+   "spins_left": 2,
+   "tickets": 1,
+   "grand": true,
+   "semi_grand": false
+  },
+  {
+   "id": "00181770992DB95F47B7A516192A895CCF7E2789C11673735F1EA1830666EBEC+00181770992DB95F47B7A516192A895CCF7E2789C11673737604728D0666EBED",
+   "type": "pair",
+   "N": "0108",
+   "name": "SEMI-GRAND: Ruby Drippington #0108 pair (Vault spins already used)",
+   "img": "https://gateway.pinata.cloud/ipfs/bafybeiaohbv7rm6svejvienye4koon5m633dam3lttrdlamsuwmgo65jyi/0108.webp",
+   "nft_ids": [
+    "00181770992DB95F47B7A516192A895CCF7E2789C11673735F1EA1830666EBEC",
+    "00181770992DB95F47B7A516192A895CCF7E2789C11673737604728D0666EBED"
+   ],
+   "tier": "jackpot",
+   "spins_left": 0,
+   "tickets": 3,
+   "grand": false,
+   "semi_grand": true
+  }
+ ],
+ "pool_sha256": "4fb13508175542441118571475b6ba380a7d680b59a323908b31053dd8aef92f"
+}
