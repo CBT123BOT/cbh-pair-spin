@@ -73,7 +73,7 @@ a.sec{background:#2a3145;color:#cfe;font-weight:600}
 <div class="sl-stage"><img class="sl-mascot" src="img/slots/mascot.webp" alt="Mickel, the Rusty Coins mascot, flipping a gold X coin" width="170" height="325">
 <section class="sl-cab" id="slcab" aria-busy="false"><div class="sl-marq" aria-hidden="true"></div>
 <div class="sl-odds"><span class="sl-chip">Every spin can win</span><span class="sl-chip">JACKPOT = matched pair</span></div>
-<p class="sl-banner" id="slban" aria-live="polite">3 Copper or 3 Silver = Mickel Nickel · 3 Hats = 🎩 SEMI-GRAND pair · Polaroid + Polaroid + 3D glasses or 3 Gold = 👑 GRAND</p>
+<p class="sl-banner" id="slban" aria-live="polite">Land a prize combo to win. Every combo is shown under Prizes below.</p>
 <div class="sl-reels" id="slreels"></div>
 <div class="sl-acts"><button type="button" class="sl-btn sl-spin" id="slspin"><span>SPIN</span><small>0.5 XRP</small></button><button type="button" class="sl-btn sl-free" id="slfree" disabled><span>FREE SPIN</span><small>0.1 XRP fee</small></button></div>
 <div class="sl-month" id="slmonth"><span>Monthly Free Spins</span><span class="n" id="slmn">0</span><small id="slms">1 per 3 matched pairs · next snapshot in …</small></div>
@@ -82,9 +82,13 @@ a.sec{background:#2a3145;color:#cfe;font-weight:600}
 <div class="sl-stats"><div class="sl-stat"><span>Spins</span><b id="slspins">0</b></div><div class="sl-stat"><span>Mickel Nickels in the prize pool</span><b id="slleft">…</b></div></div>
 </section>
 <h2 class="sl-h2 sl-disp">Prizes</h2>
-<div class="sl-gal"><article class="sl-prize jp"><div><img src="img/slots/copper.webp" alt=""><img src="img/slots/silver.webp" alt=""></div><h3 class="sl-disp">Mickel Nickel</h3><p>3 Copper or 3 Silver. Pre-minted NFT held by the project wallet. Most wins.</p></article>
-<article class="sl-prize jp"><div><img src="img/slots/hat.webp" alt=""><img src="img/slots/hat.webp" alt=""><img src="img/slots/hat.webp" alt=""></div><span class="sl-flag">Semi-Grand</span><h3 class="sl-disp">SEMI-GRAND Pair</h3><p>3 hats: a matched Polaroid + 3D TwiN pair whose Vault spins are used (Ruby Drippington #0108).</p></article>
-<article class="sl-prize jp" style="grid-column:1/-1"><div><img src="img/slots/gold.webp" alt=""><img src="img/slots/polaroid.webp" alt=""><img src="img/slots/glasses.webp" alt=""></div><span class="sl-flag">Grand</span><h3 class="sl-disp">GRAND: Gold Mickel or Patsy</h3><p>3 Gold = a Gold Mickel Nickel. Polaroid + Polaroid + 3D glasses = a pair with its Vault spins (Patsy Jpegson #0023, 2 spins). The rarest wins.</p></article></div>
+<div class="sl-gal">
+<article class="sl-prize"><div class="sl-combo" aria-label="copper + copper + copper"><span><img src="img/slots/copper.webp" alt="copper"></span><span><img src="img/slots/copper.webp" alt="copper"></span><span><img src="img/slots/copper.webp" alt="copper"></span></div><span class="sl-flag">Mickel Nickel</span><h3 class="sl-disp">Copper Mickel Nickel</h3><p>3 Copper = a Copper Mickel Nickel.</p></article>
+<article class="sl-prize"><div class="sl-combo" aria-label="silver + silver + silver"><span><img src="img/slots/silver.webp" alt="silver"></span><span><img src="img/slots/silver.webp" alt="silver"></span><span><img src="img/slots/silver.webp" alt="silver"></span></div><span class="sl-flag">Mickel Nickel</span><h3 class="sl-disp">Silver Mickel Nickel</h3><p>3 Silver = a Silver Mickel Nickel.</p></article>
+<article class="sl-prize jp"><div class="sl-combo" aria-label="hat + hat + hat"><span><img src="img/slots/hat.webp" alt="hat"></span><span><img src="img/slots/hat.webp" alt="hat"></span><span><img src="img/slots/hat.webp" alt="hat"></span></div><span class="sl-flag">Semi-Grand</span><h3 class="sl-disp">SEMI-GRAND: Ruby Pair</h3><p>3 Hats = Ruby Drippington #0108 matched pair (Vault spins already used).</p></article>
+<article class="sl-prize jp gr"><div class="sl-combo" aria-label="gold + gold + gold"><span><img src="img/slots/gold.webp" alt="gold"></span><span><img src="img/slots/gold.webp" alt="gold"></span><span><img src="img/slots/gold.webp" alt="gold"></span></div><span class="sl-flag">👑 Grand</span><h3 class="sl-disp">GRAND: Gold Mickel Nickel</h3><p>3 Gold = Gold Mickel Nickel #5515.</p></article>
+<article class="sl-prize jp gr"><div class="sl-combo" aria-label="polaroid + polaroid + glasses"><span><img src="img/slots/polaroid.webp" alt="polaroid"></span><span><img src="img/slots/polaroid.webp" alt="polaroid"></span><span><img src="img/slots/glasses.webp" alt="glasses"></span></div><span class="sl-flag">👑 Grand</span><h3 class="sl-disp">GRAND: Patsy Pair</h3><p>Polaroid + Polaroid + 3D glasses = Patsy Jpegson #0023 matched pair with 2 Vault spins.</p></article>
+</div>
 <div class="sl-box" id="slrules">…</div>
 <div class="sl-box"><b>Verify a spin</b><div>Paste a CBH-SLOT payment tx hash. Your browser looks up the ledger and re-checks the prize pick.</div><input id="sltx" placeholder="64-character tx hash" autocomplete="off"><button type="button" id="slver">Verify</button><div id="slvr" class="sl-mono"></div></div>
 </div>
