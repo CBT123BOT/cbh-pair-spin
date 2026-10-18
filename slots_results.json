@@ -8,7 +8,7 @@
  "free_spins": {
   "rHcxvJeFh8Jk6kjrGjASrtZfgcYgB3rewT": {
    "granted": 1,
-   "used": 0
+   "used": 1
   }
  },
  "prizes_left": 102,
@@ -78,7 +78,33 @@
    "grand": false,
    "semi_grand": false,
    "offers": []
+  },
+  {
+   "t": 1792336292.1583688,
+   "tx": "E16BAB91AB64F9346F700BB452CDD4B9B6E92DF3788471CD1460DDFD07CE6906",
+   "ledger_index": 107741999,
+   "wallet": "rHcxvJeFh8Jk6kjrGjASrtZfgcYgB3rewT",
+   "mode": "FREE",
+   "delivered": "100000",
+   "test": true,
+   "action": "lose",
+   "ledger_hash": "A04D134ECCC5FE5F4059F904E6114AFFDD77444F9FFC8AB49F7DEAED190079A4",
+   "close_unix": 1792336281,
+   "pool_size": 102,
+   "pool_sha256": "4fb13508175542441118571475b6ba380a7d680b59a323908b31053dd8aef92f",
+   "pool": null,
+   "reels": [
+    "polaroid",
+    "ho",
+    "bro"
+   ],
+   "prize": {},
+   "ticket": null,
+   "jackpot": false,
+   "grand": false,
+   "semi_grand": false,
+   "offers": []
   }
  ],
- "updated": "2026-10-18T15:00:39.898394+00:00"
+ "updated": "2026-10-18T15:11:34.555838+00:00"
 }
