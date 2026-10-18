@@ -38,7 +38,20 @@
    "grand": false,
    "semi_grand": false,
    "offers": []
+  },
+  {
+   "t": 1792335399.9232154,
+   "tx": "B2D401980BCB6911B928738261F96843D1509E34957E74DF77E94D93A4E5B2F3",
+   "ledger_index": 107741777,
+   "wallet": "rHcxvJeFh8Jk6kjrGjASrtZfgcYgB3rewT",
+   "mode": "FREE",
+   "delivered": "100000",
+   "action": "rejected",
+   "reason": "NO_FREE_SPIN_LEFT",
+   "month": null,
+   "granted": 1,
+   "used": 1
   }
  ],
- "updated": "2026-10-18T14:55:40.796168+00:00"
+ "updated": "2026-10-18T14:56:41.088281+00:00"
 }
