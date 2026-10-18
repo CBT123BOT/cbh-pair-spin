@@ -192,8 +192,9 @@ const PPK='cbh_pair_pending',PPMAX=20*60e3;let TAP=false;
 function getPP(){const p=LS.get(PPK,null);if(p&&NOW()-p.t0<PPMAX)return p;if(p)localStorage.removeItem(PPK);return null}
 function setPP(p){if(p)LS.set(PPK,p);else localStorage.removeItem(PPK)}
 const to=(p,ms,v)=>Promise.race([Promise.resolve(p).catch(()=>v),new Promise(r=>setTimeout(()=>r(v),ms))]);   // nothing may hang the spin
-$('spin').onclick=async()=>{const a=$('w').value.trim();if(PAUSED||$('spin').disabled||TAP||watching)return;
+$('spin').onclick=async()=>{const a=$('w').value.trim();if($('spin').disabled||TAP||watching)return;
  if(getPP()){resume(true);return}   // CHECK RESULT
+ if(PAUSED)return;
  TAP=true;$('claim').innerHTML='';idleReels();startReels();gateBtn();$('status').textContent='🎰 Getting your spin ready…';   // reels roll the moment you tap
  const fail=msg=>{TAP=false;setPP(null);stopReels(null);$('status').innerHTML=msg;gateBtn()};
  try{
