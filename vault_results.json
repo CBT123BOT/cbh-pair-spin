@@ -5,9 +5,9 @@
   "d1": 3,
   "d2_plus": 2
  },
- "stash_left": 14081,
- "coins_left": 14081,
- "giveaway_stash_in_wallet": 44,
+ "stash_left": 14080,
+ "coins_left": 14080,
+ "giveaway_stash_in_wallet": 45,
  "used_pairs": {
   "0907": {
    "holder": "rHcxvJeFh8Jk6kjrGjASrtZfgcYgB3rewT",
@@ -37,10 +37,10 @@
  "mn": {
   "open": true,
   "total": 14160,
-  "minted_total": 79,
-  "remaining": 14081,
+  "minted_total": 80,
+  "remaining": 14080,
   "first_wave_until": 4248,
-  "left_at_first_price": 4169,
+  "left_at_first_price": 4168,
   "first_price_xrp": "1.11",
   "normal_price_xrp": "3.33",
   "price_now_xrp": "1.11",
@@ -378,8 +378,43 @@
     }
    ],
    "coin_removed": null
+  },
+  {
+   "t": 1792326335.7463005,
+   "time_utc": "2026-10-18T12:25:35.746304+00:00",
+   "payment_tx": "8B45F26224CF7426DF1FC20A0B69FD56A07E288F0876A69E9E4A8109F0D1B2C1",
+   "ledger_index": 107739475,
+   "buyer": "rKi1QmbG44gcXhuUvnKZ4zqJ1KGvsmhjdv",
+   "delivered": "1110000",
+   "action": "mn_mint",
+   "qty": 1,
+   "wave": "first",
+   "price_xrp": "1.11",
+   "ledger_hash": "966E666DC44B8060AC23C8AA712471B7AFBC5BB4E3892D1866D2BAF0433A8445",
+   "picks": [
+    {
+     "i": 0,
+     "type": "mint",
+     "coin": 6867,
+     "metal": "Copper",
+     "uri": "ipfs://bafybeidmhjsm45ld37ve7xcajuvmkzwetdifhxiyylr7mfqusgczga7hzi/6867.json",
+     "pool_size": 14081,
+     "index": 6836,
+     "status": "offered",
+     "attempts": [
+      {
+       "hash": "4F9E754708E30F12E8A334B46C349AECCB1D72F152CEE78289FBD14B80DD7D9B",
+       "lls": 107739497,
+       "seq": 107409376
+      }
+     ],
+     "nft_id": "00181388992DB95F47B7A516192A895CCF7E2789C11673739FB00F960666EBFA",
+     "offer_id": "E0763271767016C5F74E483A716E30D79EB3B6B8FB2D33DA8779EBAE7C351B40",
+     "mint_tx": "4F9E754708E30F12E8A334B46C349AECCB1D72F152CEE78289FBD14B80DD7D9B"
+    }
+   ]
   }
  ],
  "rule": "pick i = SHA-256(proof/payment tx hash + validating ledger hash + byte i) mod pool size; pool = never-minted coin numbers sorted (mn_remaining.json); pool shrinks each pick",
- "updated": "2026-10-18T12:25:28.607465+00:00"
+ "updated": "2026-10-18T12:25:48.355429+00:00"
 }
