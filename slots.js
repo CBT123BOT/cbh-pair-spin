@@ -4,6 +4,7 @@
    The pending spin is remembered (localStorage + Xaman return URL ?sltx={txid}&slid={id}) so leaving for Xaman and coming back
    never loses it, and the button stays locked until that spin's result is in (no double payments). No Math.random anywhere. */
 (()=>{
+const JSV='20261018-1050';
 const g=id=>document.getElementById(id), qs=new URLSearchParams(location.search);
 const SYM=["goldx","copper","silver","gold","hat","polaroid","glasses","bro","ho"], COMBO={Copper:["copper","copper","copper"],Silver:["silver","silver","silver"],Gold:["gold","gold","gold"],pair:["polaroid","polaroid","glasses"],pair_nospins:["hat","hat","hat"]};
 // landing combos (same as slots_core.py): Copper x3 / Silver x3 = Mickel Nickel; Gold x3 = GRAND Gold Mickel only;
@@ -59,88 +60,119 @@ async function countPairs(){const a=wal();if(!a){myPairsN=null;drawFree();return
  try{const have=new Set();for(const n of await nfts(a))if(n.Issuer===SELLER)have.add(hex2s(n.URI||''));let c=0;const P=VP||{pairs:{},d1:{}};
   for(const p of Object.values(P.pairs||{}))if((have.has(p.polaroid.uri_coin)||have.has(p.polaroid.uri_nocoin))&&(have.has(p.twin.uri_coin)||have.has(p.twin.uri_nocoin)))c++;
   for(const p of Object.values(P.d1||{}))if(have.has(p.polaroid_uri)&&have.has(p.twin_uri))c++;myPairsN=c}catch(e){myPairsN=null}drawFree()}
-// ---------- reels ----------
-const src=s=>`img/slots/${s}.webp`;
-function buildReels(show){g('slreels').innerHTML=show.map((s,i)=>`<div class="sl-win" id="slw${i}"><div class="sl-strip" id="sls${i}"><div class="sl-sym"><img src="${src(s)}" alt="${s}" draggable="false"></div></div></div>`).join('')}
-function rh(){return g('slw0').getBoundingClientRect().height}
-function beep(f,d,t=0,type='square',v=.05){if(mute)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),gn=AC.createGain();o.type=type;o.frequency.value=f;gn.gain.value=v;o.connect(gn);gn.connect(AC.destination);const s=AC.currentTime+t;o.start(s);gn.gain.exponentialRampToValueAtTime(.0001,s+d);o.stop(s+d+.02)}catch(e){}}
-let loopT=null;
-function startLoop(){let k=0;for(let i=0;i<3;i++){g('slw'+i).classList.remove('hit');g('sls'+i).style.transition='none';g('sls'+i).style.transform='translate3d(0,0,0)';g('sls'+i).style.filter='blur(2px)'}
- clearInterval(loopT);loopT=setInterval(()=>{k++;for(let i=0;i<3;i++){const im=g('sls'+i).querySelector('img');im.src=src(SYM[(k+i*3)%SYM.length])}if(k%3===0)beep(220+(k%9)*20,.03,0,'square',.015)},90)}
-function land(final){clearInterval(loopT);const h=rh(),D=[1.0,1.9,3.4],N=[12,22,40];   // left, middle, then a slow right reel (suspense)
- return Promise.all(final.map((s,i)=>new Promise(res=>{const st=g('sls'+i),n=N[i];
- st.style.filter='';st.innerHTML=Array.from({length:n},(_,k)=>SYM[(k*4+i*2)%SYM.length]).concat([s]).map(x=>`<div class="sl-sym"><img src="${src(x)}" alt="${x}" draggable="false"></div>`).join('');
- st.style.transition='none';st.style.transform='translate3d(0,0,0)';st.offsetHeight;st.style.transition=`transform ${D[i]}s ${i===2?'cubic-bezier(.1,.6,.12,1)':'cubic-bezier(.15,.75,.25,1.04)'}`;st.style.transform=`translate3d(0,${-n*h}px,0)`;
- setTimeout(()=>{st.style.transition='none';st.innerHTML=`<div class="sl-sym"><img src="${src(s)}" alt="${s}" draggable="false"></div>`;st.style.transform='translate3d(0,0,0)';beep(i===2?110:140,i===2?.14:.08,0,'triangle',.08);res()},D[i]*1000+40)})))}
+// ---------- reels (feel matched to Rusty's App Builder version: all 3 roll at once, stop left -> right at 1.5 / 1.75 / 2.05 s) ----------
+const src=s=>`img/slots/${s}.webp`, NS=SYM.length, STRIP=6, D=[1500,1750,2050], EASE='cubic-bezier(0.09,0.72,0.12,1)';
+const RM=()=>window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+let pos=[0,0,0],spinning=false,landing=false,spinT0=0,shown=['goldx','gold','polaroid'];
+function buildReels(show){let strip='';for(let c=0;c<STRIP;c++)for(const x of SYM)strip+=`<div class="sl-sym"><img src="${src(x)}" alt="${x}" draggable="false"></div>`;
+ g('slreels').innerHTML=[0,1,2].map(i=>`<div class="sl-win" id="slw${i}"><div class="sl-strip" id="sls${i}">${strip}</div></div>`).join('');show.forEach((x,i)=>{setPos(i,2*NS+SYM.indexOf(x));g('slw'+i).dataset.sym=x});shown=show.slice()}
+function rh(){const w=g('slw0');return w?w.getBoundingClientRect().height:0}
+function setPos(i,p){pos[i]=p;const st=g('sls'+i);if(st)st.style.transform=`translate3d(0,${-p*rh()}px,0)`}
+function curPos(i){const st=g('sls'+i),h=rh();if(!st||!h)return pos[i];try{const m=new DOMMatrixReadOnly(getComputedStyle(st).transform);return -m.m42/h}catch(e){return pos[i]}}
+function cancelAnims(i){const st=g('sls'+i);if(st&&st.getAnimations)st.getAnimations().forEach(a=>{try{a.cancel()}catch(e){}})}
+window.addEventListener('resize',()=>{if(!spinning)for(let i=0;i<3;i++)setPos(i,pos[i])});
+// sounds (Web Audio, all tiny and scheduled ahead, so they can never block the page)
+function AX(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume()}catch(e){AC=null}return AC}
+function tone(f,d,t,type,v){if(mute)return;const a=AX();if(!a)return;try{const o=a.createOscillator(),gn=a.createGain(),s=a.currentTime+t;o.type=type;o.frequency.setValueAtTime(f,s);gn.gain.setValueAtTime(v,s);gn.gain.exponentialRampToValueAtTime(1e-4,s+d);o.connect(gn);gn.connect(a.destination);o.start(s);o.stop(s+d+.02)}catch(e){}}
+const sStart=()=>{for(let k=0;k<16;k++)tone(180+(k%3)*40,.05,k*.09,'square',.035)}, sStop=()=>tone(240,.08,0,'triangle',.06),
+ sWin=()=>[523,659,784,1046].forEach((f,k)=>tone(f,.18,k*.09,'square',.05)), sLose=()=>{tone(196,.14,0,'sine',.05);tone(146,.18,.12,'sine',.045)};
+const beep=()=>{};   // (old continuous beeping removed: the reels roll silently while we wait for the ledger)
+// roll: starts on the TAP, keeps rolling (no sound) through Xaman and the ledger wait
+function startLoop(){if(spinning&&!landing)return;spinning=true;landing=false;spinT0=Date.now();for(let i=0;i<3;i++)g('slw'+i).classList.remove('hit');g('slcab')&&g('slcab').setAttribute('aria-busy','true');
+ if(RM())return;const h=rh();for(let i=0;i<3;i++){const st=g('sls'+i);cancelAnims(i);const p0=(pos[i]%NS)+NS;setPos(i,p0);if(!st.animate)continue;
+  const ramp=st.animate([{transform:`translate3d(0,${-p0*h}px,0)`},{transform:`translate3d(0,${-(p0+NS)*h}px,0)`}],{duration:700,easing:'cubic-bezier(.5,0,1,1)',fill:'forwards'});
+  ramp.onfinish=()=>{if(!spinning||landing)return;st.animate([{transform:`translate3d(0,${-p0*h}px,0)`},{transform:`translate3d(0,${-(p0+NS)*h}px,0)`}],{duration:330,iterations:Infinity})}}}
+// land: every reel keeps its current spot and decelerates onto its symbol; never waits on anything but a timer
+function land(final){landing=true;const h=rh(),rm=RM()||!h;
+ return Promise.all(final.map((x,i)=>new Promise(res=>{const st=g('sls'+i),t=SYM.indexOf(x),l=(3+i)*NS+t;let ok=false;
+  const fin=()=>{if(ok)return;ok=true;cancelAnims(i);setPos(i,2*NS+t);g('slw'+i).dataset.sym=x;if(!rm)sStop();res()};
+  const c=((curPos(i)%NS)+NS)%NS;cancelAnims(i);setPos(i,c);
+  if(rm||!st.animate){setTimeout(fin,rm?150*i:D[i]);return}
+  const a=st.animate([{transform:`translate3d(0,${-c*h}px,0)`},{transform:`translate3d(0,${-l*h}px,0)`}],{duration:D[i],easing:EASE,fill:'forwards'});
+  a.onfinish=fin;setTimeout(fin,D[i]+400)})))   // timer backup: a hidden tab or a paused animation can't hold the result
+ .then(()=>{landing=false;spinning=false;shown=final.slice();g('slcab')&&g('slcab').setAttribute('aria-busy','false')})}
+// hard stop: used by the watchdog and the error handlers; the reels ALWAYS stop
+function hardStop(){for(let i=0;i<3;i++){cancelAnims(i);setPos(i,2*NS+SYM.indexOf(shown[i]))}spinning=false;landing=false;g('slcab')&&g('slcab').setAttribute('aria-busy','false')}
 function confetti(){const c=document.createElement('div');c.className='sl-conf';const col=['#ffc72c','#3dde78','#fff4e0','#ff3d9a'];
  for(let i=0;i<36;i++){const e=document.createElement('i');e.style.left=(i*37%100)+'%';e.style.background=col[i%4];e.style.setProperty('--dx',((i*53%120)-60)+'px');e.style.setProperty('--rot',(i*97%720)+'deg');e.style.animationDelay=(i%9)*.05+'s';c.appendChild(e)}
  g('slcab').appendChild(c);setTimeout(()=>c.remove(),2400)}
 function banner(cls,html){const b=g('slban');b.className='sl-banner '+cls;b.innerHTML=html}
 function showResult(o,demo){const P=o.prize||{};
- if(o.win){for(let i=0;i<3;i++)g('slw'+i).classList.add('hit');confetti();[523,659,784,1047].forEach((f,i)=>beep(f,.18,i*.12,'triangle',.07));
+ if(o.win){for(let i=0;i<3;i++)g('slw'+i).classList.add('hit');confetti();sWin();
   banner(o.jackpot?'jack':'win',(o.grand?'👑 GRAND PRIZE! WIN! ':o.semi_grand?'🎩 SEMI-GRAND! WIN! ':o.jackpot?'🏆 JACKPOT! WIN! ':'🎉 WIN! ')+(demo?'Demo: would win ':'You won ')+(P.name||'a prize')+(demo?'':' · claim it below'))}
- else banner('lose',demo?'Demo: no win this time.':'No win this time. Spin again!')}
+ else{sLose();banner('lose',demo?'Demo: no win this time.':'No win this time. Spin again!')}}
 // ---------- pending spin (survives the trip to Xaman and back) ----------
 const PK='sl_pending',MAXAGE=20*60e3;
 function getP(){try{const p=JSON.parse(localStorage.getItem(PK)||'null');if(p&&Date.now()-p.t0<MAXAGE)return p}catch(e){}localStorage.removeItem(PK);return null}
 function setP(p){if(p)localStorage.setItem(PK,JSON.stringify(p));else localStorage.removeItem(PK)}
 const WHY={NO_FREE_SPIN_LEFT:'no free spin left on this wallet (the 0.1 XRP fee is kept)',PAID_SPINS_OFF:'paid spins are off right now (refunded)',FREE_SPINS_OFF:'free spins are off right now (refunded)',
  WRONG_AMOUNT:'wrong amount (refunded)',BAD_MEMO:'missing spin memo (refunded)',WALLET_HOURLY_LIMIT:'too many spins this hour (refunded)',NO_PRIZES_LEFT:'no prizes left (refunded)'};
-let resuming=false;
+let resuming=false,gen=0,apiLeft=0;
 const to=(p,ms,v)=>Promise.race([Promise.resolve(p).catch(()=>v),new Promise(r=>setTimeout(()=>r(v),ms))]);   // nothing may hang the spin
 const memoT=t=>(t.Memos||[]).map(m=>{try{return hex2s(m.Memo.MemoType||'')}catch(e){return''}});
 // find the signed spin payment on the ledger: the wallet's recent txs (works even if the Xaman return link had no tx hash)
 async function findTx(P){if(!P.wallet)return null;const r=await to(rq({command:'account_tx',account:P.wallet,limit:25,forward:false}),12000,null);
  for(const it of ((r&&r.result&&r.result.transactions)||[])){const t=it.tx_json||it.tx||{};const h=(it.hash||t.hash||'').toUpperCase();
   if(t.TransactionType==='Payment'&&t.Destination===SELLER&&memoT(t).includes('CBH-SLOT')&&((t.date||0)+946684800)*1000>=P.t0-120000&&(it.meta||{}).TransactionResult==='tesSUCCESS')return h}return null}
-function findEv(P){const tx=(P.txid||'').toUpperCase();return(RS.events||[]).slice().reverse().find(e=>tx?String(e.tx||'').toUpperCase()===tx:(e.wallet===P.wallet&&(!P.mode||e.mode===P.mode)&&e.t>P.t0/1000-30))}
-async function resume(){if(resuming)return;if(!getP())return;resuming=true;busy=true;gate();startLoop();
- banner('wait','⏳ Waiting for the ledger… your spin is being decided. Please don’t pay again.');const t1=Date.now();let done=false;
- while(Date.now()-t1<90e3){const P=getP();if(!P){done=true;break}
-  if(!P.txid&&P.uuid&&XM&&XM.payload){const pl=await to(XM.payload.get(P.uuid),6000,null);const m=pl&&pl.meta||{};
-   if(pl&&pl.response&&pl.response.txid){P.txid=String(pl.response.txid).toUpperCase();setP(P)}
-   else if((m.resolved||m.expired||m.cancelled)&&!m.signed&&!m.opened_by_deeplink){setP(null);clearInterval(loopT);banner('lose','The sign request was cancelled or expired. No payment was made.');done=true;break}}
-  if(!P.txid){const h=await findTx(P);if(h){P.txid=h;setP(P)}}
-  if(P.txid&&!P.seen){const t=await to(rq({command:'tx',transaction:P.txid}),10000,null);if(t&&t.result&&t.result.validated){P.seen=1;setP(P);banner('wait','✔ Payment confirmed on the ledger. The slot machine is deciding your spin…')}}
-  const R=await to(fj('slots_results.json'),10000,null);if(R)RS=R;
-  const ev=findEv(P);
-  if(ev){setP(null);done=true;resuming=false;
-   if(ev.action==='win'||ev.action==='lose'){await playSpins(ev);if(ev.action==='win'&&window.showClaims)setTimeout(window.showClaims,1500)}
-   else{clearInterval(loopT);banner('lose','Not spun: '+(WHY[ev.reason]||ev.reason||ev.action)+(ev.owner_refund_tx?' · refunded':''))}break}
-  if(!P.txid&&Date.now()-P.t0>4*60e3){setP(null);clearInterval(loopT);banner('lose','No signed payment was found. Nothing was charged; you can spin again.');done=true;break}
-  await sleep(3000)}
- resuming=false;
- if(!done){const P=getP();clearInterval(loopT);for(let i=0;i<3;i++)g('sls'+i).style.filter='';
-  banner('wait',P&&P.seen?`✔ Your spin is confirmed on the ledger (tx ${P.txid.slice(0,8)}…). The result is still being posted. Tap CHECK RESULT, or <a href="#" id="slvlink">verify it</a>.`:'Still looking for your payment. Tap CHECK RESULT in a moment.');
-  const vl=g('slvlink');if(vl&&P)vl.onclick=e=>{e.preventDefault();const d=g('sltx').closest('details');if(d)d.open=true;g('sltx').value=P.txid;verify();g('sltx').scrollIntoView({behavior:'smooth',block:'center'})}}
- busy=false;gate();drawFree()}
-// one payment can carry 1-3 spins: each one stops left, middle, right, then the next one starts
+function findEv(P,R){const tx=(P.txid||'').toUpperCase();return((R||RS).events||[]).slice().reverse().find(e=>tx?String(e.tx||'').toUpperCase()===tx:(e.wallet===P.wallet&&(!P.mode||e.mode===P.mode)&&e.t>P.t0/1000-30))}
+// FAST result: the watcher's results file straight from the GitHub API (seconds after the watcher writes it),
+// instead of waiting ~60-70 s for GitHub Pages to redeploy. Pages stays the backup. Capped per spin (GitHub allows 60 calls/hour per visitor).
+const API='https://api.github.com/repos/CBT123BOT/cbh-pair-spin/contents/slots_results.json';
+async function fastResults(){if(apiLeft<=0)return null;apiLeft--;return to(fetch(API+'?t='+Date.now(),{cache:'no-store',headers:{Accept:'application/vnd.github.raw+json'}}).then(r=>r.ok?r.json():null),7000,null)}
+function stopWith(cls,html){hardStop();banner(cls,html)}
+function checkMsg(P){banner('wait',P&&P.seen?`✔ Your spin is confirmed on the ledger (tx ${P.txid.slice(0,8)}…). The result is still being posted. Tap CHECK RESULT, or <a href="#" id="slvlink">verify it</a>.`:'Still looking for your payment. Tap CHECK RESULT in a moment.');
+ const vl=g('slvlink');if(vl&&P)vl.onclick=e=>{e.preventDefault();const d=g('sltx').closest('details');if(d)d.open=true;g('sltx').value=P.txid;verify();g('sltx').scrollIntoView({behavior:'smooth',block:'center'})}}
+async function resume(){if(resuming)return;if(!getP())return;resuming=true;busy=true;const my=++gen;apiLeft=14;
+ try{gate();startLoop();banner('wait','🎰 Reels rolling… waiting for the ledger. Please don’t pay again.');const t1=Date.now();let k=0;
+  while(Date.now()-t1<90e3&&my===gen){const P=getP();if(!P)return;k++;
+   if(!P.txid&&P.uuid&&XM&&XM.payload){const pl=await to(XM.payload.get(P.uuid),6000,null);const m=pl&&pl.meta||{};
+    if(pl&&pl.response&&pl.response.txid){P.txid=String(pl.response.txid).toUpperCase();setP(P)}
+    else if((m.resolved||m.expired||m.cancelled)&&!m.signed&&!m.opened_by_deeplink){setP(null);stopWith('lose','The sign request was cancelled or expired. No payment was made.');return}}
+   if(my!==gen)return;
+   if(!P.txid){const h=await findTx(P);if(h){P.txid=h;setP(P)}}
+   if(P.txid&&!P.seen){const t=await to(rq({command:'tx',transaction:P.txid}),8000,null);if(t&&t.result&&t.result.validated){P.seen=1;setP(P);banner('wait','✔ Payment confirmed on the ledger. Reels rolling… your result is on its way.')}}
+   if(my!==gen)return;
+   let ev=null;
+   if(P.seen){const F=await fastResults();if(F&&F.events)ev=findEv(P,F)}
+   if(!ev&&(k%2===1||!P.seen)){const R=await to(fj('slots_results.json'),8000,null);if(R){RS=R;ev=findEv(P,R)}}
+   if(my!==gen)return;
+   if(ev){setP(null);
+    if(ev.action==='win'||ev.action==='lose'){await playSpins(ev);if(ev.action==='win'&&window.showClaims)setTimeout(window.showClaims,1500)}
+    else stopWith('lose','Not spun: '+(WHY[ev.reason]||ev.reason||ev.action)+(ev.owner_refund_tx?' · refunded':''));return}
+   if(!P.txid&&Date.now()-P.t0>4*60e3){setP(null);stopWith('lose','No signed payment was found. Nothing was charged; you can spin again.');return}
+   await sleep(P.seen?2500:3000)}
+  if(my===gen){hardStop();checkMsg(getP())}}
+ catch(e){hardStop();const P=getP();if(P)checkMsg(P);else banner('lose','Something went wrong. Tap SPIN to try again.')}
+ finally{if(my===gen){resuming=false;busy=false;if(spinning&&!landing)hardStop();gate();drawFree()}}}
+// one payment can carry 1-3 spins: each lands left -> right, then the next one rolls
 async function playSpins(ev){const S=(ev.spins&&ev.spins.length)?ev.spins:[{win:ev.action==='win',reels:ev.reels,jackpot:ev.jackpot,grand:ev.grand,semi_grand:ev.semi_grand,prize:ev.prize}],n=S.length,won=[];
- for(let k=0;k<n;k++){const sp=S[k];if(k){startLoop();banner('wait',`🎰 Spin ${k+1} of ${n}…`);await sleep(900)}
+ for(let k=0;k<n;k++){const sp=S[k];if(k){startLoop();sStart();banner('wait',`🎰 Spin ${k+1} of ${n}…`);await sleep(700)}
   await land(sp.reels);if(sp.win)won.push(sp);
-  if(n>1&&k<n-1){if(sp.win)for(let i=0;i<3;i++)g('slw'+i).classList.add('hit');banner(sp.win?'win':'lose',`Spin ${k+1} of ${n}: `+(sp.win?'🎉 WIN! '+((sp.prize||{}).name||'a prize'):'no win'));await sleep(1800)}}
- busy=false;gate();
- if(n===1){const sp=S[0];showResult({win:!!sp.win,jackpot:sp.jackpot,grand:!!sp.grand,semi_grand:!!sp.semi_grand,prize:sp.prize},false);return}
- if(!won.length){banner('lose',`No win in ${n} spins this time. Spin again!`);return}
- const top=won.find(x=>x.grand)||won.find(x=>x.semi_grand)||won.find(x=>x.jackpot)||won[0];if(top!==S[n-1]){await sleep(700);buildReels(top.reels)}   // finish on the winning combo, never a miss under a WIN banner
- showResult({win:true,jackpot:top.jackpot,grand:!!top.grand,semi_grand:!!top.semi_grand,prize:{name:won.map(x=>`${(x.prize||{}).name||'a prize'} (spin ${S.indexOf(x)+1} of ${n})`).join(' + ')}},false)}
+  if(n>1&&k<n-1){if(sp.win){for(let i=0;i<3;i++)g('slw'+i).classList.add('hit');sWin()}else sLose();banner(sp.win?'win':'lose',`Spin ${k+1} of ${n}: `+(sp.win?'🎉 WIN! '+((sp.prize||{}).name||'a prize'):'no win'));await sleep(1600)}}
+ const done=()=>{busy=false;resuming=false;gate()};
+ if(n===1){done();const sp=S[0];showResult({win:!!sp.win,jackpot:sp.jackpot,grand:!!sp.grand,semi_grand:!!sp.semi_grand,prize:sp.prize},false);return}
+ if(!won.length){done();sLose();banner('lose',`No win in ${n} spins this time. Spin again!`);return}
+ const top=won.find(x=>x.grand)||won.find(x=>x.semi_grand)||won.find(x=>x.jackpot)||won[0];if(top!==S[n-1]){await sleep(500);buildReels(top.reels)}   // finish on the winning combo, never a miss under a WIN banner
+ done();showResult({win:true,jackpot:top.jackpot,grand:!!top.grand,semi_grand:!!top.semi_grand,prize:{name:won.map(x=>`${(x.prize||{}).name||'a prize'} (spin ${S.indexOf(x)+1} of ${n})`).join(' + ')}},false)}
 // ---------- spin ----------
 async function demoSpin(){busy=true;gate();if(!demoN&&+qs.get('demo_from')>1)demoN=Math.floor(+qs.get('demo_from'))-1;   // demo-only: start the demo sequence at #N (preview/testing)
- demoN++;startLoop();banner('','Spinning…');
- const tx=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode('CBH-SLOT demo tx '+demoN))),x=>x.toString(16).padStart(2,'0')).join('');
+ demoN++;AX();startLoop();sStart();banner('','Reels are rolling…');
+ try{const tx=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode('CBH-SLOT demo tx '+demoN))),x=>x.toString(16).padStart(2,'0')).join('');
  const lh=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode('CBH-SLOT demo ledger '+demoN))),x=>x.toString(16).padStart(2,'0')).join('');
  let pool=PRZ.prizes.slice();if(!pool.some(p=>p.type==='pair'))pool.push({id:'demo-pair',type:'pair',tier:'jackpot',name:'Matched pair #0248 (demo example)',tickets:1});
- const o=await outcome(tx,lh,pool,DEMO_ODDS,+CFG.jackpot_one_in_wins||7);await sleep(500);await land(o.reels);showResult(o,true);
- if(g('slvr'))g('slvr').textContent=`demo #${demoN} · tx ${tx.slice(0,12)}… · ledger ${lh.slice(0,12)}… → ${o.win?(o.jackpot?'JACKPOT ':'WIN ')+o.prize.name:'no win'} (demo)`;busy=false;gate()}
+ const o=await outcome(tx,lh,pool,DEMO_ODDS,+CFG.jackpot_one_in_wins||7);await land(o.reels);showResult(o,true);
+ if(g('slvr'))g('slvr').textContent=`demo #${demoN} · tx ${tx.slice(0,12)}… · ledger ${lh.slice(0,12)}… → ${o.win?(o.jackpot?'JACKPOT ':'WIN ')+o.prize.name:'no win'} (demo)`}
+ catch(e){hardStop();banner('lose','Demo error, tap again.')}busy=false;gate()}
 let multiN=1;
-async function liveSpin(mode){if(getP())return resume();if(!isConn()||busy)return;busy=true;gate();const n=mode==='PAID'?multiN:1,amt=mode==='FREE'?+CFG.free_spin_drops:n*+CFG.paid_spin_drops,me=wal();
- banner('',`Opening Xaman… check it says <b>MAINNET</b> and <b>${Number(amt)/1e6} XRP</b>, then sign.`);let r=null;
+async function liveSpin(mode){if(getP())return resume();if(!isConn()||busy)return;busy=true;AX();startLoop();sStart();gate();   // reels roll the moment you tap
+ const n=mode==='PAID'?multiN:1,amt=mode==='FREE'?+CFG.free_spin_drops:n*+CFG.paid_spin_drops,me=wal();
+ banner('wait',`Opening Xaman… check it says <b>MAINNET</b> and <b>${Number(amt)/1e6} XRP</b>, then sign.`);let r=null;
  try{r=await xamanSign({TransactionType:'Payment',Destination:SELLER,Amount:String(amt),Memos:[{Memo:{MemoType:s2hex(CFG.memo_type||'CBH-SLOT'),MemoData:s2hex(mode)}}]},
-   mode==='FREE'?'MICKEL NICKEL SLOTS: free spin (0.1 XRP fee)':`MICKEL NICKEL SLOTS: ${n} spin${n>1?'s':''} (0.5 XRP each)`,uuid=>setP({mode,n,wallet:me,t0:Date.now(),uuid}))}
- catch(e){setP(null);banner('lose','Xaman: '+e.message);busy=false;gate();return}
- // desktop (QR) flow resolves here; on a phone the page usually reloads from Xaman's return link and resume() runs on load
- const P=getP();if(r&&r.signed===false){setP(null);clearInterval(loopT);banner('lose','Cancelled in Xaman. No payment was made.');busy=false;gate();return}
- if(P&&r&&r.txid){P.txid=r.txid;setP(P)}busy=false;resume()}
+   mode==='FREE'?'MICKEL NICKEL SLOTS: free spin (0.1 XRP fee)':`MICKEL NICKEL SLOTS: ${n} spin${n>1?'s':''} (0.5 XRP each)`,uuid=>setP({mode,n,wallet:me,t0:Date.now(),uuid}),true)}
+ catch(e){setP(null);stopWith('lose','Xaman: '+e.message);busy=false;gate();return}
+ // phone: the sign request is open in Xaman now; resume() polls Xaman + the ledger and keeps the reels rolling (also after the app switch)
+ const P=getP();if(r&&r.signed===false){setP(null);stopWith('lose','Cancelled in Xaman. No payment was made.');busy=false;gate();return}
+ if(P&&r&&r.txid){P.txid=String(r.txid).toUpperCase();setP(P)}busy=false;resume()}
 function gate(){if(!CFG)return;const s=g('slspin'),c=isConn(),n=freeLeft(),P=getP();let mode='',big='SPIN',sm='';
  if(DEMO){mode='demo';big='DEMO SPIN';sm='free · no real prizes';s.disabled=busy}
  else if(busy||resuming){big='⏳ SPINNING';sm='waiting for the ledger';s.disabled=true}
@@ -163,7 +195,7 @@ async function verify(){const h=g('sltx').value.trim().toUpperCase(),out=g('slvr
   out.innerHTML=`ledger ${t.ledger_index} · hash ${L.ledger_hash}${log}`}
  catch(e){out.textContent='Could not verify: '+e.message}}
 // ---------- boot ----------
-async function boot(){try{CFG=await fj('slots.json')}catch(e){CFG={paid_spins_enabled:false,free_spins_enabled:false,jackpot_one_in_wins:7,paid_spin_drops:'500000',free_spin_drops:'100000',free_spins_per_pairs:3}}
+async function boot(){if(g('slbuild'))g('slbuild').textContent='build '+(window.SL_BUILD||'?')+' · js '+JSV;try{CFG=await fj('slots.json')}catch(e){CFG={paid_spins_enabled:false,free_spins_enabled:false,jackpot_one_in_wins:7,paid_spin_drops:'500000',free_spin_drops:'100000',free_spins_per_pairs:3}}
  DEMO=qs.get('demo')==='1'||(!CFG.paid_spins_enabled&&!CFG.free_spins_enabled);
  try{PRZ=await fj('slots_prizes.json')}catch(e){}try{RS=await fj('slots_results.json')}catch(e){}
  if(g('slmode'))g('slmode').textContent=DEMO?'Demo mode · no payments · no real prizes':'Live on XRPL mainnet';
@@ -174,11 +206,19 @@ async function boot(){try{CFG=await fj('slots.json')}catch(e){CFG={paid_spins_en
  buildReels(['goldx','gold','polaroid']);gate();drawFree();countPairs();if(getP())resume();
  setInterval(async()=>{const a=wal(),k=a+'|'+isConn();if(k!==lastW){lastW=k;await testCheck();countPairs();gate()}},1000);
  setInterval(drawFree,5000);setInterval(async()=>{if(resuming)return;try{RS=await fj('slots_results.json');gate();drawFree()}catch(e){}},30000);
- document.addEventListener('visibilitychange',()=>{if(!document.hidden&&getP())resume()})}
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&getP()){resuming=false;resume()}});   // back from Xaman: poll again right away
+ window.addEventListener('pageshow',e=>{if(e.persisted&&getP()){resuming=false;resume()}});                       // iOS back/forward cache restore
+ // hard watchdog, independent of everything else: the reels can never roll more than ~95 s
+ setInterval(()=>{if(spinning&&!landing&&Date.now()-spinT0>95e3){gen++;resuming=false;busy=false;hardStop();const P=getP();if(P)checkMsg(P);else banner('lose','Spin stopped. Tap SPIN to try again.');gate()}},1000)}
+// ANY error while rolling stops the reels and shows CHECK RESULT (or a retry message)
+window.addEventListener('error',()=>{if(spinning&&!landing&&!resuming){hardStop();busy=false;const P=getP();if(P)checkMsg(P);gate()}});
+window.addEventListener('unhandledrejection',()=>{if(spinning&&!landing&&!resuming){hardStop();busy=false;const P=getP();if(P)checkMsg(P);gate()}});
 g('slspin').onclick=()=>{const m=g('slspin').dataset.mode;if(busy&&m!=='connect')return;if(m==='demo')demoSpin();else if(m==='connect'){if(XM)XM.authorize()}else if(m==='check')resume();else if(m==='FREE'||m==='PAID')liveSpin(m)};
 g('slmute').onclick=()=>{mute=!mute;localStorage.setItem('sl_mute',mute?'1':'0');g('slmute').textContent=mute?'🔇':'🔊';g('slmute').setAttribute('aria-pressed',mute)};g('slmute').textContent=mute?'🔇':'🔊';
 if(g('slver'))g('slver').onclick=verify;
 if(g('slmulti'))g('slmulti').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(busy)return;multiN=Math.min(3,Math.max(1,+b.dataset.n||1));gate()});
-window.CBH_SLOTS={outcome,multiOutcome,spinHash,getP,gate};   // exposed for the parity / flow tests
+// desktop QR flow: the Xaman websocket told us the tx hash (or a cancel) -> hand it to the polling loop
+function gotTx(r){const P=getP();if(!P)return;if(r.signed===false){setP(null);gen++;resuming=false;busy=false;stopWith('lose','Cancelled in Xaman. No payment was made.');gate();return}if(r.txid&&!P.txid){P.txid=String(r.txid).toUpperCase();setP(P)}}
+window.CBH_SLOTS={outcome,multiOutcome,spinHash,getP,gate,gotTx,build:()=>window.SL_BUILD};   // exposed for the parity / flow tests
 boot();
 })();
