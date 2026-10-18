@@ -51,7 +51,33 @@
    "month": null,
    "granted": 1,
    "used": 1
+  },
+  {
+   "t": 1792335456.5239842,
+   "tx": "72A4D7B2BC924EF54E1887533ADFFDA7B67B918B052F0C326F5FB04F2F93E4C6",
+   "ledger_index": 107741789,
+   "wallet": "rHcxvJeFh8Jk6kjrGjASrtZfgcYgB3rewT",
+   "mode": "PAID",
+   "delivered": "500000",
+   "test": true,
+   "action": "lose",
+   "ledger_hash": "AE3A644CE5E25745B9E12ABDBB9298A1CA22F499600AE31A822627E5911DC5CA",
+   "close_unix": 1792335441,
+   "pool_size": 102,
+   "pool_sha256": "4fb13508175542441118571475b6ba380a7d680b59a323908b31053dd8aef92f",
+   "pool": null,
+   "reels": [
+    "copper",
+    "hat",
+    "silver"
+   ],
+   "prize": {},
+   "ticket": null,
+   "jackpot": false,
+   "grand": false,
+   "semi_grand": false,
+   "offers": []
   }
  ],
- "updated": "2026-10-18T14:56:41.088281+00:00"
+ "updated": "2026-10-18T14:57:36.772503+00:00"
 }
