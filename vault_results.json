@@ -1452,8 +1452,19 @@
     }
    ],
    "coin_removed": null
+  },
+  {
+   "t": 1792433991.1887918,
+   "time_utc": "2026-10-19T18:19:51.188796+00:00",
+   "proof_tx": "DE33F19CBCE1B98B1886853A9FA1FC180991B5C5F2A336F3E947513A6F34E131",
+   "ledger_index": 107767121,
+   "holder": "r3wEpbRdw2iLoRB2Gc7HYh8Cvy7jXE2e1d",
+   "piece": "0963",
+   "delivered": "100000",
+   "action": "rejected",
+   "reason": "PAIR_ALREADY_USED"
   }
  ],
  "rule": "pick i = SHA-256(proof/payment tx hash + validating ledger hash + byte i) mod pool size; pool = never-minted coin numbers sorted (mn_remaining.json); pool shrinks each pick",
- "updated": "2026-10-19T18:19:48.789127+00:00"
+ "updated": "2026-10-19T18:19:52.022191+00:00"
 }
