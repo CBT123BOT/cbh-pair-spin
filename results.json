@@ -7,7 +7,7 @@
  "pairs_total": 780,
  "pairs_left": 775,
  "fair_random": "index = int(SHA-256(bytes(payment_tx_hash + validating_ledger_hash))) mod len(remaining pool sorted by piece #)",
- "updated": "2026-10-18T16:32:55.784335+00:00",
+ "updated": "2026-10-19T22:15:45.362721+00:00",
  "events": [
   {
    "t": 1792258805.2544553,
@@ -3269,6 +3269,20 @@
     "mint_tx": "EFE1930D301E24B60D27AF5E4750924F876373A40F0440C81D1A6CBD2C2702FE",
     "name": "Gloria Wenmoon #1108 \u2022 3D TwiN"
    }
+  },
+  {
+   "t": 1792448134.9014847,
+   "time_utc": "2026-10-19T22:15:34.901511+00:00",
+   "payment_tx": "D250DA39B77C5F22030ECC32F0AD0300C73296E9B9676B45B2ED06F5C2137166",
+   "ledger_index": 107770785,
+   "buyer": "rBRvuXcpAfXVg2NtoCD8y2WSCCcd5UFw3t",
+   "delivered": "100000",
+   "expected_drops": "11820000",
+   "action": "refund",
+   "reason": "WRONG_AMOUNT",
+   "refund_drops": "100000",
+   "refund_tx": "C947260436336922C47E8CE96C63DA13D5C09CC96C5F5F645E487095A7C4560B",
+   "refund_result": "tesSUCCESS"
   }
  ]
 }
