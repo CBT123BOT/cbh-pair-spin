@@ -250,7 +250,20 @@
    "grand": false,
    "semi_grand": false,
    "offers": []
+  },
+  {
+   "t": 1792448155.8941975,
+   "tx": "198BBDBE4177BD2476499303F1C68BE8F2201D79CA1D2E05AAF3E3567BA20517",
+   "ledger_index": 107770790,
+   "wallet": "rBRvuXcpAfXVg2NtoCD8y2WSCCcd5UFw3t",
+   "mode": "FREE",
+   "delivered": "100000",
+   "action": "rejected",
+   "reason": "NO_FREE_SPIN_LEFT",
+   "month": null,
+   "granted": 0,
+   "used": 0
   }
  ],
- "updated": "2026-10-18T17:38:17.346364+00:00"
+ "updated": "2026-10-19T22:15:57.259712+00:00"
 }
