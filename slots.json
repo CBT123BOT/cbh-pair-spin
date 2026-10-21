@@ -1,23 +1,23 @@
 {
- "name": "MICKEL NICKEL SLOTS",
- "note": "PUBLIC switches. LIVE Oct 18 2026 ~9:50 AM CT: free spins ON (Rusty), paid spins OFF until the legal check.",
- "paid_spins_enabled": false,
- "free_spins_enabled": true,
- "spin_xrp": "0.4",
- "fee_xrp": "0.1",
- "paid_spin_drops": "500000",
- "free_spin_drops": "100000",
- "memo_type": "CBH-SLOT",
- "jackpot_one_in_wins": 7,
- "free_spins_per_pairs": 3,
- "snapshot": "Bonus Halloween snapshot Oct 31, then 12:00 AM CT on the 1st of every month.",
- "snapshot_first_ct": "2026-10-31",
- "snapshot_bonus_ct": [
-  "2026-10-31"
- ],
- "snapshot_monthly_day": 1,
- "test_wallet_sha256": [
-  "ee77defd2d3dc88e2a8d892cee5471dcfcfef6e58d1df54c92bf1ea9ce170592"
- ],
- "test_note": "temporary owner test (remove after the test): the server only accepts test paid spins from its private allowlist"
+  "name": "MICKEL NICKEL SLOTS",
+  "note": "Public switches",
+  "paid_spins_enabled": false,
+  "free_spins_enabled": true,
+  "spin_xrp": "0.4",
+  "fee_xrp": "0.1",
+  "paid_spin_drops": "500000",
+  "free_spin_drops": "100000",
+  "memo_type": "CBH-SLOT",
+  "jackpot_one_in_wins": 7,
+  "free_spins_per_pairs": 3,
+  "snapshot": "Bonus Halloween snapshot Oct 31, then 12:00 AM CT on the 1st of every month.",
+  "snapshot_first_ct": "2026-10-31",
+  "snapshot_bonus_ct": [
+    "2026-10-31"
+  ],
+  "snapshot_monthly_day": 1,
+  "test_wallet_sha256": [
+    "ee77defd2d3dc88e2a8d892cee5471dcfcfef6e58d1df54c92bf1ea9ce170592"
+  ],
+  "test_note": "temporary owner test (remove after the test): the server only accepts test paid spins from its private allowlist"
 }
