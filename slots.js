@@ -45,9 +45,7 @@ function snapTimes(){const p=ctParts(Date.now()),first=CFG.snapshot_first_ct||'2
  return out.filter(x=>x[0]>=first).sort((a,b)=>a[1]-b[1])}
 function nextSnap(){const now=Date.now();const t=snapTimes().find(x=>x[1]>now);return t?t[1]:now}
 function firstSnapDone(){const f=CFG.snapshot_first_ct||'2026-10-31',[y,m,d]=f.split('-').map(Number);return Date.now()>=ctMs(y,m,d,0,0)}
-let testOK=false,lastW='';
-async function testCheck(){const a=wal();if(!a||!(CFG.test_wallet_sha256||[]).length){testOK=false;return}
- const h=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(a))),x=>x.toString(16).padStart(2,'0')).join('');testOK=CFG.test_wallet_sha256.includes(h)}
+let lastW='';
 const wal=()=>{const a=g('w').value.trim();return valid(a)?a:''};
 const isConn=()=>!!XM&&typeof connected!=='undefined'&&connected;
 // public results never carry full wallets: free_spins keyed by 'h:'+first 16 hex of SHA-256(wallet), events carry wh (same hash)
@@ -192,7 +190,7 @@ function gate(){if(!CFG)return;const s=g('slspin'),c=isConn(),n=freeLeft(),P=get
  else if(P){mode='check';big='CHECK RESULT';sm='your spin is confirmed';s.disabled=false}
  else if(!c){mode='connect';big='CONNECT XAMAN';sm='sign in to play';s.disabled=!XM}
  else if(CFG.free_spins_enabled&&n>0){mode='FREE';big='FREE SPIN';sm=`${n} left · 0.1 XRP fee`;s.disabled=false}
- else if(CFG.paid_spins_enabled||testOK){mode='PAID';big=multiN>1?`SPIN x${multiN}`:'SPIN';sm=`${(multiN*+CFG.paid_spin_drops/1e6).toFixed(1)} XRP`+(CFG.paid_spins_enabled?'':' · owner test');s.disabled=false}
+ else if(CFG.paid_spins_enabled){mode='PAID';big=multiN>1?`SPIN x${multiN}`:'SPIN';sm=`${(multiN*+CFG.paid_spin_drops/1e6).toFixed(1)} XRP`;s.disabled=false}
  else{big='NO FREE SPIN';sm=`next snapshot ${snapDate(nextSnap())}`;s.disabled=true}
  s.dataset.mode=mode;s.innerHTML=`<span>${big}</span><small>${sm}</small>`;s.classList.toggle('sl-free',mode==='FREE');
  const mx=g('slmulti');if(mx){mx.hidden=mode!=='PAID';mx.querySelectorAll('button').forEach(b=>b.classList.toggle('on',+b.dataset.n===multiN))}}
@@ -217,7 +215,7 @@ async function boot(){if(g('slbuild'))g('slbuild').textContent='build '+(window.
  if(/^[0-9A-F]{64}$/.test(tx)||/^[0-9a-f-]{36}$/i.test(id)){const P=getP()||{mode:qs.get('slmode')||'',wallet:qs.get('wallet')||'',t0:Date.now()};if(/^[0-9A-F]{64}$/.test(tx))P.txid=tx;if(id)P.uuid=P.uuid||id;setP(P);
   const u=new URLSearchParams(location.search);['sltx','slid','slmode'].forEach(k=>u.delete(k));history.replaceState(null,'',location.pathname+(u.toString()?'?'+u:''))}
  buildReels(['goldx','gold','polaroid']);gate();drawFree();countPairs();if(getP())resume();
- setInterval(async()=>{const a=wal(),k=a+'|'+isConn();if(k!==lastW){lastW=k;await testCheck();countPairs();gate()}},1000);
+ setInterval(async()=>{const a=wal(),k=a+'|'+isConn();if(k!==lastW){lastW=k;countPairs();gate()}},1000);
  setInterval(drawFree,5000);setInterval(async()=>{if(resuming)return;try{RS=await fj('slots_results.json');gate();drawFree()}catch(e){}},30000);
  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&getP()){resuming=false;resume()}});   // back from Xaman: poll again right away
  window.addEventListener('pageshow',e=>{if(e.persisted&&getP()){resuming=false;resume()}});                       // iOS back/forward cache restore
