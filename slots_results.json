@@ -6,15 +6,15 @@
  "first_snapshot_ct": "2026-10-31T00:00:00-05:00",
  "next_snapshot_ct": "2026-10-31T00:00:00-05:00",
  "free_spins": {
-  "rMhugA9wrZuRK5RUsvLczbJNfZActp4e5k": {
-   "granted": 1,
-   "used": 0
-  },
   "rHcxvJeFh8Jk6kjrGjASrtZfgcYgB3rewT": {
    "granted": 1,
    "used": 1
   },
   "r4ESMF44Cjo8ybmjMwdNRd3J46HvJuB3tj": {
+   "granted": 1,
+   "used": 0
+  },
+  "rMhugA9wrZuRK5RUsvLczbJNfZActp4e5k": {
    "granted": 1,
    "used": 0
   }
@@ -265,5 +265,5 @@
    "used": 0
   }
  ],
- "updated": "2026-10-19T22:15:57.259712+00:00"
+ "updated": "2026-10-21T11:15:37.738928+00:00"
 }
