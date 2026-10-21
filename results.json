@@ -7,7 +7,7 @@
  "pairs_total": 780,
  "pairs_left": 773,
  "fair_random": "index = int(SHA-256(bytes(payment_tx_hash + validating_ledger_hash))) mod len(remaining pool sorted by piece #)",
- "updated": "2026-10-21T15:47:04.449957+00:00",
+ "updated": "2026-10-21T15:48:38.224648+00:00",
  "events": [
   {
    "t": 1792258805.2544553,
@@ -4892,6 +4892,20 @@
     "mint_tx": "9A9374B663A5D75C684BC9CBA390AA3FEE9CAD2AAB12B04A41C54F968FBE7934",
     "name": "Nikki Flipperton #0557 \u2022 3D TwiN"
    }
+  },
+  {
+   "t": 1792597708.3486094,
+   "time_utc": "2026-10-21T15:48:28.348617+00:00",
+   "payment_tx": "3D42F7816E5D5F6B5742FF64C51892333668A0924DE892EC7D59A1FCAA94869E",
+   "ledger_index": 107808381,
+   "buyer": "rHcx\u2026ewT",
+   "delivered": "100000",
+   "expected_drops": "11820000",
+   "action": "refund",
+   "reason": "WRONG_AMOUNT",
+   "refund_drops": "100000",
+   "refund_tx": "8F31CDA151EB4845FD3282F82CE8C38C43A47F7EFBF1AAC6A57CDDB1243DCE93",
+   "refund_result": "tesSUCCESS"
   }
  ],
  "gifts": {
