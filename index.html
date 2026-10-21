@@ -1,5 +1,5 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
-<script>window.IX_BUILD="20261021-0720";/* stale-page guard: GitHub Pages caches pages for 10 min. If a newer build is out, reload once with ?v=<build> (a new URL, so the phone fetches it fresh). */
+<script>window.IX_BUILD="20261021-1040";/* stale-page guard: GitHub Pages caches pages for 10 min. If a newer build is out, reload once with ?v=<build> (a new URL, so the phone fetches it fresh). */
 (function(){try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){var b=j&&j.index;if(!b||b===window.IX_BUILD)return;var u=new URL(location.href);if(u.searchParams.get("v")===b)return;u.searchParams.set("v",b);location.replace(u.toString())}).catch(function(){})}catch(e){}})();</script><link rel="icon" href="img/favicon.png">
 <title>Crypto Bros&amp;Ho's Trading Company · Pair SPIN</title>
 <style>
@@ -46,6 +46,7 @@ a.sec{background:#2a3145;color:#cfe;font-weight:600}
 .tb-info{flex:1;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
 .chip{border:1.5px solid #f5c542;border-radius:999px;padding:7px 16px;font-weight:900;color:#f5c542;background:rgba(245,197,66,.08);font-size:1.25em;white-space:nowrap;letter-spacing:.5px}
 .chip small{color:#cdb46a;font-weight:600;margin-right:4px}
+#sprow{display:flex;gap:8px;align-items:center}#sprow .spin{flex:1;min-width:0}#plug{display:none;margin-top:12px;flex:0 0 52px;width:52px;height:52px;padding:0;font-size:24px;line-height:1;border-radius:50%;border:2px solid #39ff88;background:#0b2a17;color:#eaffef;cursor:pointer;animation:plugGlow 1.4s ease-in-out infinite}@keyframes plugGlow{0%,100%{box-shadow:0 0 6px #39ff88}50%{box-shadow:0 0 26px #39ff88,0 0 46px #39ff8888}}
 </style></head><body>
 <div class="topbar"><div class="plug"><a href="home.html" aria-label="Home" style="display:contents"><img src="img/the_plug.png" alt="THE plug, Crypto Bros &amp; Ho's Trading Company"></a></div><div class="tb-info"><a class="chip" href="vault.html" style="text-decoration:none">🐉 THE VAULT</a><a class="chip" href="slots.html" style="text-decoration:none">🎰 SLOTS</a><span class="chip"><small>DROP</small><span id="wv2">…</span></span><span class="chip"><small>MINT</small><span class="pz">…</span> XRP</span></div></div>
 <h1>Pair SPIN 🎰 <span id="wv">…</span></h1>
@@ -60,7 +61,7 @@ a.sec{background:#2a3145;color:#cfe;font-weight:600}
   <div class="reel" id="r1"><div class="win" id="w1"><img id="i1" alt="" decoding="async"><div class="q" id="q1">?</div></div><div class="lab" id="l1">POLAROID</div></div>
   <div class="reel" id="r2"><div class="win" id="w2"><img id="i2" alt="" decoding="async"><div class="q" id="q2">?</div></div><div class="lab" id="l2">3D TwiN</div></div>
  </div>
- <button class="spin" id="spin" disabled>Connect wallet to SPIN</button>
+ <div id="sprow"><button class="spin" id="spin" disabled>Connect wallet to SPIN</button><button id="plug" type="button" title="Free pair spin (0.1 XRP fee)" aria-label="Free pair spin (0.1 XRP fee)">🔌</button></div>
 </div>
 <div id="status"></div>
 <div id="qr"><div class="small" id="qrt">On a computer? Scan with Xaman:</div><img id="qri" width="220" height="220" alt="QR"></div>
@@ -72,7 +73,7 @@ a.sec{background:#2a3145;color:#cfe;font-weight:600}
 <script>
 const SELLER="rNxAwKP3rdNTfe4ZNw1SntXCfW2U4r2XuB",WSS=["wss://xrplcluster.com","wss://s1.ripple.com","wss://s2.ripple.com"],EXP="https://livenet.xrpl.org",PAGE=location.origin+location.pathname,GW="https://gateway.pinata.cloud/ipfs/";
 const $=id=>document.getElementById(id);$('sel').textContent=SELLER;
-const GIFT=new URLSearchParams(location.search).get('gift')==='1',GIFT_DROPS='100000'; // gift link: page only builds the 0.1 XRP fee payment, the watcher checks the wallet
+let GIFT=new URLSearchParams(location.search).get('gift')==='1',GIFT_DROPS='100000'; // gift link: page only builds the 0.1 XRP fee payment, the watcher checks the wallet
 let POOL=[],WAVES=null,wavesAt=0,byUri={},ws=null,wsi=0,reqId=1,pend={},watching=null,known=null,WATCH_H=null,SPIN_H=null;
 let PAUSED=true,PRICE=null,PRICE_XRP=null,WAVE=null,left=0,priceOk=false,connected=false,XM=null;const isMobile=/iPhone|iPad|Android/i.test(navigator.userAgent);
 const NOW=()=>Date.now(),sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -277,13 +278,22 @@ const q0=new URLSearchParams(location.search).get('wallet');if(q0&&valid(q0)&&!$
  if(/^[0-9A-F]{64}$/.test(tx)||/^[0-9a-f-]{36}$/i.test(id)){const P=getPP()||{wallet:q0||'',t0:NOW()-5*60e3,known:[]};if(/^[0-9A-F]{64}$/.test(tx))P.txid=tx;if(id)P.uuid=P.uuid||id;setPP(P);
   ['pstx','psid'].forEach(k=>u.delete(k));history.replaceState(null,'',location.pathname+(u.toString()?'?'+u:''))}}
 showRemembered();gateBtn();
+
+// ---- 🔌 plug: glows only for a connected wallet with a gift spin left. results.json "gifts" holds only hashes (h:+16 hex of SHA-256(wallet)) -> remaining; the watcher still checks the real list ----
+let PLUG_A='',PLUG_N=0;
+async function plugCheck(){const a=$('w').value.trim(),b=$('plug');if(!b)return;const ok=valid(a)&&(!XM||connected);if(!ok){b.style.display='none';PLUG_A='';return}
+ if(a!==PLUG_A){PLUG_A=a;try{const d=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(a));const h='h:'+[...new Uint8Array(d)].map(x=>x.toString(16).padStart(2,'0')).join('').slice(0,16);const j=await fj('results.json');PLUG_N=+((j.gifts||{})[h]||0)}catch(e){PLUG_N=0}}
+ const busy=watching||TAP||getPP();b.style.display=PLUG_N>0?'inline-flex':'none';b.style.alignItems='center';b.style.justifyContent='center';b.disabled=!!busy||!XM;b.style.opacity=busy?'.5':''}
+$('plug').onclick=e=>{e.preventDefault();if(PLUG_N<=0||!XM||!connected)return;GIFT=true;gateBtn();$('spin').click()};
+{const _g=gateBtn;gateBtn=function(){_g.apply(this,arguments);plugCheck()}}
+setInterval(()=>{PLUG_A='';plugCheck()},30000);
 if(GIFT){const n=document.createElement('div');n.className='note';n.innerHTML='<b>You have 1 free Pair Spin 🎁 (just the 0.1 XRP spin fee)</b><br><span class="small">Gift wallets only. Any other wallet paying 0.1 XRP is refunded, no spin.</span>';$('spin').before(n)}
 fetch('pool.json?v=20261017b').then(r=>r.json()).then(onPool).catch(()=>{}).finally(()=>{loadPrice(null,true);resume()});
 setInterval(()=>{if(!document.hidden)loadPrice()},30000);
 $('w').addEventListener('input',gateBtn);$('w').addEventListener('change',()=>{showRemembered();refresh().catch(()=>{})});
 let visT=null;document.addEventListener('visibilitychange',()=>{if(document.hidden)return;clearTimeout(visT);visT=setTimeout(()=>{resume();markClaimed()},getPP()?200:1200)});window.addEventListener('pageshow',e=>{if(e.persisted)resume()});
 </script><div class="footer" style="margin:30px -16px -16px;padding:22px 10px 26px;border-top:2px solid #f5c542;background:linear-gradient(0deg,#1a1508,#0d0f14)"><div class="title" data-text="Crypto Bros&amp;Ho's Trading Company" role="heading" aria-level="1">Crypto Bros&amp;Ho's Trading Company</div>
-<p id="ixbuild" style="text-align:center;font-size:11px;color:#8a93a8;opacity:.7;margin:10px 0 0;letter-spacing:.04em">build 20261018-1140</p></div>
+<p id="ixbuild" style="text-align:center;font-size:11px;color:#8a93a8;opacity:.7;margin:10px 0 0;letter-spacing:.04em">build 20261021-1040</p></div>
 <style>
 #snd-toggle{position:fixed;bottom:10px;right:10px;z-index:10000;background:rgba(11,13,18,.85);color:#f5c542;border:1px solid #f5c542;border-radius:999px;padding:6px 10px;font-size:15px;cursor:pointer}
 .reel.realwin{box-shadow:0 0 0 2px #f5c542,0 0 26px rgba(245,197,66,.75);transition:box-shadow .3s}
