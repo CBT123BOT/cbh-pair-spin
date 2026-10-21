@@ -1,7 +1,7 @@
 {
   "name": "MICKEL NICKEL SLOTS",
   "note": "Public switches",
-  "paid_spins_enabled": false,
+  "paid_spins_enabled": true,
   "free_spins_enabled": true,
   "spin_xrp": "0.4",
   "fee_xrp": "0.1",
