@@ -271,7 +271,71 @@
    "month": null,
    "granted": 0,
    "used": 0
+  },
+  {
+   "t": 1792585262.7937682,
+   "tx": "2DC06FFB0710BBA0499E72C2BCF21AD5BBFDA52B455D6E2FB30AB1EA49424589",
+   "ledger_index": 107805386,
+   "wh": "h:ee77defd2d3dc88e",
+   "wallet": "rHcx\u2026ewT",
+   "mode": "PAID",
+   "delivered": "1000000",
+   "test": true,
+   "action": "lose",
+   "n": 2,
+   "spins": [
+    {
+     "i": 0,
+     "hash": "2DC06FFB0710BBA0499E72C2BCF21AD5BBFDA52B455D6E2FB30AB1EA49424589",
+     "win": false,
+     "reels": [
+      "silver",
+      "copper",
+      "copper"
+     ],
+     "prize": {},
+     "ticket": null,
+     "jackpot": false,
+     "grand": false,
+     "semi_grand": false,
+     "pool": null,
+     "offers": []
+    },
+    {
+     "i": 1,
+     "hash": "FB245912393358CED968CF5E08BD59D16F8C238EF2BDB52E0535E7371F71814E",
+     "win": false,
+     "reels": [
+      "copper",
+      "gold",
+      "glasses"
+     ],
+     "prize": {},
+     "ticket": null,
+     "jackpot": false,
+     "grand": false,
+     "semi_grand": false,
+     "pool": null,
+     "offers": []
+    }
+   ],
+   "ledger_hash": "7DF80EA58E4CB67ADFAA8B6DA8EE392ED3D43C5040356AABB87C434DE7E75679",
+   "close_unix": 1792585260,
+   "pool_size": 103,
+   "pool_sha256": "45c9b2e356d48ae4bf8581b5bdab73f8533a0564bdb34df9de46e504c1456cd5",
+   "pool": null,
+   "reels": [
+    "silver",
+    "copper",
+    "copper"
+   ],
+   "prize": {},
+   "ticket": null,
+   "jackpot": false,
+   "grand": false,
+   "semi_grand": false,
+   "offers": []
   }
  ],
- "updated": "2026-10-21T11:55:14.104483+00:00"
+ "updated": "2026-10-21T12:21:03.404608+00:00"
 }
