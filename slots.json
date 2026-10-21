@@ -15,9 +15,5 @@
   "snapshot_bonus_ct": [
     "2026-10-31"
   ],
-  "snapshot_monthly_day": 1,
-  "test_wallet_sha256": [
-    "ee77defd2d3dc88e2a8d892cee5471dcfcfef6e58d1df54c92bf1ea9ce170592"
-  ],
-  "test_note": "temporary owner test (remove after the test): the server only accepts test paid spins from its private allowlist"
+  "snapshot_monthly_day": 1
 }
