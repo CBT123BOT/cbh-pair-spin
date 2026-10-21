@@ -284,4 +284,47 @@ $('w').addEventListener('input',gateBtn);$('w').addEventListener('change',()=>{s
 let visT=null;document.addEventListener('visibilitychange',()=>{if(document.hidden)return;clearTimeout(visT);visT=setTimeout(()=>{resume();markClaimed()},getPP()?200:1200)});window.addEventListener('pageshow',e=>{if(e.persisted)resume()});
 </script><div class="footer" style="margin:30px -16px -16px;padding:22px 10px 26px;border-top:2px solid #f5c542;background:linear-gradient(0deg,#1a1508,#0d0f14)"><div class="title" data-text="Crypto Bros&amp;Ho's Trading Company" role="heading" aria-level="1">Crypto Bros&amp;Ho's Trading Company</div>
 <p id="ixbuild" style="text-align:center;font-size:11px;color:#8a93a8;opacity:.7;margin:10px 0 0;letter-spacing:.04em">build 20261018-1140</p></div>
-</body></html>
+<style>
+#snd-toggle{position:fixed;bottom:10px;right:10px;z-index:10000;background:rgba(11,13,18,.85);color:#f5c542;border:1px solid #f5c542;border-radius:999px;padding:6px 10px;font-size:15px;cursor:pointer}
+.reel.realwin{box-shadow:0 0 0 2px #f5c542,0 0 26px rgba(245,197,66,.75);transition:box-shadow .3s}
+#cfx{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden}
+#cfx i{position:absolute;top:-12px;width:8px;height:8px;border-radius:2px;animation:cfall 2.4s ease-out forwards}
+@keyframes cfall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+@media (prefers-reduced-motion:reduce){#cfx i{display:none}}
+</style>
+<button id="snd-toggle" type="button" aria-label="Sound on/off"></button>
+<script>
+/* Sound + real-win celebration add-on (Oct 21): cosmetic only. Does not touch payments, results or any request.
+   Sounds: soft whir while reels spin, soft click per reel stop. Celebration + chime ONLY when a real
+   paid pair lands (showLanded called with animate=true AND both pieces present - the existing reveal() path,
+   which runs only after the watcher minted the pair; refunds/failures use stopReels and get nothing). */
+(function(){
+  var KEY='cbh_test_sound_muted',muted=localStorage.getItem(KEY)==='1',ctx=null,VOL=0.035,whirT=null;
+  var btn=document.getElementById('snd-toggle');
+  function paint(){btn.textContent=muted?'🔇':'🔊'}paint();
+  btn.onclick=function(){muted=!muted;localStorage.setItem(KEY,muted?'1':'0');paint();if(muted)stopWhir();else ac()};
+  function ac(){if(!ctx){try{ctx=new (window.AudioContext||window.webkitAudioContext)()}catch(e){return null}}if(ctx.state==='suspended')ctx.resume();return ctx}
+  document.addEventListener('pointerdown',function(){if(!muted)ac()},{passive:true});
+  function tone(f,d,type,g,delay){if(muted)return;var c=ac();if(!c||c.state!=='running')return;var t=c.currentTime+(delay||0),o=c.createOscillator(),v=c.createGain();
+    o.type=type||'sine';o.frequency.value=f;v.gain.setValueAtTime(0.0001,t);v.gain.exponentialRampToValueAtTime(g*VOL/0.035,t+0.01);v.gain.exponentialRampToValueAtTime(0.0001,t+d);o.connect(v);v.connect(c.destination);o.start(t);o.stop(t+d+0.02)}
+  function whirTick(){tone(150,0.10,'triangle',0.02);tone(190,0.07,'triangle',0.012,0.05)}
+  function spinning(){var r=document.getElementById('r1');return r&&r.classList.contains('spinning')}
+  function startWhir(){if(whirT)return;whirTick();whirT=setInterval(function(){if(!spinning()||document.hidden){stopWhir();return}whirTick()},260)}
+  function stopWhir(){clearInterval(whirT);whirT=null}
+  function click(){tone(520,0.05,'square',0.03)}
+  function chime(){tone(523,0.16,'sine',0.05);tone(659,0.18,'sine',0.045,0.09);tone(784,0.26,'sine',0.04,0.18)}
+  function confetti(){var L=document.getElementById('cfx');if(!L){L=document.createElement('div');L.id='cfx';document.body.appendChild(L)}
+    var C=['#f5c542','#fff0b0','#fff','#4ecdc4','#ffe66d'];for(var i=0;i<36;i++){var p=document.createElement('i');p.style.left=Math.random()*100+'vw';p.style.background=C[i%C.length];
+    p.style.animationDelay=Math.random()*.4+'s';p.style.animationDuration=1.8+Math.random()*1.2+'s';L.appendChild(p);setTimeout(p.remove.bind(p),3000)}}
+  function glow(){['r1','r2'].forEach(function(id){var r=document.getElementById(id);if(!r)return;r.classList.add('realwin');setTimeout(function(){r.classList.remove('realwin')},2600)})}
+  var _start=window.startReels,_stop=window.stopReels,_land=window.showLanded;
+  window.startReels=function(){var r=_start.apply(this,arguments);if(spinning())startWhir();return r};
+  window.stopReels=function(){stopWhir();return _stop.apply(this,arguments)};   // refund / failure / timeout: silence, no celebration
+  window.showLanded=function(R,animate){var r=_land.apply(this,arguments);
+    if(animate){var win=!!(R&&R.P&&R.T);setTimeout(function(){stopWhir();click()},0);setTimeout(click,450);
+      if(win)setTimeout(function(){chime();glow();confetti()},650)} else stopWhir();
+    return r};
+})();
+</script>
+</body>
+</html>
