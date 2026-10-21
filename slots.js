@@ -4,7 +4,7 @@
    The pending spin is remembered (localStorage + Xaman return URL ?sltx={txid}&slid={id}) so leaving for Xaman and coming back
    never loses it, and the button stays locked until that spin's result is in (no double payments). No Math.random anywhere. */
 (()=>{
-const JSV='20261018-1050';
+const JSV='20261021-0715';
 const g=id=>document.getElementById(id), qs=new URLSearchParams(location.search);
 const SYM=["goldx","copper","silver","gold","hat","polaroid","glasses","bro","ho"], COMBO={Copper:["copper","copper","copper"],Silver:["silver","silver","silver"],Gold:["gold","gold","gold"],pair:["polaroid","polaroid","glasses"],pair_nospins:["hat","hat","hat"]};
 // landing combos (same as slots_core.py): Copper x3 / Silver x3 = Mickel Nickel; Gold x3 = GRAND Gold Mickel only;
@@ -106,7 +106,14 @@ function showResult(o,demo){const P=o.prize||{};
 // ---------- pending spin (survives the trip to Xaman and back) ----------
 const PK='sl_pending',MAXAGE=20*60e3;
 function getP(){try{const p=JSON.parse(localStorage.getItem(PK)||'null');if(p&&Date.now()-p.t0<MAXAGE)return p}catch(e){}localStorage.removeItem(PK);return null}
-function setP(p){if(p)localStorage.setItem(PK,JSON.stringify(p));else localStorage.removeItem(PK)}
+function setP(p){if(p)localStorage.setItem(PK,JSON.stringify(p));else localStorage.removeItem(PK);try{pendUI()}catch(e){}}
+// Cancel button: shown whenever a spin is pending, so the reels can never roll forever (Oct 21). ?reset=1 clears a stuck pending spin.
+function pendUI(){const sp=g('slspin');if(!sp)return;let b=g('slcancel');if(!b){b=document.createElement('button');b.type='button';b.id='slcancel';b.textContent='✖ Cancel';
+ b.style.cssText='display:none;margin:8px auto 0;padding:6px 14px;border-radius:999px;border:1px solid #888;background:transparent;color:#ccc;font-size:.85em;cursor:pointer';
+ b.onclick=()=>{const P=getP();setP(null);gen++;resuming=false;busy=false;hardStop();banner('lose',P&&P.txid?'Stopped watching. If your payment went through, the result still shows in the public log.':'Payment cancelled, nothing charged.');gate()};
+ sp.parentNode.insertAdjacentElement('afterend',b)}
+ b.style.display=localStorage.getItem(PK)?'block':'none'}
+try{if(new URLSearchParams(location.search).get('reset')==='1')localStorage.removeItem(PK)}catch(e){}
 const WHY={NO_FREE_SPIN_LEFT:'no free spin left on this wallet (the 0.1 XRP fee is kept)',PAID_SPINS_OFF:'paid spins are off right now (refunded)',FREE_SPINS_OFF:'free spins are off right now (refunded)',
  WRONG_AMOUNT:'wrong amount (refunded)',BAD_MEMO:'missing spin memo (refunded)',WALLET_HOURLY_LIMIT:'too many spins this hour (refunded)',NO_PRIZES_LEFT:'no prizes left (refunded)'};
 let resuming=false,gen=0,apiLeft=0;
@@ -124,15 +131,18 @@ async function fastResults(){if(apiLeft<=0)return null;apiLeft--;return to(fetch
 function stopWith(cls,html){hardStop();banner(cls,html)}
 function checkMsg(P){banner('wait',P&&P.seen?`✔ Your spin is confirmed on the ledger (tx ${P.txid.slice(0,8)}…). The result is still being posted. Tap CHECK RESULT, or <a href="#" id="slvlink">verify it</a>.`:'Still looking for your payment. Tap CHECK RESULT in a moment.');
  const vl=g('slvlink');if(vl&&P)vl.onclick=e=>{e.preventDefault();const d=g('sltx').closest('details');if(d)d.open=true;g('sltx').value=P.txid;verify();g('sltx').scrollIntoView({behavior:'smooth',block:'center'})}}
-async function resume(){if(resuming)return;if(!getP())return;resuming=true;busy=true;const my=++gen;apiLeft=14;
+async function resume(){if(resuming)return;if(!getP())return;resuming=true;busy=true;const my=++gen;apiLeft=14;try{whOf(getP().wallet)}catch(e){}
  try{gate();startLoop();banner('wait','🎰 Reels rolling… waiting for the ledger. Please don’t pay again.');const t1=Date.now();let k=0;
   while(Date.now()-t1<90e3&&my===gen){const P=getP();if(!P)return;k++;
    if(!P.txid&&P.uuid&&XM&&XM.payload){const pl=await to(XM.payload.get(P.uuid),6000,null);const m=pl&&pl.meta||{};
     if(pl&&pl.response&&pl.response.txid){P.txid=String(pl.response.txid).toUpperCase();setP(P)}
-    else if((m.resolved||m.expired||m.cancelled)&&!m.signed&&!m.opened_by_deeplink){setP(null);stopWith('lose','The sign request was cancelled or expired. No payment was made.');return}}
+    else if(m.cancelled||m.expired||(m.resolved&&!m.signed)){setP(null);stopWith('lose','Payment cancelled, nothing charged.');return}
+    else if(m.resolved&&m.signed&&pl&&pl.response&&!pl.response.txid){setP(null);stopWith('lose','Payment failed in Xaman, nothing charged.');return}}
    if(my!==gen)return;
    if(!P.txid){const h=await findTx(P);if(h){P.txid=h;setP(P)}}
-   if(P.txid&&!P.seen){const t=await to(rq({command:'tx',transaction:P.txid}),8000,null);if(t&&t.result&&t.result.validated){P.seen=1;setP(P);banner('wait','✔ Payment confirmed on the ledger. Reels rolling… your result is on its way.')}}
+   if(P.txid&&!P.seen){const t=await to(rq({command:'tx',transaction:P.txid}),8000,null);if(t&&t.result&&t.result.validated&&t.result.meta&&t.result.meta.TransactionResult!=='tesSUCCESS'){setP(null);stopWith('lose','Payment failed on the ledger ('+t.result.meta.TransactionResult+'). No spin, no XRP was sent.');return}
+    if(!(t&&t.result&&t.result.validated)&&Date.now()-P.t0>3*60e3){setP(null);stopWith('lose','Payment never reached the ledger. Nothing charged; you can spin again.');return}
+    if(t&&t.result&&t.result.validated){P.seen=1;setP(P);banner('wait','✔ Payment confirmed on the ledger. Reels rolling… your result is on its way.')}}
    if(my!==gen)return;
    let ev=null;
    if(P.seen){const F=await fastResults();if(F&&F.events)ev=findEv(P,F)}
@@ -141,6 +151,7 @@ async function resume(){if(resuming)return;if(!getP())return;resuming=true;busy=
    if(ev){setP(null);
     if(ev.action==='win'||ev.action==='lose'){await playSpins(ev);if(ev.action==='win'&&window.showClaims)setTimeout(window.showClaims,1500)}
     else stopWith('lose','Not spun: '+(WHY[ev.reason]||ev.reason||ev.action)+(ev.owner_refund_tx?' · refunded':''));return}
+   if(!P.seen&&Date.now()-P.t0>6*60e3){setP(null);stopWith('lose','No confirmed payment found. Nothing was charged; you can spin again.');return}
    if(!P.txid&&Date.now()-P.t0>4*60e3){setP(null);stopWith('lose','No signed payment was found. Nothing was charged; you can spin again.');return}
    await sleep(P.seen?2500:3000)}
   if(my===gen){hardStop();checkMsg(getP())}}
@@ -211,7 +222,8 @@ async function boot(){if(g('slbuild'))g('slbuild').textContent='build '+(window.
  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&getP()){resuming=false;resume()}});   // back from Xaman: poll again right away
  window.addEventListener('pageshow',e=>{if(e.persisted&&getP()){resuming=false;resume()}});                       // iOS back/forward cache restore
  // hard watchdog, independent of everything else: the reels can never roll more than ~95 s
- setInterval(()=>{if(spinning&&!landing&&Date.now()-spinT0>95e3){gen++;resuming=false;busy=false;hardStop();const P=getP();if(P)checkMsg(P);else banner('lose','Spin stopped. Tap SPIN to try again.');gate()}},1000)}
+ setInterval(()=>{pendUI();const Q=getP();if(Q&&!Q.seen&&Date.now()-Q.t0>6*60e3){setP(null);gen++;resuming=false;busy=false;hardStop();banner('lose','No confirmed payment found. Nothing was charged; you can spin again.');gate();return}
+  if(spinning&&!landing&&Date.now()-spinT0>95e3){gen++;resuming=false;busy=false;hardStop();const P=getP();if(P)checkMsg(P);else banner('lose','Spin stopped. Tap SPIN to try again.');gate()}},1000)}
 // ANY error while rolling stops the reels and shows CHECK RESULT (or a retry message)
 window.addEventListener('error',()=>{if(spinning&&!landing&&!resuming){hardStop();busy=false;const P=getP();if(P)checkMsg(P);gate()}});
 window.addEventListener('unhandledrejection',()=>{if(spinning&&!landing&&!resuming){hardStop();busy=false;const P=getP();if(P)checkMsg(P);gate()}});
