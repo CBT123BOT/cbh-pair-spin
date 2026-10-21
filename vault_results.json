@@ -5,9 +5,9 @@
   "d1": 3,
   "d2_plus": 2
  },
- "stash_left": 13967,
- "coins_left": 13967,
- "giveaway_stash_in_wallet": 100,
+ "stash_left": 13966,
+ "coins_left": 13966,
+ "giveaway_stash_in_wallet": 101,
  "used_pairs": {
   "0907": {
    "holder": "rHcx\u2026ewT",
@@ -145,10 +145,12 @@
  "mn": {
   "open": true,
   "total": 14160,
-  "minted_total": 193,
-  "remaining": 13967,
+  "minted_total": 194,
+  "remaining": 13966,
   "first_wave_until": 4248,
-  "left_at_first_price": 4055,
+  "left_at_first_price": 4123,
+  "site_minted": 125,
+  "special_on": true,
   "first_price_xrp": "1.11",
   "normal_price_xrp": "3.33",
   "price_now_xrp": "1.11",
@@ -2145,5 +2147,5 @@
   }
  ],
  "rule": "pick i = SHA-256(proof/payment tx hash + validating ledger hash + byte i) mod pool size; pool = never-minted coin numbers sorted (mn_remaining.json); pool shrinks each pick",
- "updated": "2026-10-21T11:54:54.167676+00:00"
+ "updated": "2026-10-21T22:31:15.628357+00:00"
 }
