@@ -50,7 +50,9 @@ async function testCheck(){const a=wal();if(!a||!(CFG.test_wallet_sha256||[]).le
  const h=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(a))),x=>x.toString(16).padStart(2,'0')).join('');testOK=CFG.test_wallet_sha256.includes(h)}
 const wal=()=>{const a=g('w').value.trim();return valid(a)?a:''};
 const isConn=()=>!!XM&&typeof connected!=='undefined'&&connected;
-function freeLeft(){const a=wal(),f=a&&(RS.free_spins||{})[a];return f?Math.max(0,f.granted-f.used):0}
+// public results never carry full wallets: free_spins keyed by 'h:'+first 16 hex of SHA-256(wallet), events carry wh (same hash)
+const MYWH={};function whOf(a){if(!a||a in MYWH)return;MYWH[a]=null;crypto.subtle.digest('SHA-256',new TextEncoder().encode(a)).then(b=>{MYWH[a]='h:'+Array.from(new Uint8Array(b),x=>x.toString(16).padStart(2,'0')).join('').slice(0,16);try{gate();drawFree()}catch(e){}}).catch(()=>{delete MYWH[a]})}
+function freeLeft(){const a=wal();whOf(a);const F=RS.free_spins||{},f=a&&((MYWH[a]&&F[MYWH[a]])||F[a]);return f?Math.max(0,f.granted-f.used):0}
 const snapDate=ms=>new Date(ms).toLocaleDateString('en-US',{timeZone:'America/Chicago',month:'short',day:'numeric'});
 function drawFree(){if(!CFG)return;g('slmn').textContent=wal()?freeLeft():'–';const ns=nextSnap();
  g('slms').textContent=firstSnapDone()?`Next snapshot ${snapDate(ns)}, 12:00 AM CT`:'Bonus Halloween snapshot Oct 31, then 12:00 AM CT on the 1st of every month.';
@@ -114,7 +116,7 @@ const memoT=t=>(t.Memos||[]).map(m=>{try{return hex2s(m.Memo.MemoType||'')}catch
 async function findTx(P){if(!P.wallet)return null;const r=await to(rq({command:'account_tx',account:P.wallet,limit:25,forward:false}),12000,null);
  for(const it of ((r&&r.result&&r.result.transactions)||[])){const t=it.tx_json||it.tx||{};const h=(it.hash||t.hash||'').toUpperCase();
   if(t.TransactionType==='Payment'&&t.Destination===SELLER&&memoT(t).includes('CBH-SLOT')&&((t.date||0)+946684800)*1000>=P.t0-120000&&(it.meta||{}).TransactionResult==='tesSUCCESS')return h}return null}
-function findEv(P,R){const tx=(P.txid||'').toUpperCase();return((R||RS).events||[]).slice().reverse().find(e=>tx?String(e.tx||'').toUpperCase()===tx:(e.wallet===P.wallet&&(!P.mode||e.mode===P.mode)&&e.t>P.t0/1000-30))}
+function findEv(P,R){const tx=(P.txid||'').toUpperCase();return((R||RS).events||[]).slice().reverse().find(e=>tx?String(e.tx||'').toUpperCase()===tx:((e.wallet===P.wallet||(e.wh&&e.wh===MYWH[P.wallet]))&&(!P.mode||e.mode===P.mode)&&e.t>P.t0/1000-30))}
 // FAST result: the watcher's results file straight from the GitHub API (seconds after the watcher writes it),
 // instead of waiting ~60-70 s for GitHub Pages to redeploy. Pages stays the backup. Capped per spin (GitHub allows 60 calls/hour per visitor).
 const API='https://api.github.com/repos/CBT123BOT/cbh-pair-spin/contents/slots_results.json';
