@@ -1,5 +1,5 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
-<script>window.IX_BUILD="20261021-1045";/* stale-page guard: GitHub Pages caches pages for 10 min. If a newer build is out, reload once with ?v=<build> (a new URL, so the phone fetches it fresh). */
+<script>window.IX_BUILD="20261021-1055";/* stale-page guard: GitHub Pages caches pages for 10 min. If a newer build is out, reload once with ?v=<build> (a new URL, so the phone fetches it fresh). */
 (function(){try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){var b=j&&j.index;if(!b||b===window.IX_BUILD)return;var u=new URL(location.href);if(u.searchParams.get("v")===b)return;u.searchParams.set("v",b);location.replace(u.toString())}).catch(function(){})}catch(e){}})();</script><link rel="icon" href="img/favicon.png">
 <title>Crypto Bros&amp;Ho's Trading Company · Pair SPIN</title>
 <style>
@@ -73,7 +73,7 @@ a.sec{background:#2a3145;color:#cfe;font-weight:600}
 <script>
 const SELLER="rNxAwKP3rdNTfe4ZNw1SntXCfW2U4r2XuB",WSS=["wss://xrplcluster.com","wss://s1.ripple.com","wss://s2.ripple.com"],EXP="https://livenet.xrpl.org",PAGE=location.origin+location.pathname,GW="https://gateway.pinata.cloud/ipfs/";
 const $=id=>document.getElementById(id);$('sel').textContent=SELLER;
-let GIFT=new URLSearchParams(location.search).get('gift')==='1',GIFT_DROPS='100000'; // gift link: page only builds the 0.1 XRP fee payment, the watcher checks the wallet
+let GIFT=false,GIFT_DROPS='100000'; // gift link: page only builds the 0.1 XRP fee payment, the watcher checks the wallet
 let POOL=[],WAVES=null,wavesAt=0,byUri={},ws=null,wsi=0,reqId=1,pend={},watching=null,known=null,WATCH_H=null,SPIN_H=null;
 let PAUSED=true,PRICE=null,PRICE_XRP=null,WAVE=null,left=0,priceOk=false,connected=false,XM=null;const isMobile=/iPhone|iPad|Android/i.test(navigator.userAgent);
 const NOW=()=>Date.now(),sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -186,7 +186,7 @@ async function reveal(p,animate){if(REVEALED.has(p.h))return;REVEALED.add(p.h);c
  $('status').innerHTML='🎉 You got <b>'+(P?P.name.split(' #')[0]+' #'+(P.name.split(' #')[1]||''):'your pair')+'</b>! Claim both below.';$('claim').innerHTML=claimHtml(p);$('qr').style.display='none';$('manual').style.display='none'}
 // ---- Xaman connect + sign requests (public API key only; payloads forced to MAINNET; amount fixed in the request) ----
 async function xamanSign(txjson,instruction,onCreated){
- const ret=PAGE+'?wallet='+encodeURIComponent($('w').value.trim())+(GIFT?'&gift=1':'')+(onCreated?'&pstx={txid}&psid={id}':'');
+ const ret=PAGE+'?wallet='+encodeURIComponent($('w').value.trim())+(onCreated?'&pstx={txid}&psid={id}':'');
  const sub=await XM.payload.createAndSubscribe({txjson,options:{force_network:'MAINNET',return_url:{app:ret,web:ret}},custom_meta:{instruction}},e=>{if('signed' in e.data)return e.data});
  if(!sub||!sub.created)throw new Error('Xaman did not create the sign request');window.LAST_PAYLOAD=sub.created;if(onCreated)onCreated(sub.created.uuid);
  if(XM.runtime&&XM.runtime.xapp){try{XM.xapp.openSignRequest({uuid:sub.created.uuid})}catch(e){location.href=sub.created.next.always}}
@@ -212,7 +212,7 @@ function gateBtn(){const a=$('w').value.trim(),b=$('spin');if(PAUSED&&!priceAt&&
  if(!walletOk){b.disabled=true;b.textContent=XM?'Connect Xaman to SPIN':'Enter your address to SPIN';return}
  if(watching||TAP){b.disabled=true;b.textContent='Spinning…';return}
  if(getPP()){b.disabled=false;b.textContent='CHECK RESULT';return}   // a paid spin is still open: no new payment until it's done
- b.disabled=false;b.textContent=GIFT?'🎁 FREE PAIR SPIN · 0.1 XRP fee':`SPIN · ${PRICE_XRP} XRP`}
+ b.disabled=false;GIFT=false;b.textContent=`SPIN · ${PRICE_XRP} XRP`}
 async function refresh(){const a=$('w').value.trim();if(!valid(a)){loadPrice();return null}const L=await scan(a);render(L);return L}
 const payLink=()=>`https://xaman.app/detect/request:${SELLER}?amount=${PRICE_XRP}`;
 // ---- the spin: saved BEFORE Xaman opens, resumed on return / reload / pageshow, hard 90 s watchdog, one payment at a time ----
@@ -224,15 +224,15 @@ $('spin').onclick=async()=>{const a=$('w').value.trim();if($('spin').disabled||T
  if(getPP()){resume(true);return}   // CHECK RESULT
  if(PAUSED)return;
  TAP=true;$('claim').innerHTML='';idleReels();startReels();gateBtn();$('status').textContent='🎰 Getting your spin ready…';   // reels roll the moment you tap
- const fail=msg=>{TAP=false;setPP(null);stopReels(null);$('status').innerHTML=msg;gateBtn()};
+ const fail=msg=>{TAP=false;if(GIFT){try{localStorage.removeItem('cbh_plug_used')}catch(e){};PLUG_A=''}setPP(null);stopReels(null);$('status').innerHTML=msg;gateBtn()};
  try{
   const before=PRICE;await to(loadPrice(null,true),12000);if(!priceOk||!PRICE||PRICE!==before){TAP=false;idleReels();$('status').textContent='Price just changed to '+(PRICE_XRP||'sold out')+'. Check it and tap SPIN again.';gateBtn();return}
-  history.replaceState(null,'','?wallet='+a+(GIFT?'&gift=1':''));
+  history.replaceState(null,'','?wallet='+a);
   let L=await to(scan(a,await to(history_(true),15000,null)),15000,null);if(!L){fail('Could not reach the XRP Ledger, try again.');return}known=new Set(L.map(p=>p.h));render(L);
   $('status').innerHTML=`Opening Xaman… check it says <b>XRPL Mainnet</b> and <b>${GIFT?'0.1':PRICE_XRP}</b>, then sign. Waiting for your payment…`;
   const P0={wallet:a,t0:NOW(),known:[...known]};
   if(XM){const s=await xamanSign({TransactionType:'Payment',Destination:SELLER,Amount:GIFT?GIFT_DROPS:PRICE,Memos:[{Memo:{MemoType:'4342482D50414952',MemoData:'5350494E'}}]},GIFT?'CB&H FREE gift pair SPIN: 0.1 XRP spin fee':`CB&H pair SPIN ${WAVE}: ${PRICE_XRP} XRP`,uuid=>setPP({...P0,uuid}));
-   s.resolved.then(r=>{const P=getP2();if(!P)return;if(r&&r.signed===false){setPP(null);clearInterval(watching);watching=null;TAP=false;stopReels(null);$('qr').style.display='none';$('status').textContent='Cancelled in Xaman. No payment was made.';gateBtn();return}
+   s.resolved.then(r=>{const P=getP2();if(!P)return;if(r&&r.signed===false){setPP(null);clearInterval(watching);watching=null;TAP=false;stopReels(null);$('qr').style.display='none';try{localStorage.removeItem('cbh_plug_used')}catch(e){};PLUG_A='';$('status').textContent='Cancelled in Xaman. No payment was made.';gateBtn();return}
     if(r&&r.txid&&!P.txid){P.txid=String(r.txid).toUpperCase();setPP(P);WATCH_H=P.txid}}).catch(()=>{})}
   else if(GIFT){fail('Gift spins need Xaman connected (the gift payment carries a CBH-PAIR memo). Reload the page, or use the gift sign link you were sent.');return}
   else{setPP(P0);window.open(payLink(),'_blank');$('xl').href=payLink();$('qri').src='https://api.qrserver.com/v1/create-qr-code/?size=220x220&data='+encodeURIComponent(payLink());$('qr').style.display='block';$('manual').style.display='block'}
@@ -283,17 +283,19 @@ showRemembered();gateBtn();
 let PLUG_A='',PLUG_N=0;
 async function plugCheck(){const a=$('w').value.trim(),b=$('plug');if(!b)return;const ok=valid(a)&&(!XM||connected);if(!ok){b.style.display='none';PLUG_A='';return}
  if(a!==PLUG_A){PLUG_A=a;try{const d=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(a));const h='h:'+[...new Uint8Array(d)].map(x=>x.toString(16).padStart(2,'0')).join('').slice(0,16);const j=await fj('results.json');PLUG_N=+((j.gifts||{})[h]||0)}catch(e){PLUG_N=0}}
- const busy=watching||TAP||getPP();b.style.display=PLUG_N>0?'inline-flex':'none';b.style.alignItems='center';b.style.justifyContent='center';b.disabled=!!busy||!XM;b.style.opacity=busy?'.5':''}
-$('plug').onclick=e=>{e.preventDefault();if(PLUG_N<=0||!XM||!connected)return;GIFT=true;gateBtn();$('spin').click()};
+ let u=null;try{u=JSON.parse(localStorage.getItem('cbh_plug_used')||'null')}catch(e){}if(u&&(u.a!==a||NOW()-u.t>900000)){u=null;try{localStorage.removeItem('cbh_plug_used')}catch(e){}}
+ const n=u?0:PLUG_N,nt=$('giftnote');if(nt)nt.style.display=n>0?'block':'none';
+ const busy=watching||TAP||getPP();b.style.display=n>0?'inline-flex':'none';b.style.alignItems='center';b.style.justifyContent='center';b.disabled=!!busy||!XM;b.style.opacity=busy?'.5':''}
+$('plug').onclick=e=>{e.preventDefault();const b=$('plug');if(PLUG_N<=0||!XM||!connected||b.disabled||watching||TAP||getPP())return;try{localStorage.setItem('cbh_plug_used',JSON.stringify({a:$('w').value.trim(),t:NOW()}))}catch(e){}b.style.display='none';GIFT=true;$('spin').disabled=false;$('spin').click();plugCheck()};
 {const _g=gateBtn;gateBtn=function(){_g.apply(this,arguments);plugCheck()}}
 setInterval(()=>{PLUG_A='';plugCheck()},30000);
-if(GIFT){const n=document.createElement('div');n.className='note';n.innerHTML='<b>You have 1 free Pair Spin 🎁 (just the 0.1 XRP spin fee)</b><br><span class="small">Gift wallets only. Any other wallet paying 0.1 XRP is refunded, no spin.</span>';$('spin').before(n)}
+{const n=document.createElement('div');n.id='giftnote';n.className='note';n.style.display='none';n.innerHTML='<b>You have 1 free Pair Spin 🎁 (just the 0.1 XRP spin fee)</b><br><span class="small">Tap the glowing 🔌 next to SPIN. Gift wallets only.</span>';$('sprow').before(n)}
 fetch('pool.json?v=20261017b').then(r=>r.json()).then(onPool).catch(()=>{}).finally(()=>{loadPrice(null,true);resume()});
 setInterval(()=>{if(!document.hidden)loadPrice()},30000);
 $('w').addEventListener('input',gateBtn);$('w').addEventListener('change',()=>{showRemembered();refresh().catch(()=>{})});
 let visT=null;document.addEventListener('visibilitychange',()=>{if(document.hidden)return;clearTimeout(visT);visT=setTimeout(()=>{resume();markClaimed()},getPP()?200:1200)});window.addEventListener('pageshow',e=>{if(e.persisted)resume()});
 </script><div class="footer" style="margin:30px -16px -16px;padding:22px 10px 26px;border-top:2px solid #f5c542;background:linear-gradient(0deg,#1a1508,#0d0f14)"><div class="title" data-text="Crypto Bros&amp;Ho's Trading Company" role="heading" aria-level="1">Crypto Bros&amp;Ho's Trading Company</div>
-<p id="ixbuild" style="text-align:center;font-size:11px;color:#8a93a8;opacity:.7;margin:10px 0 0;letter-spacing:.04em">build 20261021-1045</p></div>
+<p id="ixbuild" style="text-align:center;font-size:11px;color:#8a93a8;opacity:.7;margin:10px 0 0;letter-spacing:.04em">build 20261021-1055</p></div>
 <style>
 #snd-toggle{position:fixed;bottom:10px;right:10px;z-index:10000;background:rgba(11,13,18,.85);color:#f5c542;border:1px solid #f5c542;border-radius:999px;padding:6px 10px;font-size:15px;cursor:pointer}
 .reel.realwin{box-shadow:0 0 0 2px #f5c542,0 0 26px rgba(245,197,66,.75);transition:box-shadow .3s}
