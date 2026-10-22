@@ -4,7 +4,7 @@
    The pending spin is remembered (localStorage + Xaman return URL ?sltx={txid}&slid={id}) so leaving for Xaman and coming back
    never loses it, and the button stays locked until that spin's result is in (no double payments). No Math.random anywhere. */
 (()=>{
-const JSV='20261021-0715';
+const JSV='20261022-0600';
 const g=id=>document.getElementById(id), qs=new URLSearchParams(location.search);
 const SYM=["goldx","copper","silver","gold","hat","polaroid","glasses","bro","ho"], COMBO={Copper:["copper","copper","copper"],Silver:["silver","silver","silver"],Gold:["gold","gold","gold"],pair:["polaroid","polaroid","glasses"],pair_nospins:["hat","hat","hat"]};
 // landing combos (same as slots_core.py): Copper x3 / Silver x3 = Mickel Nickel; Gold x3 = GRAND Gold Mickel only;
@@ -50,7 +50,12 @@ const wal=()=>{const a=g('w').value.trim();return valid(a)?a:''};
 const isConn=()=>!!XM&&typeof connected!=='undefined'&&connected;
 // public results never carry full wallets: free_spins keyed by 'h:'+first 16 hex of SHA-256(wallet), events carry wh (same hash)
 const MYWH={};function whOf(a){if(!a||a in MYWH)return;MYWH[a]=null;crypto.subtle.digest('SHA-256',new TextEncoder().encode(a)).then(b=>{MYWH[a]='h:'+Array.from(new Uint8Array(b),x=>x.toString(16).padStart(2,'0')).join('').slice(0,16);try{gate();drawFree()}catch(e){}}).catch(()=>{delete MYWH[a]})}
-function freeLeft(){const a=wal();whOf(a);const F=RS.free_spins||{},f=a&&((MYWH[a]&&F[MYWH[a]])||F[a]);return f?Math.max(0,f.granted-f.used):0}
+// double-tap guard (Oct 22): a FREE payment you just signed counts as used right away, until the watcher's published "used" catches up (max 15 min)
+function freeLock(a){try{const L=JSON.parse(localStorage.getItem('sl_free_lock')||'null');if(!L||L.a!==a||Date.now()-L.t>900000)return null;return L}catch(e){return null}}
+function freeLeft(){const a=wal();whOf(a);const F=RS.free_spins||{},f=a&&((MYWH[a]&&F[MYWH[a]])||F[a]);if(!f)return 0;let left=Math.max(0,f.granted-f.used);const L=freeLock(a);
+ if(L){if(f.used>L.used)try{localStorage.removeItem('sl_free_lock')}catch(e){}else left=Math.max(0,left-1)}return left}
+function setFreeLock(a){const F=RS.free_spins||{},f=(MYWH[a]&&F[MYWH[a]])||F[a]||{used:0};try{localStorage.setItem('sl_free_lock',JSON.stringify({a,t:Date.now(),used:+f.used||0}))}catch(e){}}
+const clearFreeLock=()=>{try{localStorage.removeItem('sl_free_lock')}catch(e){}};
 const snapDate=ms=>new Date(ms).toLocaleDateString('en-US',{timeZone:'America/Chicago',month:'short',day:'numeric'});
 function drawFree(){if(!CFG)return;g('slmn').textContent=wal()?freeLeft():'–';const ns=nextSnap();
  g('slms').textContent=firstSnapDone()?`Next snapshot ${snapDate(ns)}, 12:00 AM CT`:'Bonus Halloween snapshot Oct 31, then 12:00 AM CT on the 1st of every month.';
@@ -134,11 +139,11 @@ async function resume(){if(resuming)return;if(!getP())return;resuming=true;busy=
   while(Date.now()-t1<90e3&&my===gen){const P=getP();if(!P)return;k++;
    if(!P.txid&&P.uuid&&XM&&XM.payload){const pl=await to(XM.payload.get(P.uuid),6000,null);const m=pl&&pl.meta||{};
     if(pl&&pl.response&&pl.response.txid){P.txid=String(pl.response.txid).toUpperCase();setP(P)}
-    else if(m.cancelled||m.expired||(m.resolved&&!m.signed)){setP(null);stopWith('lose','Payment cancelled, nothing charged.');return}
-    else if(m.resolved&&m.signed&&pl&&pl.response&&!pl.response.txid){setP(null);stopWith('lose','Payment failed in Xaman, nothing charged.');return}}
+    else if(m.cancelled||m.expired||(m.resolved&&!m.signed)){if(P.mode==='FREE')clearFreeLock();setP(null);stopWith('lose','Payment cancelled, nothing charged.');return}
+    else if(m.resolved&&m.signed&&pl&&pl.response&&!pl.response.txid){if(P.mode==='FREE')clearFreeLock();setP(null);stopWith('lose','Payment failed in Xaman, nothing charged.');return}}
    if(my!==gen)return;
    if(!P.txid){const h=await findTx(P);if(h){P.txid=h;setP(P)}}
-   if(P.txid&&!P.seen){const t=await to(rq({command:'tx',transaction:P.txid}),8000,null);if(t&&t.result&&t.result.validated&&t.result.meta&&t.result.meta.TransactionResult!=='tesSUCCESS'){setP(null);stopWith('lose','Payment failed on the ledger ('+t.result.meta.TransactionResult+'). No spin, no XRP was sent.');return}
+   if(P.txid&&!P.seen){const t=await to(rq({command:'tx',transaction:P.txid}),8000,null);if(t&&t.result&&t.result.validated&&t.result.meta&&t.result.meta.TransactionResult!=='tesSUCCESS'){if(P.mode==='FREE')clearFreeLock();setP(null);stopWith('lose','Payment failed on the ledger ('+t.result.meta.TransactionResult+'). No spin, no XRP was sent.');return}
     if(!(t&&t.result&&t.result.validated)&&Date.now()-P.t0>3*60e3){setP(null);stopWith('lose','Payment never reached the ledger. Nothing charged; you can spin again.');return}
     if(t&&t.result&&t.result.validated){P.seen=1;setP(P);banner('wait','✔ Payment confirmed on the ledger. Reels rolling… your result is on its way.')}}
    if(my!==gen)return;
@@ -177,12 +182,12 @@ async function demoSpin(){busy=true;gate();if(!demoN&&+qs.get('demo_from')>1)dem
 let multiN=1;
 async function liveSpin(mode){if(getP())return resume();if(!isConn()||busy)return;busy=true;AX();startLoop();sStart();gate();   // reels roll the moment you tap
  const n=mode==='PAID'?multiN:1,amt=mode==='FREE'?+CFG.free_spin_drops:n*+CFG.paid_spin_drops,me=wal();
- banner('wait',`Opening Xaman… check it says <b>MAINNET</b> and <b>${Number(amt)/1e6} XRP</b>, then sign.`);let r=null;
+ banner('wait',`Opening Xaman… check it says <b>MAINNET</b> and <b>${Number(amt)/1e6} XRP</b>, then sign.${/iPhone|iPad|Android/i.test(navigator.userAgent)?' After signing, tap <b>◀ Safari</b> (top-left) to come back here.':''}`);let r=null;
  try{r=await xamanSign({TransactionType:'Payment',Destination:SELLER,Amount:String(amt),Memos:[{Memo:{MemoType:s2hex(CFG.memo_type||'CBH-SLOT'),MemoData:s2hex(mode)}}]},
-   mode==='FREE'?'MICKEL NICKEL SLOTS: free spin (0.1 XRP fee)':`MICKEL NICKEL SLOTS: ${n} spin${n>1?'s':''} (0.5 XRP each)`,uuid=>setP({mode,n,wallet:me,t0:Date.now(),uuid}),true)}
- catch(e){setP(null);stopWith('lose','Xaman: '+e.message);busy=false;gate();return}
+   mode==='FREE'?'MICKEL NICKEL SLOTS: free spin (0.1 XRP fee)':`MICKEL NICKEL SLOTS: ${n} spin${n>1?'s':''} (0.5 XRP each)`,uuid=>{setP({mode,n,wallet:me,t0:Date.now(),uuid});if(mode==='FREE')setFreeLock(me)},true)}
+ catch(e){if(mode==='FREE')clearFreeLock();setP(null);stopWith('lose','Xaman: '+e.message);busy=false;gate();return}
  // phone: the sign request is open in Xaman now; resume() polls Xaman + the ledger and keeps the reels rolling (also after the app switch)
- const P=getP();if(r&&r.signed===false){setP(null);stopWith('lose','Cancelled in Xaman. No payment was made.');busy=false;gate();return}
+ const P=getP();if(r&&r.signed===false){if(mode==='FREE')clearFreeLock();setP(null);stopWith('lose','Cancelled in Xaman. No payment was made.');busy=false;gate();return}
  if(P&&r&&r.txid){P.txid=String(r.txid).toUpperCase();setP(P)}busy=false;resume()}
 function gate(){if(!CFG)return;const s=g('slspin'),c=isConn(),n=freeLeft(),P=getP();let mode='',big='SPIN',sm='';
  if(DEMO){mode='demo';big='DEMO SPIN';sm='free · no real prizes';s.disabled=busy}
@@ -230,7 +235,7 @@ g('slmute').onclick=()=>{mute=!mute;localStorage.setItem('sl_mute',mute?'1':'0')
 if(g('slver'))g('slver').onclick=verify;
 if(g('slmulti'))g('slmulti').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(busy)return;multiN=Math.min(3,Math.max(1,+b.dataset.n||1));gate()});
 // desktop QR flow: the Xaman websocket told us the tx hash (or a cancel) -> hand it to the polling loop
-function gotTx(r){const P=getP();if(!P)return;if(r.signed===false){setP(null);gen++;resuming=false;busy=false;stopWith('lose','Cancelled in Xaman. No payment was made.');gate();return}if(r.txid&&!P.txid){P.txid=String(r.txid).toUpperCase();setP(P)}}
+function gotTx(r){const P=getP();if(!P)return;if(r.signed===false){if(P.mode==='FREE')clearFreeLock();setP(null);gen++;resuming=false;busy=false;stopWith('lose','Cancelled in Xaman. No payment was made.');gate();return}if(r.txid&&!P.txid){P.txid=String(r.txid).toUpperCase();setP(P)}}
 window.CBH_SLOTS={outcome,multiOutcome,spinHash,getP,gate,gotTx,build:()=>window.SL_BUILD};   // exposed for the parity / flow tests
 boot();
 })();
