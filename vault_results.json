@@ -7,7 +7,7 @@
  },
  "stash_left": 13963,
  "coins_left": 13963,
- "giveaway_stash_in_wallet": 104,
+ "giveaway_stash_in_wallet": 100,
  "used_pairs": {
   "0907": {
    "holder": "rHcx\u2026ewT",
@@ -2240,5 +2240,5 @@
   }
  ],
  "rule": "pick i = SHA-256(proof/payment tx hash + validating ledger hash + byte i) mod pool size; pool = never-minted coin numbers sorted (mn_remaining.json); pool shrinks each pick",
- "updated": "2026-10-22T04:58:46.255569+00:00"
+ "updated": "2026-10-22T17:11:19.505658+00:00"
 }
