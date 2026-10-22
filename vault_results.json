@@ -5,9 +5,9 @@
   "d1": 3,
   "d2_plus": 2
  },
- "stash_left": 13966,
- "coins_left": 13966,
- "giveaway_stash_in_wallet": 101,
+ "stash_left": 13963,
+ "coins_left": 13963,
+ "giveaway_stash_in_wallet": 104,
  "used_pairs": {
   "0907": {
    "holder": "rHcx\u2026ewT",
@@ -140,16 +140,22 @@
    "proof_tx": "DF0F24A6761A8EE02DEAE6B70F0EDD37823C59536113F5CE54A7315DBF0D53F5",
    "kind": "d1",
    "status": "paid"
+  },
+  "0525": {
+   "holder": "rpem\u2026oLd",
+   "proof_tx": "9065EF3CAF2DC4E971361999725301F0EBE577DAD4BC0B7314E198834A370E45",
+   "kind": "d1",
+   "status": "paid"
   }
  },
  "mn": {
   "open": true,
   "total": 14160,
-  "minted_total": 194,
-  "remaining": 13966,
+  "minted_total": 197,
+  "remaining": 13963,
   "first_wave_until": 4248,
-  "left_at_first_price": 4123,
-  "site_minted": 125,
+  "left_at_first_price": 4120,
+  "site_minted": 128,
   "special_on": true,
   "first_price_xrp": "1.11",
   "normal_price_xrp": "3.33",
@@ -2144,8 +2150,84 @@
    "delivered": "100000",
    "action": "rejected",
    "reason": "MISSING_POLAROID"
+  },
+  {
+   "t": 1792644955.2583864,
+   "time_utc": "2026-10-22T04:55:55.258412+00:00",
+   "proof_tx": "9065EF3CAF2DC4E971361999725301F0EBE577DAD4BC0B7314E198834A370E45",
+   "ledger_index": 107820301,
+   "holder": "rpem\u2026oLd",
+   "piece": "0525",
+   "delivered": "100000",
+   "action": "spins",
+   "kind": "d1",
+   "spins": 3,
+   "ledger_hash": "1DDA0BA12F51C3613921E7F981CA27A2F61D3163EEB27B874F99017DCC7140CB",
+   "picks": [
+    {
+     "i": 0,
+     "type": "mint",
+     "coin": 2195,
+     "metal": "Copper",
+     "uri": "ipfs://bafybeidmhjsm45ld37ve7xcajuvmkzwetdifhxiyylr7mfqusgczga7hzi/2195.json",
+     "pool_size": 4054,
+     "index": 629,
+     "status": "offered",
+     "attempts": [
+      {
+       "hash": "1FEFDD026052C99C92CCA1CE4514B174238B2EF426F835C236D0F1C341D74343",
+       "lls": 107820323,
+       "seq": 107410151
+      }
+     ],
+     "nft_id": "00181770992DB95F47B7A516192A895CCF7E2789C11673738515A5190666EC7F",
+     "offer_id": "B7B0407FD87D35846B377533D3A57B4303110054441B3C36EB1D98BB411C8EF2",
+     "mint_tx": "1FEFDD026052C99C92CCA1CE4514B174238B2EF426F835C236D0F1C341D74343"
+    },
+    {
+     "i": 1,
+     "type": "mint",
+     "coin": 4129,
+     "metal": "Silver",
+     "uri": "ipfs://bafybeidmhjsm45ld37ve7xcajuvmkzwetdifhxiyylr7mfqusgczga7hzi/4129.json",
+     "pool_size": 4053,
+     "index": 1177,
+     "status": "offered",
+     "attempts": [
+      {
+       "hash": "32F4C09D40A583C82875FD993EB67AAC782EE449F1FD6A0DFE0CC0BC74A8079E",
+       "lls": 107820325,
+       "seq": 107410152
+      }
+     ],
+     "nft_id": "00181770992DB95F47B7A516192A895CCF7E2789C11673739BFB76180666EC80",
+     "offer_id": "F2D266DBD2D06955C8101E409782358040932162B18C5E5908926F454BDAC6AA",
+     "mint_tx": "32F4C09D40A583C82875FD993EB67AAC782EE449F1FD6A0DFE0CC0BC74A8079E"
+    },
+    {
+     "i": 2,
+     "type": "mint",
+     "coin": 5962,
+     "metal": "Copper",
+     "uri": "ipfs://bafybeidmhjsm45ld37ve7xcajuvmkzwetdifhxiyylr7mfqusgczga7hzi/5962.json",
+     "pool_size": 4052,
+     "index": 1724,
+     "status": "offered",
+     "attempts": [
+      {
+       "hash": "CEA6CEB33B8959BB9DD9E1DE43ECADFF7126EB4CD81C04B10CFFFD850855097C",
+       "lls": 107820327,
+       "seq": 107410153
+      }
+     ],
+     "nft_id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373B2E1471F0666EC81",
+     "offer_id": "301E1736424E09E37AD68B5D5B63FC345BC67FA025D43EBA4D9AAD39962C1AC3",
+     "mint_tx": "CEA6CEB33B8959BB9DD9E1DE43ECADFF7126EB4CD81C04B10CFFFD850855097C"
+    }
+   ],
+   "coin_removed": null
   }
  ],
  "rule": "pick i = SHA-256(proof/payment tx hash + validating ledger hash + byte i) mod pool size; pool = never-minted coin numbers sorted (mn_remaining.json); pool shrinks each pick",
- "updated": "2026-10-21T22:31:15.628357+00:00"
+ "updated": "2026-10-22T04:56:21.912498+00:00"
 }
