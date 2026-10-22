@@ -1,5 +1,5 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
-<script>window.SL_BUILD="20261021-0720";/* stale-page guard: GitHub Pages caches pages for 10 min. If a newer build is out, reload once with ?v=<build> (a new URL, so the phone fetches it fresh). */
+<script>window.SL_BUILD="20261022-0600";/* stale-page guard: GitHub Pages caches pages for 10 min. If a newer build is out, reload once with ?v=<build> (a new URL, so the phone fetches it fresh). */
 (function(){try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){var b=j&&j.slots;if(!b||b===window.SL_BUILD)return;var u=new URL(location.href);if(u.searchParams.get("v")===b)return;u.searchParams.set("v",b);location.replace(u.toString())}).catch(function(){})}catch(e){}})();</script><link rel="icon" href="img/favicon.png">
 <title>MICKEL NICKEL SLOTS · Crypto Bros&amp;Ho's Trading Company</title>
 <link rel="stylesheet" href="slots.css?v=20261018-1050">
@@ -57,7 +57,7 @@ async function nfts(a){let out=[],marker;do{const r=(await rq({command:'account_
 // Xaman: the return link brings you back HERE with the tx hash, so a reload never loses your spin
 async function xamanSign(txjson,instruction,onCreated,nowait){const w=$('w').value.trim(),mode=(txjson.Memos&&txjson.Memos[0]&&txjson.Memos[0].Memo.MemoData)?(hex2s(txjson.Memos[0].Memo.MemoData)):'';
  const ret=PAGE+'?wallet='+encodeURIComponent(w)+(mode?'&slmode='+encodeURIComponent(mode)+'&sltx={txid}&slid={id}':'');
- const sub=await XM.payload.createAndSubscribe({txjson,options:{force_network:NET,return_url:{app:ret,web:ret}},custom_meta:{instruction}},e=>{if('signed' in e.data)return e.data});
+ const sub=await XM.payload.createAndSubscribe({txjson,options:Object.assign({force_network:NET},isMobile?{}:{return_url:{app:ret,web:ret}}),custom_meta:{instruction}},e=>{if('signed' in e.data)return e.data});
  if(!sub||!sub.created)throw new Error('Xaman did not create the sign request');if(onCreated)onCreated(sub.created.uuid);
  const xapp=!!(XM.runtime&&XM.runtime.xapp);
  if(xapp){try{XM.xapp.openSignRequest({uuid:sub.created.uuid})}catch(e){location.href=sub.created.next.always}}
@@ -77,5 +77,5 @@ if(window.CBH_XAMAN_API_KEY){const sc=document.createElement('script');sc.src='h
  XM.on('success',async()=>{const a=await XM.user.account;$('w').value=a;connected=true;$('connect').textContent='✅ '+a.slice(0,6)+'…'+a.slice(-4)+' · disconnect';showClaims()})};document.head.appendChild(sc)}
 </script>
 <p class="sl-build" id="slbuild">build 20261018-1050</p>
-<script src="slots.js?v=20261021-0715"></script>
+<script src="slots.js?v=20261022-0600"></script>
 </body></html>
