@@ -8,7 +8,7 @@
  "free_spins": {
   "h:ab7ed169a659934b": {
    "granted": 3,
-   "used": 0
+   "used": 1
   },
   "h:8f8ff34709118778": {
    "granted": 1,
@@ -404,7 +404,54 @@
    "month": null,
    "granted": 1,
    "used": 1
+  },
+  {
+   "t": 1792674573.70291,
+   "tx": "5A815DAD1F75F5B697A729F4A2F1C4ED306F94A7F5949C813AADBBF47D143D27",
+   "ledger_index": 107827813,
+   "wh": "h:ab7ed169a659934b",
+   "wallet": "rUst\u2026YGn",
+   "mode": "FREE",
+   "delivered": "100000",
+   "gift": true,
+   "action": "lose",
+   "n": 1,
+   "spins": [
+    {
+     "i": 0,
+     "hash": "5A815DAD1F75F5B697A729F4A2F1C4ED306F94A7F5949C813AADBBF47D143D27",
+     "win": false,
+     "reels": [
+      "copper",
+      "silver",
+      "ho"
+     ],
+     "prize": {},
+     "ticket": null,
+     "jackpot": false,
+     "grand": false,
+     "semi_grand": false,
+     "pool": null,
+     "offers": []
+    }
+   ],
+   "ledger_hash": "D46BA3C4D0C5664C88EECB9F551C10F69B5CCC82E6B36BC3F1C04ACC8B0BCC54",
+   "close_unix": 1792674360,
+   "pool_size": 103,
+   "pool_sha256": "45c9b2e356d48ae4bf8581b5bdab73f8533a0564bdb34df9de46e504c1456cd5",
+   "pool": null,
+   "reels": [
+    "copper",
+    "silver",
+    "ho"
+   ],
+   "prize": {},
+   "ticket": null,
+   "jackpot": false,
+   "grand": false,
+   "semi_grand": false,
+   "offers": []
   }
  ],
- "updated": "2026-10-22T11:03:58.635281+00:00"
+ "updated": "2026-10-22T13:09:37.946009+00:00"
 }
