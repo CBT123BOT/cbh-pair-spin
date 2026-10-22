@@ -6,11 +6,15 @@
  "first_snapshot_ct": "2026-10-31T00:00:00-05:00",
  "next_snapshot_ct": "2026-10-31T00:00:00-05:00",
  "free_spins": {
-  "h:c07ea9daaecc29bf": {
-   "granted": 1,
-   "used": 1
-  },
   "h:8f8ff34709118778": {
+   "granted": 1,
+   "used": 0
+  },
+  "h:71a6e156a041bc1a": {
+   "granted": 1,
+   "used": 0
+  },
+  "h:d590e8424441c039": {
    "granted": 1,
    "used": 0
   },
@@ -18,13 +22,9 @@
    "granted": 3,
    "used": 2
   },
-  "h:d590e8424441c039": {
+  "h:c07ea9daaecc29bf": {
    "granted": 1,
-   "used": 0
-  },
-  "h:71a6e156a041bc1a": {
-   "granted": 1,
-   "used": 0
+   "used": 1
   }
  },
  "prizes_left": 102,
@@ -1554,5 +1554,5 @@
    ]
   }
  ],
- "updated": "2026-10-22T13:40:01.372184+00:00"
+ "updated": "2026-10-22T17:11:43.909557+00:00"
 }
