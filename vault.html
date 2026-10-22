@@ -94,8 +94,11 @@ function gate(){const b=$('spin');if(!VOPEN){b.disabled=true;b.textContent='THE 
  if(!walletOk||!XM){b.disabled=true;b.textContent='Connect Xaman to spin';return}b.disabled=false;b.textContent='🐉 UNITE THE TWINS · USE '+NS+' SPINS'}
 $('ok').onchange=gate;
 async function xamanSign(txjson,instruction){const ret=PAGE+'?wallet='+encodeURIComponent($('w').value.trim());
- const sub=await XM.payload.createAndSubscribe({txjson,options:{force_network:NET,return_url:{app:ret,web:ret}},custom_meta:{instruction}},e=>{if('signed' in e.data)return e.data});
- if(!sub||!sub.created)throw new Error('Xaman did not create the sign request');if(isMobile)location.href=sub.created.next.always;else{$('qri').src=sub.created.refs.qr_png;$('qr').style.display='block'}return sub.resolved}
+ const sub=await XM.payload.createAndSubscribe({txjson,options:Object.assign({force_network:NET},isMobile?{}:{return_url:{app:ret,web:ret}}),custom_meta:{instruction}},e=>{if('signed' in e.data)return e.data});
+ if(!sub||!sub.created)throw new Error('Xaman did not create the sign request');if(isMobile)location.href=sub.created.next.always;else{$('qri').src=sub.created.refs.qr_png;$('qr').style.display='block'}
+ const uuid=sub.created.uuid;return new Promise((res,rej)=>{let done=false,n=0;const fin=v=>{if(done)return;done=true;clearInterval(t);res(v)};sub.resolved.then(fin,()=>{});
+  const t=setInterval(async()=>{if(done)return;if(++n>200){done=true;clearInterval(t);rej(new Error('no answer from Xaman, check your wallet before trying again'));return}try{const p=await XM.payload.get(uuid);const m=p&&p.meta||{};if(m.resolved)fin({signed:!!m.signed,txid:p.response&&p.response.txid})}catch(e){}},3000)})}
+let VBUSY=false;const vlock=async fn=>{if(VBUSY)return;VBUSY=true;try{await fn()}finally{VBUSY=false}};
 function startC(){for(let i=0;i<NS;i++){$('c'+i).classList.add('spinning');$('c'+i).textContent='🪙'}}
 function stopC(list){for(let i=0;i<NS;i++){const c=$('c'+i);c.classList.remove('spinning');c.innerHTML=list[i]?(list[i].img?`<img src="${list[i].img}" title="${list[i].name}">`:'✔'):'?'}}
 async function pendingCoins(){const a=$('w').value.trim();const r=(await rq({command:'account_objects',account:SELLER,type:'nft_offer',limit:400})).result||{};
@@ -103,13 +106,13 @@ async function pendingCoins(){const a=$('w').value.trim();const r=(await rq({com
  return (r.account_objects||[]).filter(o=>o.Destination===a&&o.Amount==='0'&&held[o.NFTokenID]).map(o=>({offer:o.index,uri:held[o.NFTokenID]}))}
 async function showClaims(){const L=await pendingCoins();if(!L.length){$('claim').innerHTML='';return L}const info=await Promise.all(L.map(x=>coinInfo(x.uri)));
  $('claim').innerHTML='<h3>Your Mickel Nickels to claim</h3><div class="claim">'+L.map((x,i)=>`<a class="btn cl" href="#" onclick='claimOne("${x.offer}");return false'>CLAIM ${info[i].metal||''} ${info[i].name}</a>`).join('')+'</div><div class="small">Claiming costs 0 XRP. Or accept them in Xaman → Events → Requests.</div>';return L.map((x,i)=>({...x,...info[i]}))}
-async function claimOne(o){if(!XM)return;try{await xamanSign({TransactionType:'NFTokenAcceptOffer',NFTokenSellOffer:o},'Claim your Mickel Nickel (0 XRP)')}catch(e){$('status').textContent='Xaman: '+e.message}setTimeout(showClaims,5000)}
-$('spin').onclick=async()=>{if(!VOPEN||$('spin').disabled)return;const N=sel;const before=new Set((await pendingCoins()).map(x=>x.offer));startC();
+async function claimOne(o){if(!XM||VBUSY)return;VBUSY=true;try{await xamanSign({TransactionType:'NFTokenAcceptOffer',NFTokenSellOffer:o},'Claim your Mickel Nickel (0 XRP)')}catch(e){$('status').textContent='Xaman: '+e.message}finally{VBUSY=false}setTimeout(showClaims,5000)}
+$('spin').onclick=()=>vlock(async()=>{if(!VOPEN||$('spin').disabled)return;const N=sel;const before=new Set((await pendingCoins()).map(x=>x.offer));startC();
  $('status').innerHTML=`Opening Xaman… check it says <b>${NET}</b> and <b>${SPINFEE/1e6} XRP</b> (spin fee), then sign. That proves you hold pair #${N}.`;
  try{if(!VOPEN)throw new Error('THE VAULT opens soon');await xamanSign({TransactionType:'Payment',Destination:SELLER,Amount:String(SPINFEE),Memos:[{Memo:{MemoType:s2hex('CBH-VAULT'),MemoData:s2hex(N)}}]},`THE VAULT: use ${NS} spins on pair #${N}`)}catch(e){stopC([]);$('status').textContent='Xaman: '+e.message;return}
  clearInterval(watchT);let k=0;watchT=setInterval(async()=>{k++;try{const L=(await showClaims())||[];const nw=L.filter(x=>!before.has(x.offer));
   if(nw.length>=NS){clearInterval(watchT);stopC(nw);const g=nw.filter(x=>/gold/i.test((x.metal||'')+x.name)).length;$('status').innerHTML=(g?'🏆 GOLD! ':'🎉 ')+'Your '+NS+' spins are in. Claim your coins below. The coin on pair #'+N+' is now off.';sel=null;await load();myPairs()}
-  else if(k>45){clearInterval(watchT);stopC([]);$('status').innerHTML='No spins came back. Check <a href="vault_results.json" style="color:#8ab">the public log</a> (the pair may not qualify).'}}catch(e){}},4000)};
+  else if(k>45){clearInterval(watchT);stopC([]);$('status').innerHTML='No spins came back. Check <a href="vault_results.json" style="color:#8ab">the public log</a> (the pair may not qualify).'}}catch(e){}},4000)});
 if(window.CBH_XAMAN_API_KEY){const sc=document.createElement('script');sc.src='https://xumm.app/assets/cdn/xumm.min.js';sc.onload=()=>{XM=new Xumm(window.CBH_XAMAN_API_KEY);$('connect').style.display='block';$('w').readOnly=true;
  $('connect').onclick=e=>{e.preventDefault();if(connected)XM.logout();else XM.authorize()};XM.on('logout',()=>{connected=false;$('connect').textContent='🔗 Connect Xaman (sign in)';gate()});
  XM.on('success',async()=>{const a=await XM.user.account;$('w').value=a;connected=true;$('connect').textContent='✅ Connected: '+a.slice(0,6)+'…'+a.slice(-4);myPairs();showClaims();mnGate()})};document.head.appendChild(sc)}
@@ -127,12 +130,12 @@ function mnGate(){if(!MNW){$('mnleft').textContent='—';return}const S=mnState(
  const b=$('mnbuy');if(!S.open){b.disabled=true;b.textContent='Mint opens soon';b.style.opacity='.5';return}b.style.opacity='';
  if(!XM||!connected){b.disabled=true;b.textContent='Connect Xaman to mint';return}b.disabled=false;b.textContent=`🪙 MINT ${mnq} · ${$('mntot').textContent} XRP`}
 $('mnminus').onclick=()=>{mnq--;mnGate()};$('mnplus').onclick=()=>{mnq++;mnGate()};
-$('mnbuy').onclick=async()=>{const S=mnState();if(!S.open||$('mnbuy').disabled)return;const q=mnq,amt=(dr(S.price)*BigInt(q)).toString();const before=new Set((await pendingCoins()).map(x=>x.offer));
+$('mnbuy').onclick=()=>vlock(async()=>{const S=mnState();if(!S.open||$('mnbuy').disabled)return;const q=mnq,amt=(dr(S.price)*BigInt(q)).toString();const before=new Set((await pendingCoins()).map(x=>x.offer));
  $('status').innerHTML=`Opening Xaman… check it says <b>${NET}</b> and <b>${(Number(amt)/1e6).toFixed(2)} XRP</b>, then sign.`;
  try{await xamanSign({TransactionType:'Payment',Destination:SELLER,Amount:amt,Memos:[{Memo:{MemoType:s2hex('CBH-MN'),MemoData:s2hex(String(q))}}]},`Mint ${q} random Mickel Nickel${q>1?'s':''} at ${S.price} XRP each`)}catch(e){$('status').textContent='Xaman: '+e.message;return}
  $('status').textContent='Paid ✔ Minting your random coin'+(q>1?'s':'')+'…';let k=0;clearInterval(watchT);watchT=setInterval(async()=>{k++;try{const L=(await showClaims())||[];const nw=L.filter(x=>!before.has(x.offer));
   if(nw.length>=q){clearInterval(watchT);const g=nw.filter(x=>/gold/i.test((x.metal||'')+x.name)).length;$('status').innerHTML=(g?'🏆 GOLD! ':'🎉 ')+`Your ${q} Mickel Nickel${q>1?'s are':' is'} in. Claim below.`;await load();mnGate()}
-  else if(k>60){clearInterval(watchT);$('status').innerHTML='Nothing came back yet. Check <a href="vault_results.json" style="color:#8ab">the public log</a> (a wrong-price payment is refunded).'}}catch(e){}},4000)};
+  else if(k>60){clearInterval(watchT);$('status').innerHTML='Nothing came back yet. Check <a href="vault_results.json" style="color:#8ab">the public log</a> (a wrong-price payment is refunded).'}}catch(e){}},4000)});
 setInterval(()=>load().then(mnGate).catch(()=>{}),30000);loadMN();
 $('w').addEventListener('change',()=>myPairs().catch(()=>{}));
 </script><div class="footer" style="margin:30px -16px -16px;padding:22px 10px 26px;border-top:2px solid #f5c542;background:linear-gradient(0deg,#1a1508,#0d0f14)"><div class="title" data-text="Crypto Bros&amp;Ho's Trading Company" role="heading" aria-level="1">Crypto Bros&amp;Ho's Trading Company</div>
