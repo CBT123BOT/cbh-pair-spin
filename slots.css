@@ -11,7 +11,7 @@
 .sl-head{display:flex;align-items:flex-start;gap:8px}.sl-brand{flex:1;min-width:0;text-align:center}
 .sl-word{margin:0;font-size:clamp(1.55rem,7.4vw,2.6rem);line-height:.95;color:var(--cream);text-shadow:0 3px 0 var(--ink),3px 3px 0 var(--ink)}
 .sl-tag{margin:.3rem 0 0;font-size:.9rem}.sl-demo{margin:.15rem 0 0;font-size:.74rem;letter-spacing:.04em;text-transform:uppercase}
-.sl-mute{flex:none;width:44px;height:44px;border-radius:999px;border:3px solid var(--ink);background:var(--cream);box-shadow:0 3px 0 var(--ink);font-size:1.1rem;cursor:pointer}
+.sl-mute{flex:none;min-width:44px;height:44px;padding:0 10px;display:flex;align-items:center;gap:4px;border-radius:999px;border:3px solid var(--ink);background:var(--cream);box-shadow:0 3px 0 var(--ink);font-size:1.1rem;cursor:pointer}
 .sl-stage{display:grid;justify-items:center;gap:.4rem;margin-top:.4rem}
 .sl-mascot{width:min(170px,42vw);height:auto;filter:drop-shadow(0 8px #1a0d1429)}
 .sl-cab{width:100%;box-sizing:border-box;background:var(--ink);color:var(--cream);border:4px solid var(--gold);border-radius:1.4rem;padding:.7rem;box-shadow:0 10px 0 var(--pinkd),0 16px 28px #1a0d1438;position:relative;overflow:hidden}
@@ -73,3 +73,14 @@
 .sl-multi button.on{background:#ffc72c;color:#1a0f14}
 /* build label (tells us which version a phone is running) */
 .sl-build{text-align:center;font-size:11px;color:#8a93a8;opacity:.7;margin:18px 0 6px;letter-spacing:.04em}
+
+.sl-mute small{font:800 11px/1 system-ui,sans-serif;color:var(--ink)}
+.sl-fmulti{flex-wrap:wrap;align-items:center}.sl-flab{flex-basis:100%;text-align:center;font-size:.8rem;color:#ffc72c;font-weight:800}
+.sl-fmulti button{max-width:64px}
+.sl-sndhint{text-align:center;margin:6px 0 0;font-size:.8rem;color:#ffc72c}.sl-sndhint[hidden]{display:none}
+#cfx{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden}
+.cfx-coin{position:absolute;top:-60px;will-change:transform;animation:coinfall 2.2s cubic-bezier(.45,0,.9,.6) forwards;filter:drop-shadow(0 2px 2px rgba(0,0,0,.45))}
+@keyframes coinfall{0%{transform:translate3d(0,0,0) rotate(0)}100%{transform:translate3d(var(--dx),112vh,0) rotate(var(--rot))}}
+#cfx i{position:absolute;top:-12px;width:8px;height:8px;border-radius:2px;animation:cfall 2.4s ease-out forwards}
+@keyframes cfall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+@media (prefers-reduced-motion:reduce){#cfx{display:none}}
