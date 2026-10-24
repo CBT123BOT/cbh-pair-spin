@@ -1,0 +1,22 @@
+{
+ "network": "MAINNET",
+ "machine": "rNxAwKP3rdNTfe4ZNw1SntXCfW2U4r2XuB",
+ "coin_issuer": "rNxAwKP3rdNTfe4ZNw1SntXCfW2U4r2XuB",
+ "voucher_issuer": "rNxAwKP3rdNTfe4ZNw1SntXCfW2U4r2XuB",
+ "voucher_taxon": 25,
+ "values": {
+  "Copper": 1000,
+  "Silver": 10000,
+  "Gold": 100000
+ },
+ "voucher_value": 50000,
+ "machine_fee_drops": 100000,
+ "cap_per_wallet": 3,
+ "player_supply": 300,
+ "player_minted": 0,
+ "reserved_total": 33,
+ "reserved_minted": 0,
+ "wallet_vouchers": {},
+ "requests": [],
+ "updated": 1792859686.602208
+}

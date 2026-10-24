@@ -1,0 +1,67 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MiCkEL PiCKLe CRypTo ArmOry ARmy 🪖 · From the Ashes</title><link rel="stylesheet" href="ashes.css?v=20261023-vr1"></head>
+<body>
+<header class="hd"><h1 class="disp">MiCkEL PiCKLe CRypTo ArmOry ARmy 🪖</h1><button id="mute" class="mute" type="button"></button></header>
+<div class="wal"><input id="w" placeholder="your r… wallet" autocomplete="off"><a href="#" id="connect">🔗 Connect Xaman</a></div>
+<nav class="tabs"><a href="#ashes" data-t="ashes" class="on">🎰 Vending Machine</a><a href="#coin" data-t="coin">🪙 Coin Machine</a></nav>
+<section id="t-shop" class="tab" hidden>
+ <div class="banner cafeb"><img src="img/cafe_shop_pickles.jpg" alt="Mickel Pickle Shop on xrp.cafe"></div>
+ <div class="card hero"><img src="img/base_standing_logo.jpg" alt="Base Mickel Pickle"><div><h2 class="disp">Base Pickles</h2><p>Every custom build starts with one base pickle.</p>
+ <p class="price"><span id="pBase">3.33 XRP</span></p><p class="full">Full build: 7.77 XRP in parts (3.33 + 3 × 1.11 + 1.11) + 1 voucher (from the Coin Machine)</p><p class="note">Minted &amp; sold on xrp.cafe · 300 base pickles</p>
+ <a class="btn gold cafe" href="https://xrp.cafe" target="_blank" rel="noopener">BUY ON XRP.CAFE ↗</a></div></div>
+</section>
+<section id="t-att" class="tab" hidden>
+ <div class="banner cafeb"><img src="img/cafe_shop_attachments.jpg" alt="Mickel Pickle Attachments on xrp.cafe"></div>
+ <p class="full">Full build: 7.77 XRP in parts (3.33 + 3 × 1.11 + 1.11) + 1 voucher (from the Coin Machine)</p><p class="note">9 attachments · pick any 3 for each build · <b id="pAtt">1.11 XRP</b> each · minted &amp; sold on xrp.cafe</p><p><a class="btn gold cafe" href="https://xrp.cafe" target="_blank" rel="noopener">BUY ON XRP.CAFE ↗</a></p>
+ <div class="grid" id="attGrid"></div>
+ <div class="banner lineup"><img src="img/lineup_10.jpg" alt="Attachments lineup"></div>
+</section>
+<section id="t-vogue" class="tab" hidden>
+ <div class="banner cafeb"><img src="img/cafe_shop_vogue_out.jpg" alt="MiCkLe PiCKLe Vogue Out on xrp.cafe"></div>
+ <p class="full">Full build: 7.77 XRP in parts + 1 voucher (from the Coin Machine)</p><p class="note">MiCkLe PiCKLe Vogue Out · 333 poses (111 of each) · <b id="pPose">1.11 XRP</b> each · minted &amp; sold on xrp.cafe<br>Your pose decides how your finished pickle stands, and its creature arms and legs.</p>
+ <div class="grid" id="poseGrid"></div><p><a class="btn gold cafe" href="https://xrp.cafe" target="_blank" rel="noopener">BUY ON XRP.CAFE ↗</a></p>
+</section>
+<section id="t-ashes" class="tab" hidden>
+ <div class="vm">
+  <div class="vm-marquee"><div class="disp vm-brand">MICKEL PICKLE</div><div class="vm-slogan">Pay a nickel! Get a pickle! A pickle in every can!</div><div class="vm-sub">VENDING MACHINE · process: <b>From the Ashes</b></div></div>
+  <div class="vm-body">
+   <div class="vm-glass">
+    <div class="vm-row"><span class="vm-lbl">A · BASE</span><div class="vm-slots" id="myBases" data-r="A"></div></div>
+    <div class="vm-row"><span class="vm-lbl">B · ATTACHMENTS <span id="nAtt">0/3</span></span><div class="vm-slots" id="myAtts" data-r="B"></div></div>
+    <div class="vm-row"><span class="vm-lbl">C · POSE</span><div class="vm-slots" id="myPoses" data-r="C"></div></div>
+    <img class="vm-sticker" src="img/can_armory_army.png" alt="">
+   </div>
+   <div class="vm-panel">
+    <div class="vm-screen" id="status">Load 1 base + 3 attachments + 1 pose</div>
+    <div class="vm-coin"><span class="vm-coinslot vm-billslot"></span><small id="vmPay">VOUCHER SLOT<br>insert 1 voucher</small><small class="vm-getv">Get your voucher at the Coin Machine.</small></div>
+    <div class="vm-keys"><span>A</span><span>B</span><span>C</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>✓</span></div>
+    <div class="vm-builds" id="myBuilds"></div>
+    <button class="btn vm-build" id="build" type="button" disabled>BURN &amp; BUILD</button>
+   </div>
+  </div>
+  <div class="vm-tray" id="vmTray"><div class="vm-flames"></div><div class="canbox"><img id="can" src="img/can_armory_army.png" alt="Mickel Pickle can"><img id="result" alt="Your new Mickel Pickle" hidden></div><span class="vm-push">PUSH</span></div><div id="vmBanner" hidden>🎉 YOUR CUSTOM PICKLE!</div><div id="vmClaims"></div>
+ </div>
+ <p class="lore">“To become a phoenix, you must be reborn from your ashes.”</p>
+ <div class="cost"><b>Full build: 7.77 XRP in parts + 1 voucher + 0.1 XRP machine fee</b><br>Season 1: vouchers only · 333 vouchers, one per pickle · max 3 builds per wallet<br><small>Get your voucher at the Coin Machine. 1 signature in Xaman (one Batch): hands over your voucher and sends your 5 picks together, all or nothing. The machine collects the voucher (it is kept, not burned), burns those 5 parts, and hands everything back if anything fails. +1 tap to claim your pickle.</small></div>
+ <div id="claims"></div>
+</section>
+<section id="t-coin" class="tab" hidden>
+ <div class="vm cm">
+  <div class="vm-marquee"><div class="disp vm-brand">COIN MACHINE</div><div class="vm-slogan">Coins in! Dollars out!</div><div class="vm-sub">Mickel Nickel voucher printer </div></div>
+  <div class="cm-body">
+   <div class="cm-hopper"><span class="vm-lbl">COIN HOPPER</span>
+    <div class="cm-coins" id="cmCoins" data-demo="1"><i class="c ag">10K</i><i class="c cu">1K</i><i class="c cu">1K</i><i class="c cu">1K</i><i class="c ag">10K</i><i class="c cu">1K</i><i class="c cu">1K</i><i class="c cu">1K</i><i class="c ag">10K</i><i class="c cu">1K</i><i class="c cu">1K</i><i class="c cu">1K</i><i class="c ag">10K</i><i class="c cu">1K</i></div>
+    <div class="cm-funnel"><span class="vm-coinslot"></span></div>
+    <div class="cm-legend"><span><i class="c cu sm"></i>Copper 1,000</span><span><i class="c ag sm"></i>Silver 10,000</span><span><i class="c au sm"></i>Gold 100,000</span></div>
+   </div>
+   <div class="vm-panel"><span class="vm-lbl">TOTAL</span><div class="cm-total"><span class="cm-count" id="cmCount">50,000</span><small>4 Silver + 10 Copper</small><br><small>/ 50,000</small></div>
+    <div class="cm-bar"><i></i></div><button class="btn vm-build" id="cmInsert" type="button" disabled>INSERT COINS</button><div class="vm-builds" id="cmMine"></div></div>
+  </div>
+  <div class="cm-billslot"><div class="cm-mouth"></div></div><div class="cm-vcount" id="cmVcount"></div>
+ </div>
+ <div class="cost"><b>Drop in any mix of Mickel Nickel coin NFTs worth exactly 50,000 per bill: 50K = 1 bill, 1 Gold (100K) = 2 bills, 150K = 3.</b> The bill pays for one custom build in the Vending Machine, where it is collected (not burned).<br><small>Rules: Copper coins are burned · Gold &amp; Silver coins are kept · max 3 vouchers per wallet · exact multiples of 50,000 only, or everything is handed back · max 3 vouchers per wallet counts every bill.</small><div id="cmStatus" class="vm-screen" style="margin-top:8px">Connect your wallet, tap your coins to fill the hopper to exactly 50,000.</div><div class="note" id="cmSigs"></div><div class="note"><b>0.1 XRP machine fee per request</b> (paid once, in signature 1; any extra signatures are 1 drop). Refunded if the machine hands your coins back.</div><div id="cmClaims"></div></div>
+</section>
+<div id="qr" hidden><img id="qri" alt="Scan with Xaman"><p class="small">Scan with Xaman</p></div>
+<p class="small foot">Gold Glow: a random 1-in-10 “Super Saiyan” aura (not for sale)</p>
+<script src="config.js"></script><script src="ashes.js?v=20261023-vr1"></script>
+</body></html>

@@ -1,0 +1,146 @@
+/* Brawny Lumberjack (07) pants variant (Oct 22 8:05 PM): 'ripped jeans' | 'clean jeans' (no shorts), rolled by the watcher.
+   Mickel Pickle shops + FROM THE ASHES machine -- MAINNET staging (Oct 22 2026). Never decides anything: the watcher validates, burns, rolls and mints.
+   Reads ashes_public.json (issuers, prices) + ashes_results.json (stock, per-wallet counts, builds) published by ashes_watcher.py. */
+const NET='MAINNET',WSS=['wss://xrplcluster.com','wss://s1.ripple.com','wss://s2.ripple.com'],isMobile=/iPhone|iPad|Android/i.test(navigator.userAgent);
+const IMG={'01':'01_thriller_jacket','02':'02_cuban_cbt_chain','03':'03_leprechaun_pants_boots','04':'04_gold_grill','06':'06_diamond_hands','07':'07_lumberjack_outfit','08':'08_laser_eyes','09':'09_blunt','10':'10_joint'};
+const g=id=>document.getElementById(id),s2hex=s=>Array.from(new TextEncoder().encode(s)).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase(),
+ hex2s=h=>{try{return new TextDecoder().decode(new Uint8Array(h.match(/../g).map(x=>parseInt(x,16))))}catch(e){return''}},valid=a=>/^r[1-9A-HJ-NP-Za-km-z]{24,34}$/.test(a||'');
+let C=null,R=null,XM=null,ws=null,wi=0,rid=1,mine={bases:[],atts:[],poses:[],vouchers:[]},pick={base:null,att:[],pose:null},useV=false,CR=null,myCoins=[],cmSel=new Set(),busy=false,mute=localStorage.getItem('mp_mute')==='1',AC=null;
+async function fj(u){const r=await fetch(u+'?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error(u);return r.json()}
+function conn(){return new Promise((res,rej)=>{if(ws&&ws.readyState===1)return res(ws);const s=new WebSocket(WSS[wi++%WSS.length]);s.P={};s.onopen=()=>{ws=s;res(s)};s.onerror=()=>rej(new Error('ws'));
+ s.onmessage=e=>{const m=JSON.parse(e.data);if(s.P[m.id]){s.P[m.id](m);delete s.P[m.id]}}})}
+async function rq(o){for(let k=0;k<4;k++){try{const s=await conn();return await new Promise(r=>{const id=rid++;s.P[id]=r;s.send(JSON.stringify({...o,id}));setTimeout(()=>{if(s.P[id]){delete s.P[id];r({error:'timeout'})}},9000)})}catch(e){ws=null}}throw new Error('ledger')}
+async function wh(a){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(a));return 'h:'+Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('').slice(0,16)}
+// sound (same idea as slots: unlock on every tap, on/off toggle remembered)
+function AX(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state!=='running')AC.resume()}catch(e){}return AC}
+document.addEventListener('pointerdown',()=>{if(!mute){try{if(navigator.audioSession)navigator.audioSession.type='playback'}catch(e){}AX()}},{passive:true});
+function tone(f,d,t=0,type='sine',v=.06){if(mute)return;const a=AX();if(!a||a.state!=='running')return;const o=a.createOscillator(),n=a.createGain(),s=a.currentTime+t;o.type=type;o.frequency.setValueAtTime(f,s);n.gain.setValueAtTime(v,s);n.gain.exponentialRampToValueAtTime(1e-4,s+d);o.connect(n);n.connect(a.destination);o.start(s);o.stop(s+d+.02)}
+const rumble=()=>{for(let i=0;i<6;i++)tone(70+Math.random()*30,.25,i*.3,'sawtooth',.03)},chime=()=>[523,659,784,1047].forEach((f,i)=>tone(f,.4,i*.12,'triangle',.07));
+const paintMute=()=>{g('mute').textContent=mute?'🔇 Off':'🔊 On'};g('mute').onclick=()=>{mute=!mute;localStorage.setItem('mp_mute',mute?'1':'0');paintMute();if(!mute)tone(660,.08)};paintMute();
+// tabs
+document.querySelectorAll('.tabs a').forEach(a=>a.onclick=e=>{e.preventDefault();show(a.dataset.t)});
+function show(t){if(!['ashes','coin'].includes(t))t='ashes';document.querySelectorAll('.tabs a').forEach(x=>x.classList.toggle('on',x.dataset.t===t));['shop','att','vogue','ashes','coin'].forEach(x=>g('t-'+x).hidden=x!==t);history.replaceState(null,'','#'+t)}
+// Xaman
+async function sign(txjson,instruction){if(!XM)throw new Error('Connect Xaman first');
+ const sub=await XM.payload.createAndSubscribe({txjson,options:{force_network:NET,return_url:{app:location.href,web:location.href}},custom_meta:{instruction}},e=>{if('signed' in e.data)return e.data});
+ if(isMobile)location.href=sub.created.next.always;else{g('qri').src=sub.created.refs.qr_png;g('qr').hidden=false}
+ const r=await sub.resolved;g('qr').hidden=true;if(!r||!r.signed)throw new Error('Cancelled in Xaman, nothing sent.');return r}
+const W=()=>g('w').value.trim();
+async function counts(){const h=valid(W())?await wh(W()):'';const b=(R&&R.shop&&R.shop.bought[h])||{base:0,attachment:0,pose:0};b.pose=b.pose||0;return {b,builds:(R&&R.wallet_builds[h])||0}}
+// SHOWCASES (Rusty 7:58 PM CT Oct 22): parts are minted + sold on xrp.cafe, no on-site checkout or mint caps
+const CAFE='https://xrp.cafe';   // placeholder until the collection pages exist
+function paintShops(){if(!C)return;
+ g('attGrid').innerHTML=Object.entries(C.attachments).map(([id,n])=>`<div class="it"><img src="img/${IMG[id]}.jpg" alt=""><div>${n}${id==='07'?'<br><small>ripped or clean jeans (random)</small>':''}</div><span class="left">1.11 XRP</span><a class="cafe" href="${CAFE}" target="_blank" rel="noopener">xrp.cafe ↗</a></div>`).join('');
+ g('poseGrid').innerHTML=Object.entries(C.poses||{}).map(([id,n])=>`<div class="it"><img src="img/pose_${id}.jpg" alt=""><div>${n}</div><span class="left">111 · 1.11 XRP</span><a class="cafe" href="${CAFE}" target="_blank" rel="noopener">xrp.cafe ↗</a></div>`).join('')}
+// claims: 0-XRP sell offers from our issuer to THIS wallet (parts + finished pickles)
+async function paintClaims(){if(!valid(W())||!C)return;let L=[];for(const iss of [C.pickle_issuer,CR&&CR.coin_issuer].filter(Boolean)){try{const r=await rq({command:'account_objects',account:iss,type:'nft_offer',limit:400});L=L.concat((r.result.account_objects||[]).filter(o=>o.Destination===W()&&o.Amount==='0'))}catch(e){}}
+ const DONE=JSON.parse(sessionStorage.getItem('cbhClaimed')||'[]');L=L.filter(o=>!DONE.includes(o.index));const mark=ids=>{const d=JSON.parse(sessionStorage.getItem('cbhClaimed')||'[]').concat(ids);sessionStorage.setItem('cbhClaimed',JSON.stringify(d));ids.forEach(i=>document.querySelectorAll(`[data-o="${i}"]`).forEach(a=>a.remove()))};
+ const all=L.length>1?`<a href="#" class="claimall">🎁🎁 CLAIM ALL ${L.length} (0 XRP, ${Math.ceil(L.length/8)} signature${L.length>8?'s':''})</a>`:'';
+ VOFF=L.filter(o=>ntTaxon(o.NFTokenID)===5).length;paintVCount();if(g('vmClaims'))g('vmClaims').innerHTML=g('cmClaims').innerHTML=g('claims').innerHTML=all+L.map(o=>`<a href="#" data-o="${o.index}">🎁 CLAIM (0 XRP)</a>`).join('');
+ document.querySelectorAll('#claims a[data-o],#cmClaims a[data-o],#vmClaims a[data-o]').forEach(x=>x.onclick=async e=>{e.preventDefault();if(x.dataset.busy)return;x.dataset.busy=1;try{await sign({TransactionType:'NFTokenAcceptOffer',NFTokenSellOffer:x.dataset.o},'Claim your Mickel Pickle (0 XRP)');mark([x.dataset.o])}catch(er){delete x.dataset.busy}setTimeout(refresh,6000)});
+ document.querySelectorAll('.claimall').forEach(x=>x.onclick=async e=>{e.preventDefault();if(x.dataset.busy)return;x.dataset.busy=1;const ids=L.map(o=>o.index),G=[];for(let i=0;i<ids.length;i+=8)G.push(ids.slice(i,i+8));
+  try{for(let i=0;i<G.length;i++){const ai=await rq({command:'account_info',account:W(),ledger_index:'current'});const sq=ai.result.account_data.Sequence;
+   const raw=G[i].map((o,k)=>({RawTransaction:{TransactionType:'NFTokenAcceptOffer',Account:W(),NFTokenSellOffer:o,Flags:1073741824,Sequence:sq+1+k,Fee:'0',SigningPubKey:''}}));
+   x.textContent=`Signature ${i+1} of ${G.length}: claiming ${G[i].length} in Xaman…`;
+   await sign({TransactionType:'Batch',Flags:524288,Sequence:sq,Fee:String((raw.length+2)*20),RawTransactions:raw},`CLAIM ALL (0 XRP): signature ${i+1}/${G.length}, claim ${G[i].length} gifted NFTs in one signature`);mark(G[i]);
+   if(i<G.length-1)await new Promise(r=>setTimeout(r,5000))}}catch(er){delete x.dataset.busy}setTimeout(refresh,6000)})}
+// MACHINE
+async function loadMine(){mine={bases:[],atts:[],poses:[],vouchers:[]};myCoins=[];if(!valid(W())||!C)return;let all=[],marker;do{const r=(await rq({command:'account_nfts',account:W(),limit:400,marker})).result||{};all=all.concat(r.account_nfts||[]);marker=r.marker}while(marker);
+ for(const n of all){if(CR&&n.Issuer===CR.coin_issuer&&n.NFTokenTaxon===CR.coin_taxon){let m={};const u=hex2s(n.URI||''),mm=u.match(/\/(\d+)\.json$/);if(mm&&MNM)m.metal={C:'Copper',S:'Silver',G:'Gold'}[MNM[+mm[1]-1]];if(CR.values[m.metal])myCoins.push({id:n.NFTokenID,metal:m.metal,v:CR.values[m.metal]});continue}if(n.Issuer!==C.pickle_issuer||!Object.values(C.taxon).includes(n.NFTokenTaxon))continue;if(n.NFTokenTaxon===C.taxon.voucher){mine.vouchers.push({id:n.NFTokenID});continue}let m={};try{m=JSON.parse(hex2s(n.URI||'').replace(/^data:application\/json,/,''))}catch(e){}{const f=hex2s(n.URI||'').match(/\/(b|a|o)_([a-z0-9]+)_\d+\.json$/);if(f)m[f[1]]=f[2]}
+  if(n.NFTokenTaxon===C.taxon.base)mine.bases.push({id:n.NFTokenID});else if(n.NFTokenTaxon===C.taxon.attachment&&IMG[m.a])mine.atts.push({id:n.NFTokenID,a:m.a});else if(n.NFTokenTaxon===C.taxon.pose&&m.o)mine.poses.push({id:n.NFTokenID,o:m.o})}}
+function paintMachine(){const bb=g('myBases'),aa=g('myAtts');pick.base=mine.bases.some(x=>x.id===pick.base)?pick.base:null;pick.att=pick.att.filter(i=>mine.atts.some(x=>x.id===i));
+ bb.innerHTML=mine.bases.length?mine.bases.map(x=>`<div class="it ${pick.base===x.id?'sel':''}" data-id="${x.id}"><img src="img/base_standing_logo.jpg" alt=""><div>Base …${x.id.slice(-4)}</div></div>`).join(''):'<p class="note">No base pickles yet. Grab one on xrp.cafe.</p>';
+ // one tile per attachment type (spares = quantity); a pick holds the NFT id of the first copy of that type
+ const groups={};mine.atts.forEach(x=>(groups[x.a]=groups[x.a]||[]).push(x.id));const picked=a=>pick.att.find(i=>groups[a].includes(i));
+ aa.innerHTML=Object.keys(groups).length?Object.keys(C.attachments).filter(a=>groups[a]).map(a=>{const s=!!picked(a),off=!s&&pick.att.length>=3;return `<div class="it ${s?'sel':''} ${off?'off':''}" data-a="${a}">${groups[a].length>1?`<span class="qty">x${groups[a].length}</span>`:''}<img src="img/${IMG[a]}.jpg" alt=""><div>${C.attachments[a]}</div></div>`}).join(''):'<p class="note">No attachments yet. Grab some on xrp.cafe.</p>';
+ bb.querySelectorAll('.it').forEach(e=>e.onclick=()=>{pick.base=pick.base===e.dataset.id?null:e.dataset.id;tone(500,.05);paintMachine()});
+ aa.querySelectorAll('.it').forEach(e=>e.onclick=()=>{const a=e.dataset.a,cur=picked(a);if(cur)pick.att=pick.att.filter(i=>i!==cur);else if(pick.att.length<3)pick.att.push(groups[a][0]);tone(600,.05);paintMachine()});
+ const pp=g('myPoses');pick.pose=mine.poses.some(x=>x.id===pick.pose)?pick.pose:null;
+ pp.innerHTML=mine.poses.length?mine.poses.map(x=>`<div class="it ${pick.pose===x.id?'sel':''}" data-id="${x.id}"><img src="img/pose_${x.o}.jpg" alt=""><div>${(C.poses||{})[x.o]||x.o}</div></div>`).join(''):'<p class="note">No poses yet. Grab one on xrp.cafe.</p>';
+ pp.querySelectorAll('.it').forEach(e=>e.onclick=()=>{pick.pose=pick.pose===e.dataset.id?null:e.dataset.id;tone(550,.05);paintMachine()});
+ useV=mine.vouchers.length>0;g('vmPay').innerHTML=mine.vouchers.length?`VOUCHER SLOT<br>💵 ${mine.vouchers.length} voucher${mine.vouchers.length>1?'s':''} ready`:'VOUCHER SLOT<br>no voucher yet';
+ g('nAtt').textContent=pick.att.length+'/3';gate()}
+async function gate(){const {builds}=await counts(),lim=R?R.max_builds_per_wallet:3;g('myBuilds').textContent=`your builds: ${builds}/${lim}`;const b=g('build');
+ if(builds>=lim){b.disabled=true;b.textContent='LIMIT: 3 BUILDS PER WALLET';return}b.textContent='BURN & BUILD';b.disabled=busy||!mine.vouchers.length||!pick.base||pick.att.length!==3||!pick.pose}
+g('build').onclick=async()=>{const {builds}=await counts();if(builds>=R.max_builds_per_wallet)return;busy=true;gate();const bid='MP'+Date.now().toString(36).toUpperCase();
+ g('status').textContent='Opening Xaman… check it says MAINNET and uses your voucher, then sign.';
+ const V=mine.vouchers[0]?mine.vouchers[0].id:null;if(!V){g('status').textContent='Insert a voucher first. Get your voucher at the Coin Machine.';busy=false;gate();return}
+ try{const ai=await rq({command:'account_info',account:W(),ledger_index:'current'});const sq=ai.result.account_data.Sequence;g('status').textContent='Opening Xaman: ONE signature hands over your voucher + sends your 5 picks…';const r=await sign({TransactionType:'Batch',Flags:65536,Sequence:sq,Fee:'80',RawTransactions:[{RawTransaction:{TransactionType:'NFTokenCreateOffer',Account:W(),NFTokenID:V,Amount:'0',Flags:1073741825,Destination:C.machine,Sequence:sq+1,Fee:'0',SigningPubKey:''}},{RawTransaction:{TransactionType:'Payment',Account:W(),Destination:C.machine,Amount:String(C.machine_fee_drops||100000),Flags:1073741824,Sequence:sq+2,Fee:'0',SigningPubKey:'',Memos:[{Memo:{MemoType:s2hex('CBH-ASHES'),MemoData:s2hex(JSON.stringify({b:bid,m:'one',base:pick.base,att:pick.att,pose:pick.pose,voucher:V}))}}]}}]},'VENDING MACHINE: one signature. Your voucher is collected (not burned) + your 5 parts are burned to build your Mickel Pickle.');
+  localStorage.setItem('mp_pending',JSON.stringify({bid,tx:r.txid,t:Date.now()}));rise(bid)}catch(e){g('status').textContent=e.message;busy=false;gate()}};
+let rising=false;async function rise(bid){if(rising)return;rising=true;g('vmTray').classList.remove('reveal');g('vmBanner').hidden=true;g('can').hidden=false;g('result').hidden=true;g('can').classList.add('shake');rumble();const rt=setInterval(rumble,1900);
+ g('status').innerHTML='🔥 Rising from the ashes… your pickle is being built';
+ for(let k=0;k<720;k++){await new Promise(r=>setTimeout(r,5000));try{R=await fj('ashes_results.json')}catch(e){continue}const b=R.builds.find(x=>x.id===bid||x.id.startsWith(bid+'-'));
+  if(b&&b.status==='refunded'){g('status').textContent='Build refunded ('+(b.reason||'')+'). Your voucher and parts were handed back.';break}
+  if(b&&b.status==='done'){await finale(b);chime();g('status').innerHTML=`Reborn! Pose: ${b.pose.replace(/pose\d_/,'').replace(/_/g,' ')}${b.pants_variant?' · Jeans: '+b.pants_variant:''}${b.glow?' · <b>⚡ SUPER SAIYAN GOLD GLOW</b>':''}<br>Tap CLAIM below to take it.`;break}}
+ clearInterval(rt);g('can').classList.remove('shake');localStorage.removeItem('mp_pending');rising=false;busy=false;refresh()}
+// FINAL SEQUENCE (approved Oct 22): the machine drops the final can -> it pops open to the flexing poster -> the finished pickle
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+async function finale(b){const can=g('can'),im=g('result');can.classList.remove('shake');can.hidden=true;im.hidden=true;
+ const show1=(src,cls)=>{im.className='';im.src=src;im.hidden=false;void im.offsetWidth;im.className=cls};
+ show1('img/final_can.jpg','drop');tone(180,.25,0,'square',.05);tone(120,.3,.35,'square',.05);await wait(1700);
+ show1('img/reveal_poster.jpg','burst');[392,523,659].forEach((f,i)=>tone(f,.25,i*.08,'triangle',.07));await wait(2200);
+ show1(b.image+'?t=1','pop');g('vmTray').classList.add('reveal');const bn=g('vmBanner');bn.hidden=false;bn.classList.remove('vpop');void bn.offsetWidth;bn.classList.add('vpop');[523,659,784,1047,1319].forEach((f,i)=>tone(f,.3,i*.1,'triangle',.07));setTimeout(()=>g('vmTray').scrollIntoView({behavior:'smooth',block:'start'}),300)}
+const MOCK=false;   // mainnet: screenshot mock disabled   // STAGING screenshot hook only: fake parts in the slots
+// COIN MACHINE (MAINNET backend coin_watcher.py): pick coins worth exactly 50,000 -> 1 offer per coin to the machine + 1 trigger payment
+const fmt=n=>n.toLocaleString('en-US'),CLS={Copper:'cu',Silver:'ag',Gold:'au'},LBL={Copper:'1K',Silver:'10K',Gold:'100K'};
+function paintCoin(){paintVCount();if(MOCK||!CR)return;const el=g('cmCoins');const tot=myCoins.filter(c=>cmSel.has(c.id)).reduce((a,c)=>a+c.v,0);
+ if(valid(W())){el.dataset.demo='0';el.innerHTML=myCoins.length?myCoins.map(c=>`<i class="c ${CLS[c.metal]} mine ${cmSel.has(c.id)?'sel':''}" data-id="${c.id}">${LBL[c.metal]}</i>`).join(''):'<p class="note">No Mickel Nickel coins in this wallet.</p>';
+  el.querySelectorAll('.mine').forEach(e=>e.onclick=()=>{cmSel.has(e.dataset.id)?cmSel.delete(e.dataset.id):cmSel.add(e.dataset.id);tone(880,.04);paintCoin()});
+  g('cmCount').textContent=fmt(tot);g('cmCount').nextElementSibling.textContent=cmSel.size+' coin'+(cmSel.size===1?'':'s');document.querySelector('.cm-bar i').style.width=Math.min(100,tot/500)+'%';document.querySelector('.cm-bar i').style.animation='none'}
+ wh(W()).then(h=>{const n=(CR.wallet_vouchers||{})[h]||0;g('cmMine').textContent=`your vouchers: ${n}/${CR.cap_per_wallet} · ${CR.player_supply-CR.player_minted} of ${CR.player_supply} left`;
+  const TX0=TESTERS.includes(W()),left=CR.player_supply-CR.player_minted;cmLock(left<=0?'supply':(!TX0&&n>=CR.cap_per_wallet)?'wallet':null,n);const b=g('cmInsert');const kv=tot%CR.voucher_value===0?tot/CR.voucher_value:0,TX=false,room=TX?99:CR.cap_per_wallet-n;b.disabled=busy||!valid(W())||!kv||kv>room||!!CMLOCK;const sg=Math.ceil(cmSel.size/7);b.textContent=(!TX&&n>=CR.cap_per_wallet)?'LIMIT: 3 VOUCHERS':(tot&&!kv)?'MUST BE 50K, 100K or 150K':kv>room?`ONLY ${room} VOUCHER${room>1?'S':''} LEFT FOR YOU`:'INSERT '+fmt(tot)+(kv?` = ${kv} VOUCHER${kv>1?'S':''}`:'')+(sg?` · ${sg} signature${sg>1?'s':''}`:'');const si=g('cmSigs');if(si)si.textContent=cmSel.size?`${cmSel.size} coin${cmSel.size>1?'s':''} = ${sg} signature${sg>1?'s':''} in Xaman (7 coins per signature)`:'5 Silver = 1 voucher (1 signature) · 1 Gold = 2 vouchers (1 signature) · 50 Copper = 1 voucher (8 signatures)'})}
+// FIX Oct 23 PM: on a phone, opening Xaman leaves this page, so a JS loop never reached signature 2. The plan is saved; the page resumes it when you come back.
+const PK='cbhCoinPending';const getP=()=>{try{const p=JSON.parse(localStorage.getItem(PK)||'null');return p&&p.w===W()&&Date.now()-p.t<45*60e3?p:null}catch(e){return null}};
+async function runCoin(P){busy=true;paintCoin();
+ try{for(let i=P.done;i<P.G.length;i++){g('cmStatus').textContent=`Signature ${i+1} of ${P.G.length}: ${P.G[i].length} coin${P.G[i].length>1?'s':''} into the hopper. Sign all ${P.G.length} or nothing is taken.`;
+   const q0=(await rq({command:'account_info',account:W(),ledger_index:'current'})).result.account_data.Sequence;const sq=Math.max(q0,P.nsq||0);
+   const raw=P.G[i].map((c,k)=>({RawTransaction:{TransactionType:'NFTokenCreateOffer',Account:W(),NFTokenID:c,Amount:'0',Flags:1073741825,Destination:CR.machine,Expiration:P.exp,Sequence:sq+1+k,Fee:'0',SigningPubKey:''}}));
+   raw.push({RawTransaction:{TransactionType:'Payment',Account:W(),Destination:CR.machine,Amount:i===0?String(CR.machine_fee_drops||100000):'1',Flags:1073741824,Sequence:sq+1+P.G[i].length,Fee:'0',SigningPubKey:'',Memos:[{Memo:{MemoType:s2hex('CBH-COIN'),MemoData:s2hex(JSON.stringify({v:P.vid,i:i+1,of:P.G.length,n:P.n,k:P.G[i].length}))}}]}});
+   P.cur=i;P.t=Date.now();localStorage.setItem(PK,JSON.stringify(P));
+   await sign({TransactionType:'Batch',Flags:65536,Sequence:sq,Fee:String((raw.length+2)*20),RawTransactions:raw},`COIN MACHINE: signature ${i+1}/${P.G.length}, ${P.G[i].length} coins into the hopper`);
+   P.done=i+1;P.nsq=sq+raw.length+1;localStorage.setItem(PK,JSON.stringify(P))}
+  localStorage.removeItem(PK);savePR(P.vid);await pollResult(P.vid);
+ }catch(e){g('cmStatus').textContent=e.message+(getP()?' Tap CONTINUE to try again.':'')}cmSel.clear();busy=false;refresh();showResume()}
+function refundMsg(r){r=String(r||'');if(/WALLET_CAP/i.test(r))return "you've hit the 3-voucher limit for this wallet";if(/FEE_UNDERPAID/i.test(r))return 'the 0.1 XRP machine fee was short';if(/SOLD_OUT|SUPPLY|TOTAL_CAP/i.test(r))return 'the machine is sold out';if(/NOT_MULT|EXACT|AMOUNT|VALUE/i.test(r))return 'coins must add up to exactly 50,000 per voucher';return r?r.replace(/_/g,' ').toLowerCase():'the machine could not take them'}
+function cmRefund(r){cmWork(false);const s=document.querySelector('.cm-billslot');if(s){s.classList.remove('printing');s.querySelectorAll('.cm-out').forEach(x=>x.remove())}g('cmStatus').innerHTML=`<div class="cm-refund"><div class="big">↩️ Coins refunded</div><div>${refundMsg(r)}.</div><div class="small">No voucher was printed. Your coins and fee were sent back.</div></div>`}
+let CMLOCK=null;function cmLock(k,n){CMLOCK=k;const m=document.querySelector('.cm');if(!m)return;m.classList.toggle('cm-locked',!!k);let o=m.querySelector('.cm-soldout');if(!k){if(o)o.remove();return}
+ cmSel.clear();if(!o){o=document.createElement('div');o.className='cm-soldout';m.querySelector('.cm-body').appendChild(o)}
+ o.innerHTML=k==='supply'?'<b class="neon">SOLD<br>OUT</b><span>All vouchers are gone</span>':`<b class="neon">SOLD<br>OUT</b><span>You've collected ${Math.min(n,3)} of 3 vouchers</span>`;
+ const b=g('cmInsert');if(b){b.disabled=true;b.textContent='SOLD OUT'}}
+const PRK='cbhCoinPendingResult';function savePR(vid){localStorage.setItem(PRK,JSON.stringify({vid,w:W(),t:Date.now()}))}
+function getPR(){try{const p=JSON.parse(localStorage.getItem(PRK)||'null');if(!p||p.w!==W()||Date.now()-p.t>15*60e3)return null;return p}catch(e){return null}}
+let polling=null;async function pollResult(vid){if(!vid||polling===vid)return;polling=vid;g('cmStatus').innerHTML='<span class="cm-wait">⏳ The machine is counting your coins… your voucher prints in about a minute.</span>';cmWork(true);
+ try{for(let k=0;k<60;k++){await new Promise(r=>setTimeout(r,5000));try{CR=await fj('coin_results.json')}catch(e){continue}const q=(CR.requests||[]).find(x=>x.id===vid);
+  if(q&&q.status==='refunded'){cmRefund(q.reason);localStorage.removeItem(PRK);break}
+  if(q&&q.status==='done'){const n=q.vouchers||q.n_vouchers||1;cmWork(false);await printBills(n);g('cmStatus').innerHTML=`<div class="voucher-success"><div class="big">💵 VOUCHER PRINTED!</div><div>${n>1?n+' vouchers':'Your voucher is'} ready</div><div class="small">Tap 🎁 CLAIM below (0 XRP), then head to the Vending Machine.</div></div>`;localStorage.removeItem(PRK);await refresh();const c=g('cmClaims');if(c)c.scrollIntoView({behavior:'smooth',block:'center'});break}}}finally{polling=null;cmWork(false)}}
+window.addEventListener('pageshow',()=>{const p=getPR();if(p)pollResult(p.vid)});setTimeout(()=>{const p=getPR();if(p)pollResult(p.vid)},1500);
+function showResume(){const P=getP(),b=g('cmResume');if(!b)return;b.hidden=!P||busy;if(P)b.textContent=`▶ CONTINUE: sign ${P.done+1} of ${P.G.length} (your coins are waiting in the hopper)`}
+g('cmInsert').onclick=()=>{if(CMLOCK){paintCoin();return}const ids=[...cmSel];const G=[];for(let i=0;i<ids.length;i+=7)G.push(ids.slice(i,i+7));
+ runCoin({w:W(),vid:'CM'+Date.now().toString(36).toUpperCase(),G,n:ids.length,exp:Math.floor(Date.now()/1000)-946684800+3600,done:0,nsq:0,t:Date.now()})};
+(()=>{const b=document.createElement('button');b.id='cmResume';b.className=g('cmInsert').className;b.hidden=true;b.style.marginTop='8px';g('cmInsert').after(b);
+ b.onclick=async()=>{const P=getP();if(!P)return showResume();
+  // did the last signature actually land? then skip it
+  try{const r=await rq({command:'account_tx',account:W(),limit:30});if((r.result.transactions||[]).some(x=>{const t=x.tx_json||x.tx||{};return t.TransactionType==='Payment'&&(t.Memos||[]).some(m=>{try{const d=JSON.parse(decodeURIComponent(escape(m.Memo.MemoData.match(/../g).map(h=>String.fromCharCode(parseInt(h,16))).join(''))));return d.v===P.vid&&d.i===P.cur+1}catch(e){return false}})})){P.done=Math.max(P.done,P.cur+1)}}catch(e){}
+  if(P.done>=P.G.length){localStorage.removeItem(PK);savePR(P.vid);showResume();pollResult(P.vid);return}runCoin(P)}})();
+let TESTERS=[],MNM=null;async function refresh(){if(!MNM)try{MNM=(await (await fetch('mn_metals.txt')).text()).trim()}catch(e){}try{CR=await fj('coin_results.json')}catch(e){}try{R=await fj('ashes_results.json')}catch(e){}paintShops();if(MOCK){mine={vouchers:[{id:'MOCKVOUCHER1'}],bases:[{id:'MOCKBASE0001'},{id:'MOCKBASE0002'}],atts:['02','06','08','01','09'].map((a,i)=>({id:'MOCKATT000'+i,a})),poses:['p1','p2','p3'].map((o,i)=>({id:'MOCKPOSE000'+i,o}))};if(!pick.base){pick.base='MOCKBASE0001';pick.att=['MOCKATT0000','MOCKATT0001','MOCKATT0002'];pick.pose='MOCKPOSE0002'}}else{try{await loadMine()}catch(e){}}paintMachine();paintClaims();paintCoin();showResume()}
+g('w').onchange=refresh;
+(async()=>{C=await fj('ashes_public.json');const q=new URLSearchParams(location.search).get('wallet');if(valid(q))g('w').value=q;show((location.hash||'#ashes').slice(1)||'ashes');await refresh();
+ const DEV=new URLSearchParams(location.search).get('finale');   // STAGING ONLY dev hook: ?finale=<build id> replays the final sequence for a finished build
+ if(DEV&&/localhost|127\.0\.0\.1|^file/.test(location.href)){show('ashes');const b=(R.builds||[]).find(x=>x.id===DEV&&x.status==='done');if(b){g('status').innerHTML='🔥 Rising from the ashes… (dev replay)';await finale(b);g('status').textContent='Reborn! (dev replay of '+DEV+')'}return}
+ const P=JSON.parse(localStorage.getItem('mp_pending')||'null');if(P&&Date.now()-P.t<36e5){show('ashes');rise(P.bid)}
+ if(window.CBH_XAMAN_API_KEY){const sc=document.createElement('script');sc.src='https://xumm.app/assets/cdn/xumm.min.js';sc.onload=()=>{XM=new Xumm(window.CBH_XAMAN_API_KEY);
+  g('connect').onclick=e=>{e.preventDefault();XM.authorize()};XM.on('success',async()=>{g('w').value=await XM.user.account;g('connect').textContent='✅ connected';refresh()})};document.head.appendChild(sc)}})();
+
+// VOUCHER REVEAL (Oct 23): hopper shakes while counting, then one bill slides out per voucher printed
+function ntTaxon(id){try{const t=parseInt(id.slice(48,56),16)>>>0,s=parseInt(id.slice(56,64),16)>>>0;return (t^((Math.imul(384160001,s)+2459)>>>0))>>>0}catch(e){return -1}}
+let VOFF=0;function paintVCount(){const el=g('cmVcount');if(!el)return;const h=mine.vouchers.length,n=h+VOFF;
+ el.innerHTML=`<span class="vm-lbl">YOUR VOUCHERS</span><div class="vc-n">${n}</div><div class="vc-bills">${n?'<i>💵</i>'.repeat(Math.min(n,6)):'<em>none yet</em>'}</div><small>${h} in wallet${VOFF?` · ${VOFF} waiting to 🎁 CLAIM`:''}</small>`}
+let cmT=null;function cmWork(on){const m=document.querySelector('#t-coin .cm');if(!m)return;clearInterval(cmT);cmT=null;m.classList.toggle('working',on);document.querySelectorAll('.cm-drop').forEach(x=>x.remove());
+ if(!on)return;rumble();const f=document.querySelector('.cm-funnel');let k=0;cmT=setInterval(()=>{if(k++%4===0)rumble();const c=document.createElement('i');c.className='c cm-drop '+['cu','ag','au','cu'][k%4];c.style.left=(30+Math.random()*40)+'%';f.appendChild(c);tone(900+Math.random()*300,.05,0,'square',.03);setTimeout(()=>c.remove(),900)},450)}
+async function printBills(n){const s=document.querySelector('.cm-billslot');s.classList.add('printing');s.querySelectorAll('.cm-out').forEach(x=>x.remove());
+ for(let i=0;i<n;i++){const b=document.createElement('img');b.src='img/voucher_50000_bill.jpg';b.alt='Mickel Nickel 50,000 voucher';b.className='cm-out';b.style.setProperty('--r',(i%2?3:-3)+'deg');b.style.setProperty('--o',(i*14)+'px');s.appendChild(b);
+  tone(140,.6,0,'sawtooth',.03);await wait(1300);chime();await wait(700)}
+ const t=document.createElement('div');t.className='cm-out-tag';t.textContent=n>1?`💵 x${n} PRINTED!`:'💵 PRINTED!';s.appendChild(t);s.scrollIntoView({behavior:'smooth',block:'center'})}
+// Vending Machine resume when coming back from Xaman (pageshow fires on back/forward + bfcache restores)
+window.addEventListener('pageshow',()=>{const P=JSON.parse(localStorage.getItem('mp_pending')||'null');if(P&&Date.now()-P.t<36e5&&!rising){show('ashes');rise(P.bid)}});
+// demo triggers removed for mainnet

@@ -1,0 +1,49 @@
+{
+ "network": "MAINNET",
+ "split": {
+  "burned_m2n": "25000",
+  "treasury_m2n": "25000"
+ },
+ "updated": 1792859702.1793537,
+ "cost_m2n": "50000",
+ "max_builds_per_wallet": 3,
+ "public_builds": 300,
+ "built": 0,
+ "wallet_builds": {},
+ "builds": [],
+ "shop": {
+  "prices_drops": {
+   "base": "3330000",
+   "attachment": "1110000",
+   "pose": "1110000"
+  },
+  "price_placeholder": false,
+  "cap_per_wallet": {
+   "base": 3,
+   "attachment": 9,
+   "pose": 3
+  },
+  "poses": {
+   "p1": "Victory Flex (bathroom)",
+   "p2": "Power Tools (dark)",
+   "p3": "Nervous Crypto Armory"
+  },
+  "left": {
+   "base": 300,
+   "01": 100,
+   "02": 100,
+   "03": 100,
+   "04": 100,
+   "06": 100,
+   "07": 100,
+   "08": 100,
+   "09": 100,
+   "10": 100,
+   "p1": 111,
+   "p2": 111,
+   "p3": 111
+  },
+  "bought": {},
+  "offers": []
+ }
+}

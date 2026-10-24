@@ -1,0 +1,64 @@
+{
+ "network": "MAINNET",
+ "pickle_issuer": "rNxAwKP3rdNTfe4ZNw1SntXCfW2U4r2XuB",
+ "m2n_issuer": "rJWC1VtyonPsTPJS1U8MZkszx6xypSYxwY",
+ "build_cost_m2n": "50000",
+ "attachments": {
+  "01": "Thriller Jacket",
+  "02": "Iced Out Cuban with CBT Charm",
+  "03": "Leprechaun Pants + Red Boots",
+  "04": "Gold Grill",
+  "06": "Diamond Hands",
+  "07": "Brawny Lumberjack Outfit",
+  "08": "Laser Eyes",
+  "09": "Blunt",
+  "10": "Joint"
+ },
+ "shop_stock": {
+  "base": 300,
+  "01": 100,
+  "02": 100,
+  "03": 100,
+  "04": 100,
+  "06": 100,
+  "07": 100,
+  "08": 100,
+  "09": 100,
+  "10": 100,
+  "p1": 111,
+  "p2": 111,
+  "p3": 111
+ },
+ "machine": "rNxAwKP3rdNTfe4ZNw1SntXCfW2U4r2XuB",
+ "split": {
+  "burned_m2n": "25000",
+  "treasury_m2n": "25000"
+ },
+ "poses": {
+  "p1": "Victory Flex (bathroom)",
+  "p2": "Power Tools (dark)",
+  "p3": "Nervous Crypto Armory"
+ },
+ "prices_xrp": {
+  "base": "3.33",
+  "attachment": "1.11",
+  "pose": "1.11"
+ },
+ "pants_variants": [
+  "ripped jeans",
+  "clean jeans"
+ ],
+ "pants_variants_note": "Brawny Lumberjack (07) is pants only (Rusty Oct 22 8:05 PM CT): 50/50 ripped vs clean full-length jeans, no shorts",
+ "art_rules": {
+  "chain_under_collar_02_07": "When Cuban chain (02) + Brawny lumberjack (07) are worn together: the chain goes UNDERNEATH the flannel collar (collar overlaps the chain at the back and sides of the neck), chain + CBT pendant still hang visibly down the front (Rusty Oct 22 8:08 PM CT)"
+ },
+ "taxon": {
+  "base": 21,
+  "attachment": 22,
+  "pickle": 23,
+  "pose": 24,
+  "voucher": 25
+ },
+ "voucher_hold": "rNxAwKP3rdNTfe4ZNw1SntXCfW2U4r2XuB",
+ "machine_fee_drops": 100000
+}
