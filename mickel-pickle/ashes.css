@@ -31,7 +31,7 @@
 .status{margin-top:8px;min-height:2.4em;color:var(--gold);font-size:.95rem}
 h3{font-size:.95rem;margin:14px 0 6px;color:var(--pickle)}.cost{margin-top:12px;font-size:.85rem;color:var(--cream)}.cost small{color:#b9c0d0}
 #qr{text-align:center;margin:10px 0}#qr img{background:#fff;padding:8px;border-radius:8px}.small{font-size:.75rem;color:#8a93a8}.foot{text-align:center;margin-top:20px}
-#claims a,#vmClaims a{display:block;margin-top:8px;padding:12px;border-radius:999px;text-align:center;background:var(--gold);color:var(--ink);text-decoration:none;border:3px solid var(--ink)}
+#claims a,#vmClaims a,#cmClaims a{display:block;margin-top:8px;padding:12px;border-radius:999px;text-align:center;background:var(--gold);color:var(--ink);text-decoration:none;border:3px solid var(--ink)}
 .full{margin:.3rem 0;color:var(--gold);font-size:.85rem}.it .qty{position:absolute;top:4px;right:4px;background:var(--fire);color:#fff;border-radius:999px;padding:1px 6px;font-size:.65rem}.it{position:relative}
 
 .btn.cafe{display:inline-block;text-decoration:none;text-align:center;color:var(--ink)}.it a.cafe{display:block;margin-top:4px;border:2px solid var(--ink);border-radius:999px;background:var(--gold);color:var(--ink);text-decoration:none;padding:4px;font-weight:700}
