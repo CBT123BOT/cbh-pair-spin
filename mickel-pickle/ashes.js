@@ -14,9 +14,26 @@ async function wh(a){const b=await crypto.subtle.digest('SHA-256',new TextEncode
 // sound (same idea as slots: unlock on every tap, on/off toggle remembered)
 function AX(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state!=='running')AC.resume()}catch(e){}return AC}
 document.addEventListener('pointerdown',()=>{if(!mute){try{if(navigator.audioSession)navigator.audioSession.type='playback'}catch(e){}AX()}},{passive:true});
-function tone(f,d,t=0,type='sine',v=.06){if(mute)return;const a=AX();if(!a||a.state!=='running')return;const o=a.createOscillator(),n=a.createGain(),s=a.currentTime+t;o.type=type;o.frequency.setValueAtTime(f,s);n.gain.setValueAtTime(v,s);n.gain.exponentialRampToValueAtTime(1e-4,s+d);o.connect(n);n.connect(a.destination);o.start(s);o.stop(s+d+.02)}
-const rumble=()=>{for(let i=0;i<6;i++)tone(70+Math.random()*30,.25,i*.3,'sawtooth',.03)},chime=()=>[523,659,784,1047].forEach((f,i)=>tone(f,.4,i*.12,'triangle',.07));
-const paintMute=()=>{g('mute').textContent=mute?'🔇 Off':'🔊 On'};g('mute').onclick=()=>{mute=!mute;localStorage.setItem('mp_mute',mute?'1':'0');paintMute();if(!mute)tone(660,.08)};paintMute();
+// SOUND ENGINE v2: layered Web Audio synth -> master gain -> compressor (loud, no clipping). No audio files needed.
+let MB=null;function bus(){const a=AX();if(!a)return null;if(!MB){const c=a.createDynamicsCompressor();c.threshold.value=-14;c.knee.value=8;c.ratio.value=6;c.attack.value=.003;c.release.value=.2;const m=a.createGain();m.gain.value=1.6;m.connect(c);c.connect(a.destination);MB=m}return MB}
+function ok(){if(mute)return null;const a=AX();if(!a||a.state!=='running')return null;return a}
+function osc(f,d,t=0,type='sine',v=.3,o={}){const a=ok();if(!a)return;const s=a.currentTime+t,x=a.createOscillator(),n=a.createGain();x.type=type;x.frequency.setValueAtTime(f,s);if(o.to)x.frequency.exponentialRampToValueAtTime(o.to,s+(o.gl||d));if(o.det)x.detune.value=o.det;const at=o.at||.005;n.gain.setValueAtTime(1e-4,s);n.gain.linearRampToValueAtTime(v,s+at);n.gain.exponentialRampToValueAtTime(1e-4,s+d);let out=n;if(o.lp){const fl=a.createBiquadFilter();fl.type='lowpass';fl.frequency.value=o.lp;n.connect(fl);out=fl}x.connect(n);out.connect(bus());x.start(s);x.stop(s+d+.05)}
+let NB=null;function noise(d,t=0,v=.3,type='bandpass',f=1000,q=1,o={}){const a=ok();if(!a)return;if(!NB){NB=a.createBuffer(1,a.sampleRate*2,a.sampleRate);const c=NB.getChannelData(0);for(let i=0;i<c.length;i++)c[i]=Math.random()*2-1}const s=a.currentTime+t,src=a.createBufferSource(),fl=a.createBiquadFilter(),n=a.createGain();src.buffer=NB;src.loop=true;fl.type=type;fl.frequency.setValueAtTime(f,s);if(o.to)fl.frequency.exponentialRampToValueAtTime(o.to,s+d);fl.Q.value=q;const at=o.at||.003;n.gain.setValueAtTime(1e-4,s);n.gain.linearRampToValueAtTime(v,s+at);n.gain.exponentialRampToValueAtTime(1e-4,s+d);src.connect(fl);fl.connect(n);n.connect(bus());src.start(s,Math.random());src.stop(s+d+.05)}
+// legacy helper now routed through the loud bus
+function tone(f,d,t=0,type='sine',v=.06){osc(f,d,t,type,Math.min(.5,v*4))}
+const SFX={
+ click(){osc(1800,.04,0,'square',.12,{to:900,lp:4000});osc(240,.07,0,'sine',.45,{to:120});noise(.03,0,.25,'highpass',3000)},
+ clink(){const f=2400+Math.random()*900;[1,2.76,5.4].forEach((m,i)=>osc(f*m/2,.35-i*.08,0,'sine',.22/(i+1)));noise(.02,0,.3,'highpass',5000);osc(f*.7,.25,.06,'sine',.1)},
+ rumble(){noise(1.6,0,.32,'lowpass',260,1,{at:.3});osc(55,1.6,0,'sawtooth',.18,{lp:180,at:.3});osc(82,1.4,.1,'triangle',.15,{at:.3})},
+ whir(){noise(.9,0,.22,'bandpass',900,3,{to:1600,at:.05});osc(120,.9,0,'square',.08,{to:180,lp:600})},
+ kaching(){osc(150,.12,0,'square',.3,{to:60,lp:900});noise(.08,0,.45,'bandpass',2500,2);[2093,2637,3136,4186].forEach((f,i)=>{osc(f,.9,.12,'sine',.28);osc(f*2.01,.5,.12,'sine',.08)});noise(.6,.12,.15,'highpass',7000)},
+ whoosh(){noise(1.4,0,.55,'bandpass',200,.8,{to:1400,at:.35});osc(60,1.5,0,'sawtooth',.25,{to:90,lp:220,at:.3})},
+ pop(){osc(600,.12,0,'sine',.7,{to:90,gl:.1});noise(.06,0,.7,'bandpass',1800,1.5);osc(1200,.18,.05,'triangle',.25,{to:2400})},
+ fanfare(){const N=[[523,0,.18],[659,.14,.18],[784,.28,.18],[1047,.44,.9]];N.forEach(([f,t,d])=>{osc(f,d,t,'sawtooth',.16,{lp:2600,det:-8});osc(f,d,t,'sawtooth',.16,{lp:2600,det:8});osc(f/2,d,t,'triangle',.22)});[523,659,784].forEach(f=>osc(f,1.1,.44,'triangle',.12));noise(.5,.44,.3,'highpass',6000);osc(80,.4,.44,'sine',.6,{to:45})},
+ shimmer(){for(let i=0;i<14;i++)osc(1568*Math.pow(2,(i%7)/7),.6,.6+i*.06,'sine',.16);noise(1.4,.6,.2,'highpass',8000,1,{at:.2})}
+};
+const rumble=()=>SFX.rumble(),chime=()=>SFX.kaching();
+const paintMute=()=>{g('mute').textContent=mute?'🔇 Off':'🔊 On'};g('mute').onclick=()=>{mute=!mute;localStorage.setItem('mp_mute',mute?'1':'0');paintMute();if(!mute)setTimeout(()=>SFX.click(),30)};paintMute();
 // tabs
 document.querySelectorAll('.tabs a').forEach(a=>a.onclick=e=>{e.preventDefault();show(a.dataset.t)});
 function show(t){if(!['ashes','coin'].includes(t))t='ashes';document.querySelectorAll('.tabs a').forEach(x=>x.classList.toggle('on',x.dataset.t===t));['shop','att','vogue','ashes','coin'].forEach(x=>g('t-'+x).hidden=x!==t);history.replaceState(null,'','#'+t)}
@@ -58,11 +75,11 @@ function paintMachine(){const bb=g('myBases'),aa=g('myAtts');pick.base=mine.base
  // one tile per attachment type (spares = quantity); a pick holds the NFT id of the first copy of that type
  const groups={};mine.atts.forEach(x=>(groups[x.a]=groups[x.a]||[]).push(x.id));const picked=a=>pick.att.find(i=>groups[a].includes(i));
  aa.innerHTML=Object.keys(groups).length?Object.keys(C.attachments).filter(a=>groups[a]).map(a=>{const s=!!picked(a),off=!s&&pick.att.length>=3;return `<div class="it ${s?'sel':''} ${off?'off':''}" data-a="${a}">${groups[a].length>1?`<span class="qty">x${groups[a].length}</span>`:''}<img src="img/${IMG[a]}.jpg" alt=""><div>${C.attachments[a]}</div></div>`}).join(''):'<p class="note">No attachments yet. Grab some on xrp.cafe.</p>';
- bb.querySelectorAll('.it').forEach(e=>e.onclick=()=>{pick.base=pick.base===e.dataset.id?null:e.dataset.id;tone(500,.05);paintMachine()});
- aa.querySelectorAll('.it').forEach(e=>e.onclick=()=>{const a=e.dataset.a,cur=picked(a);if(cur)pick.att=pick.att.filter(i=>i!==cur);else if(pick.att.length<3)pick.att.push(groups[a][0]);tone(600,.05);paintMachine()});
+ bb.querySelectorAll('.it').forEach(e=>e.onclick=()=>{pick.base=pick.base===e.dataset.id?null:e.dataset.id;SFX.click();paintMachine()});
+ aa.querySelectorAll('.it').forEach(e=>e.onclick=()=>{const a=e.dataset.a,cur=picked(a);if(cur)pick.att=pick.att.filter(i=>i!==cur);else if(pick.att.length<3)pick.att.push(groups[a][0]);SFX.click();paintMachine()});
  const pp=g('myPoses');pick.pose=mine.poses.some(x=>x.id===pick.pose)?pick.pose:null;
  pp.innerHTML=mine.poses.length?mine.poses.map(x=>`<div class="it ${pick.pose===x.id?'sel':''}" data-id="${x.id}"><img src="img/pose_${x.o}.jpg" alt=""><div>${(C.poses||{})[x.o]||x.o}</div></div>`).join(''):'<p class="note">No poses yet. Grab one on xrp.cafe.</p>';
- pp.querySelectorAll('.it').forEach(e=>e.onclick=()=>{pick.pose=pick.pose===e.dataset.id?null:e.dataset.id;tone(550,.05);paintMachine()});
+ pp.querySelectorAll('.it').forEach(e=>e.onclick=()=>{pick.pose=pick.pose===e.dataset.id?null:e.dataset.id;SFX.click();paintMachine()});
  useV=mine.vouchers.length>0;g('vmPay').innerHTML=mine.vouchers.length?`VOUCHER SLOT<br>💵 ${mine.vouchers.length} voucher${mine.vouchers.length>1?'s':''} ready`:'VOUCHER SLOT<br>no voucher yet';
  g('nAtt').textContent=pick.att.length+'/3';gate()}
 async function gate(){const {builds}=await counts(),lim=R?R.max_builds_per_wallet:3;g('myBuilds').textContent=`your builds: ${builds}/${lim}`;const b=g('build');
@@ -76,7 +93,7 @@ let rising=false;async function rise(bid){if(rising)return;rising=true;g('vmTray
  g('status').innerHTML='🔥 Rising from the ashes… your pickle is being built';
  for(let k=0;k<720;k++){await new Promise(r=>setTimeout(r,5000));try{R=await fj('ashes_results.json')}catch(e){continue}const b=R.builds.find(x=>x.id===bid||x.id.startsWith(bid+'-'));
   if(b&&b.status==='refunded'){g('status').textContent='Build refunded ('+(b.reason||'')+'). Your voucher and parts were handed back.';break}
-  if(b&&b.status==='done'){await finale(b);chime();g('status').innerHTML=`Reborn! Pose: ${b.pose.replace(/pose\d_/,'').replace(/_/g,' ')}${b.pants_variant?' · Jeans: '+b.pants_variant:''}${b.glow?' · <b>⚡ SUPER SAIYAN GOLD GLOW</b>':''}<br>Tap CLAIM below to take it.`;break}}
+  if(b&&b.status==='done'){await finale(b);g('status').innerHTML=`Reborn! Pose: ${b.pose.replace(/pose\d_/,'').replace(/_/g,' ')}${b.pants_variant?' · Jeans: '+b.pants_variant:''}${b.glow?' · <b>⚡ SUPER SAIYAN GOLD GLOW</b>':''}<br>Tap CLAIM below to take it.`;break}}
  clearInterval(rt);g('can').classList.remove('shake');localStorage.removeItem('mp_pending');rising=false;busy=false;refresh()}
 // FINAL SEQUENCE (approved Oct 22): the machine drops the final can -> it pops open to the flexing poster -> the finished pickle
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
@@ -90,7 +107,7 @@ const MOCK=false;   // mainnet: screenshot mock disabled   // STAGING screenshot
 const fmt=n=>n.toLocaleString('en-US'),CLS={Copper:'cu',Silver:'ag',Gold:'au'},LBL={Copper:'1K',Silver:'10K',Gold:'100K'};
 function paintCoin(){paintVCount();if(MOCK||!CR)return;const el=g('cmCoins');const tot=myCoins.filter(c=>cmSel.has(c.id)).reduce((a,c)=>a+c.v,0);
  if(valid(W())){el.dataset.demo='0';el.innerHTML=myCoins.length?myCoins.map(c=>`<i class="c ${CLS[c.metal]} mine ${cmSel.has(c.id)?'sel':''}" data-id="${c.id}">${LBL[c.metal]}</i>`).join(''):'<p class="note">No Mickel Nickel coins in this wallet.</p>';
-  el.querySelectorAll('.mine').forEach(e=>e.onclick=()=>{cmSel.has(e.dataset.id)?cmSel.delete(e.dataset.id):cmSel.add(e.dataset.id);tone(880,.04);paintCoin()});
+  el.querySelectorAll('.mine').forEach(e=>e.onclick=()=>{cmSel.has(e.dataset.id)?cmSel.delete(e.dataset.id):cmSel.add(e.dataset.id);SFX.click();paintCoin()});
   g('cmCount').textContent=fmt(tot);g('cmCount').nextElementSibling.textContent=cmSel.size+' coin'+(cmSel.size===1?'':'s');document.querySelector('.cm-bar i').style.width=Math.min(100,tot/500)+'%';document.querySelector('.cm-bar i').style.animation='none'}
  wh(W()).then(h=>{const n=(CR.wallet_vouchers||{})[h]||0;g('cmMine').textContent=`your vouchers: ${n}/${CR.cap_per_wallet} · ${CR.player_supply-CR.player_minted} of ${CR.player_supply} left`;
   const TX0=TESTERS.includes(W()),left=CR.player_supply-CR.player_minted;cmLock(left<=0?'supply':(!TX0&&n>=CR.cap_per_wallet)?'wallet':null,n);const b=g('cmInsert');const kv=tot%CR.voucher_value===0?tot/CR.voucher_value:0,TX=false,room=TX?99:CR.cap_per_wallet-n;b.disabled=busy||!valid(W())||!kv||kv>room||!!CMLOCK;const sg=Math.ceil(cmSel.size/7);b.textContent=(!TX&&n>=CR.cap_per_wallet)?'LIMIT: 3 VOUCHERS':(tot&&!kv)?'MUST BE 50K, 100K or 150K':kv>room?`ONLY ${room} VOUCHER${room>1?'S':''} LEFT FOR YOU`:'INSERT '+fmt(tot)+(kv?` = ${kv} VOUCHER${kv>1?'S':''}`:'')+(sg?` · ${sg} signature${sg>1?'s':''}`:'');const si=g('cmSigs');if(si)si.textContent=cmSel.size?`${cmSel.size} coin${cmSel.size>1?'s':''} = ${sg} signature${sg>1?'s':''} in Xaman (7 coins per signature)`:'5 Silver = 1 voucher (1 signature) · 1 Gold = 2 vouchers (1 signature) · 50 Copper = 1 voucher (8 signatures)'})}
@@ -141,11 +158,38 @@ function ntTaxon(id){try{const t=parseInt(id.slice(48,56),16)>>>0,s=parseInt(id.
 let VOFF=0;function paintVCount(){const el=g('cmVcount');if(!el)return;const h=mine.vouchers.length,n=h+VOFF;
  el.innerHTML=`<span class="vm-lbl">YOUR VOUCHERS</span><div class="vc-n">${n}</div><div class="vc-bills">${n?'<i>💵</i>'.repeat(Math.min(n,6)):'<em>none yet</em>'}</div><small>${h} in wallet${VOFF?` · ${VOFF} waiting to 🎁 CLAIM`:''}</small>`}
 let cmT=null;function cmWork(on){const m=document.querySelector('#t-coin .cm');if(!m)return;clearInterval(cmT);cmT=null;m.classList.toggle('working',on);document.querySelectorAll('.cm-drop').forEach(x=>x.remove());
- if(!on)return;rumble();const f=document.querySelector('.cm-funnel');let k=0;cmT=setInterval(()=>{if(k++%4===0)rumble();const c=document.createElement('i');c.className='c cm-drop '+['cu','ag','au','cu'][k%4];c.style.left=(30+Math.random()*40)+'%';f.appendChild(c);tone(900+Math.random()*300,.05,0,'square',.03);setTimeout(()=>c.remove(),900)},450)}
+ if(!on)return;rumble();const f=document.querySelector('.cm-funnel');let k=0;cmT=setInterval(()=>{if(k++%4===0)rumble();const c=document.createElement('i');c.className='c cm-drop '+['cu','ag','au','cu'][k%4];c.style.left=(30+Math.random()*40)+'%';f.appendChild(c);SFX.clink();setTimeout(()=>c.remove(),900)},450)}
 async function printBills(n){const s=document.querySelector('.cm-billslot');s.classList.add('printing');s.querySelectorAll('.cm-out').forEach(x=>x.remove());
  for(let i=0;i<n;i++){const b=document.createElement('img');b.src='img/voucher_50000_bill.jpg';b.alt='Mickel Nickel 50,000 voucher';b.className='cm-out';b.style.setProperty('--r',(i%2?3:-3)+'deg');b.style.setProperty('--o',(i*14)+'px');s.appendChild(b);
-  tone(140,.6,0,'sawtooth',.03);await wait(1300);chime();await wait(700)}
+  SFX.whir();await wait(1300);await wait(700)}
  const t=document.createElement('div');t.className='cm-out-tag';t.textContent=n>1?`💵 x${n} PRINTED!`:'💵 PRINTED!';s.appendChild(t);s.scrollIntoView({behavior:'smooth',block:'center'})}
 // Vending Machine resume when coming back from Xaman (pageshow fires on back/forward + bfcache restores)
 window.addEventListener('pageshow',()=>{const P=JSON.parse(localStorage.getItem('mp_pending')||'null');if(P&&Date.now()-P.t<36e5&&!rising){show('ashes');rise(P.bid)}});
 // demo triggers removed for mainnet
+// CELEBRATIONS (preview): voucher ka-ching + sparkle; pickle build stages, lid pop, confetti, GLOW aura
+const kaching=()=>SFX.kaching();
+function sparks(host,n,ch){for(let i=0;i<n;i++){const s=document.createElement('i');s.className='spark';s.textContent=ch||'✨';s.style.left=(20+Math.random()*60)+'%';s.style.top=(30+Math.random()*40)+'%';s.style.setProperty('--dx',(Math.random()*120-60)+'px');s.style.setProperty('--dy',(-40-Math.random()*80)+'px');host.appendChild(s);setTimeout(()=>s.remove(),1100)}}
+function confetti(host,n,gold){const C=gold?['#ffd54a','#ffb300','#fff3a0']:['#4caf50','#ffd54a','#e53935','#29b6f6','#fff'];for(let i=0;i<n;i++){const c=document.createElement('i');c.className='confetti';c.style.background=C[i%C.length];const a=Math.random()*Math.PI*2,r=90+Math.random()*130;c.style.setProperty('--dx',Math.cos(a)*r+'px');c.style.setProperty('--dy',(Math.sin(a)*r-60)+'px');host.appendChild(c);setTimeout(()=>c.remove(),1900)}}
+const _printBills=printBills;printBills=async function(n){const s=document.querySelector('.cm-billslot');const p=_printBills(n);for(let i=0;i<n;i++){await wait(1300);kaching();sparks(s,8);await wait(700)}await p;sparks(s,10,'💵')};
+// build stages instead of an endless spinner
+const STAGES=['🔥 Burning parts','🫧 Brewing your pickle','🥒 Adding the brine','🥫 Canning','✨ Almost there'];let stT=null;
+function stages(on){clearInterval(stT);stT=null;const box=document.querySelector('.canbox');if(!on)return;let k=0,t0=Date.now();const paint=()=>{const e=(Date.now()-t0)/1000,i=Math.min(STAGES.length-1,Math.floor(e/25)),pc=Math.min(95,5+e/1.4);g('status').innerHTML=`${STAGES[i]}…<div class="vm-prog"><i style="width:${pc}%"></i></div>`;if(box&&k++%1===0){const b=document.createElement('i');b.className='bub';b.style.left=(25+Math.random()*50)+'%';box.appendChild(b);setTimeout(()=>b.remove(),1700)}};paint();stT=setInterval(paint,1000)}
+const _rise=rise;rise=async function(bid){if(rising)return;const p=_rise(bid);stages(true);try{await p}finally{stages(false)}};
+// reveal ONLY the image of this wallet's own finished build (matched by build id); cache-busted, retried; neutral can placeholder otherwise
+function ownImg(im,b){const PH='img/final_can.jpg';return new Promise(async res=>{for(let k=0;k<8;k++){let src=b&&b.image;if(!src){try{const R2=await fj('ashes_results.json'),x=R2.builds.find(y=>y.id===b.id);src=x&&x.status==='done'&&x.image}catch(e){}}
+ if(src){const u=src.startsWith('data:')?src:src+(src.includes('?')?'&':'?')+'t='+Date.now();const okk=await new Promise(r=>{const t=new Image();t.onload=()=>r(1);t.onerror=()=>r(0);t.src=u});if(okk){im.src=u;im.dataset.build=b.id;return res()}}
+ im.src=PH;im.dataset.build='';await wait(3000)}res()})}
+const _finale=finale;finale=async function(b){stages(false);const can=g('can'),box=document.querySelector('.canbox'),im=g('result');
+ can.hidden=false;can.classList.remove('shake');void can.offsetWidth;can.classList.add('shake');rumble();await wait(1200);can.classList.remove('shake');
+ const lid=document.createElement('i');lid.className='lid';box.appendChild(lid);setTimeout(()=>lid.remove(),1100);SFX.pop();can.classList.add('lidpop');await wait(500);
+ can.hidden=true;can.classList.remove('lidpop');if(b.glow){const a=document.createElement('i');a.className='aura';box.appendChild(a);setTimeout(()=>a.remove(),3000)}
+ im.className='';await ownImg(im,b);im.hidden=false;void im.offsetWidth;im.className='rise';confetti(box,b.glow?60:40,b.glow);
+ g('vmTray').classList.add('reveal');const bn=g('vmBanner');bn.hidden=false;bn.className='vm-ready';bn.innerHTML=(b.glow?'<span class="rare">⚡ RARE GLOW! ⚡</span>':'')+'YOUR MICKEL PICKLE IS READY!';SFX.fanfare();if(b.glow)SFX.shimmer();
+ setTimeout(()=>g('vmTray').scrollIntoView({behavior:'smooth',block:'start'}),300)};
+// put the voucher claim button right under the printed bill
+const _pc=paintClaims;paintClaims=async function(){await _pc();const s=document.querySelector('.cm-billslot.printing'),c=g('cmClaims');if(s&&c&&s.nextElementSibling!==c)s.after(c);c&&c.querySelectorAll('a').forEach(a=>a.classList.add('cm-claimhere'))};
+// furnace while cooking (preview)
+let emT=null;
+function furnace(on){const vm=document.querySelector('.vm'),gl=document.querySelector('.vm-glass');clearInterval(emT);emT=null;if(!vm)return;vm.classList.toggle('cooking',on);if(!on)return;SFX.whoosh();
+ emT=setInterval(()=>{if(!gl)return;for(let i=0;i<2;i++){const e=document.createElement('i');e.className='ember';e.style.left=(10+Math.random()*80)+'%';e.style.setProperty('--dx',(Math.random()*60-30)+'px');gl.appendChild(e);setTimeout(()=>e.remove(),2300)}},300)}
+const _stages=stages;stages=function(on){_stages(on);furnace(on);if(on){const paint=()=>{const s=g('status');if(s&&!s.querySelector('.vm-note'))s.insertAdjacentHTML('afterbegin','<span class="vm-note">Your Mickel Pickle is cooking… this can take a couple minutes 🔥</span>')};paint();clearInterval(stT);const old=stT;let k=0;const t0=Date.now();stT=setInterval(()=>{const e=(Date.now()-t0)/1000,i=Math.min(STAGES.length-1,Math.floor(e/25)),pc=Math.min(95,5+e/1.4);g('status').innerHTML=`${STAGES[i]}…<div class="vm-prog"><i style="width:${pc}%"></i></div>`;paint()},1000)}};
