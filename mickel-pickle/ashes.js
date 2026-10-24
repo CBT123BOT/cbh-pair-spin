@@ -28,10 +28,10 @@ async function sign(txjson,instruction){if(!XM)throw new Error('Connect Xaman fi
 const W=()=>g('w').value.trim();
 async function counts(){const h=valid(W())?await wh(W()):'';const b=(R&&R.shop&&R.shop.bought[h])||{base:0,attachment:0,pose:0};b.pose=b.pose||0;return {b,builds:(R&&R.wallet_builds[h])||0}}
 // SHOWCASES (Rusty 7:58 PM CT Oct 22): parts are minted + sold on xrp.cafe, no on-site checkout or mint caps
-const CAFE='https://xrp.cafe';   // placeholder until the collection pages exist
+const CAFE='https://xrp.cafe/collection/mickel-pickle-armory-attachments', CAFE_POSE='https://xrp.cafe/collection/mickel-pickle-vogue-out-poses';
 function paintShops(){if(!C)return;
  g('attGrid').innerHTML=Object.entries(C.attachments).map(([id,n])=>`<div class="it"><img src="img/${IMG[id]}.jpg" alt=""><div>${n}${id==='07'?'<br><small>ripped or clean jeans (random)</small>':''}</div><span class="left">1.11 XRP</span><a class="cafe" href="${CAFE}" target="_blank" rel="noopener">xrp.cafe ↗</a></div>`).join('');
- g('poseGrid').innerHTML=Object.entries(C.poses||{}).map(([id,n])=>`<div class="it"><img src="img/pose_${id}.jpg" alt=""><div>${n}</div><span class="left">111 · 1.11 XRP</span><a class="cafe" href="${CAFE}" target="_blank" rel="noopener">xrp.cafe ↗</a></div>`).join('')}
+ g('poseGrid').innerHTML=Object.entries(C.poses||{}).map(([id,n])=>`<div class="it"><img src="img/pose_${id}.jpg" alt=""><div>${n}</div><span class="left">111 · 1.11 XRP</span><a class="cafe" href="${CAFE_POSE}" target="_blank" rel="noopener">xrp.cafe ↗</a></div>`).join('')}
 // claims: 0-XRP sell offers from our issuer to THIS wallet (parts + finished pickles)
 async function paintClaims(){if(!valid(W())||!C)return;let L=[];for(const iss of [C.pickle_issuer,CR&&CR.coin_issuer].filter(Boolean)){try{const r=await rq({command:'account_objects',account:iss,type:'nft_offer',limit:400});L=L.concat((r.result.account_objects||[]).filter(o=>o.Destination===W()&&o.Amount==='0'))}catch(e){}}
  const DONE=JSON.parse(sessionStorage.getItem('cbhClaimed')||'[]');L=L.filter(o=>!DONE.includes(o.index));const mark=ids=>{const d=JSON.parse(sessionStorage.getItem('cbhClaimed')||'[]').concat(ids);sessionStorage.setItem('cbhClaimed',JSON.stringify(d));ids.forEach(i=>document.querySelectorAll(`[data-o="${i}"]`).forEach(a=>a.remove()))};
