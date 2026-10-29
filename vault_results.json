@@ -7,7 +7,7 @@
  },
  "stash_left": 13961,
  "coins_left": 13961,
- "giveaway_stash_in_wallet": 95,
+ "giveaway_stash_in_wallet": 97,
  "used_pairs": {
   "0907": {
    "holder": "rHcx\u2026ewT",
@@ -2324,8 +2324,19 @@
      "result": "tesSUCCESS"
     }
    }
+  },
+  {
+   "t": 1793274825.773602,
+   "time_utc": "2026-10-29T11:53:45.773608+00:00",
+   "proof_tx": "9EB8825A2652DFB307DBE77CD9AD51D94144A23BCE37AA290EBFEF91CF0559E3",
+   "ledger_index": 107979460,
+   "holder": "r9vL\u2026aSC",
+   "piece": "0176",
+   "delivered": "100000",
+   "action": "rejected",
+   "reason": "PAIR_ALREADY_USED"
   }
  ],
  "rule": "pick i = SHA-256(proof/payment tx hash + validating ledger hash + byte i) mod pool size; pool = never-minted coin numbers sorted (mn_remaining.json); pool shrinks each pick",
- "updated": "2026-10-29T11:53:21.863402+00:00"
+ "updated": "2026-10-29T11:53:48.724561+00:00"
 }
