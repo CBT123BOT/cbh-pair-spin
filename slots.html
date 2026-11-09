@@ -1,5 +1,5 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
-<script>window.SL_BUILD="20261109-0124";/* stale-page guard: GitHub Pages caches pages for 10 min. If a newer build is out, reload once with ?v=<build> (a new URL, so the phone fetches it fresh). */
+<script>window.SL_BUILD="20261109-0136";/* stale-page guard: GitHub Pages caches pages for 10 min. If a newer build is out, reload once with ?v=<build> (a new URL, so the phone fetches it fresh). */
 (function(){try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){var b=j&&j.slots;if(!b||b===window.SL_BUILD)return;var u=new URL(location.href);if(u.searchParams.get("v")===b)return;u.searchParams.set("v",b);location.replace(u.toString())}).catch(function(){})}catch(e){}})();</script><link rel="icon" href="img/favicon.png">
 <title>MICKEL NICKEL SLOTS · Crypto Bros&amp;Ho's Trading Company</title>
 <link rel="stylesheet" href="slots.css?v=20261022-0830">
@@ -23,7 +23,7 @@ body{font-family:system-ui,sans-serif;background:#0d0f14;color:#eee;margin:0 aut
 <section class="sl-cab" id="slcab" aria-busy="false"><div class="sl-marq" aria-hidden="true"></div>
 <p class="sl-banner" id="slban" aria-live="polite">Land a prize combo to win!</p>
 <div class="sl-reels" id="slreels"></div>
-<p class="sl-paynote" id="slpaynote" role="status">Payments are off. Slots processing is not verified, and paid prizes have no documented legal clearance. Nothing is charged unless a machine status under 180 seconds says it is accepting payments. Current request, if that ever happens before the new schedule: 0.1 XRP per earned spin and 0.5 XRP per paid spin (0.5 / 1.0 / 1.5 for 1, 2, or 3). Planned, not active: earned 0.01 XRP; paid Slots 0.5 XRP for one or exactly 1 XRP total for three, anti-spam included, page choices 1 or 3, max 3 per payment. A legacy 1 XRP payment stays two spins. A legacy 1.50 XRP payment stays three. Network fees are separate. 0.01 is not a promise that it covers every cost. No prize is guaranteed.</p>
+<p class="sl-paynote" id="slpaynote" role="status">Payments are off. Slots processing is not verified, and paid prizes have no documented legal clearance. Nothing is charged unless a machine status under 180 seconds is accepting payments, its fee schedule is live, and it includes an integer fee epoch. The page schedule must be live too. Current request, if that ever happens before the new schedule: 0.1 XRP per earned spin and 0.5 XRP per paid spin (0.5 / 1.0 / 1.5 for 1, 2, or 3). Planned, not active: earned 0.01 XRP; paid Slots 0.5 XRP for one or exactly 1 XRP total for three, anti-spam included, page choices 1 or 3, max 3 per payment. A legacy 1 XRP payment stays two spins. A legacy 1.50 XRP payment stays three. Network fees are separate. 0.01 is not a promise that it covers every cost. No prize is guaranteed.</p>
 <div class="sl-acts one"><button type="button" class="sl-btn sl-spin" id="slspin" disabled><span>SPIN</span><small>loading…</small></button></div>
 <div class="sl-multi" id="slmulti" hidden role="group" aria-label="Spins per payment"><button type="button" data-n="1">x1 · 0.5</button><button type="button" data-n="2">x2 · 1.0</button><button type="button" data-n="3">x3 · 1.5</button></div>
 <div class="sl-multi sl-fmulti" id="slfmulti" hidden role="group" aria-label="Free spins per signature"></div>
@@ -81,7 +81,7 @@ if(window.CBH_XAMAN_API_KEY){const sc=document.createElement('script');sc.src='h
  $('connect').onclick=e=>{e.preventDefault();if(connected)XM.logout();else XM.authorize()};XM.on('logout',()=>{connected=false;$('connect').textContent='🔗 Connect Xaman'});
  XM.on('success',async()=>{const a=await XM.user.account;$('w').value=a;connected=true;$('connect').textContent='✅ '+a.slice(0,6)+'…'+a.slice(-4)+' · disconnect';showClaims()})};document.head.appendChild(sc)}
 </script>
-<p class="sl-build" id="slbuild">build 20261109-0124</p>
-<script src="pay-gate.js?v=20261109-0124"></script>
-<script src="slots.js?v=20261109-0124"></script>
+<p class="sl-build" id="slbuild">build 20261109-0136</p>
+<script src="pay-gate.js?v=20261109-0136"></script>
+<script src="slots.js?v=20261109-0136"></script>
 </body></html>
