@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><script>window.VAULT_BUILD="20261109-1220";(function(){try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){var b=j&&j.vault;if(!b||b===window.VAULT_BUILD)return;var u=new URL(location.href);if(u.searchParams.get("v")===b)return;u.searchParams.set("v",b);location.replace(u.toString())}).catch(function(){})}catch(e){}})();if(location.hash==="#slots")location.replace("slots.html"+location.search)</script><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="img/favicon.png">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><script>window.VAULT_BUILD="20261109-1400";(function(){try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){var b=j&&j.vault;if(!b||b===window.VAULT_BUILD)return;var u=new URL(location.href);if(u.searchParams.get("v")===b)return;u.searchParams.set("v",b);location.replace(u.toString())}).catch(function(){})}catch(e){}})();if(location.hash==="#slots")location.replace("slots.html"+location.search)</script><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="img/favicon.png">
 <title>Crypto Bros&amp;Ho's Trading Company · THE VAULT</title>
 <style>
 body{font-family:system-ui,sans-serif;background:#0d0f14;color:#eee;margin:0 auto;padding:16px;max-width:760px}
@@ -66,6 +66,7 @@ a.sec{background:#2a3145;color:#cfe;font-weight:600}
 <p class="small">Each spin request costs a <b id="vaultfee">0.01</b> XRP anti-spam request fee, paid in one payment you sign (it also proves you hold the pair). That is the amount this page asks for today. Network fees are separate. The fee is per request, not per spin, and it does not change the 3 and 2 counts. The project covers any processing cost above that. This is not a place to buy extra spins. Separate random Mickel Nickel minting, when offered, is on <a href="https://xrp.cafe/collection/mickelnickels" style="color:#8ab" target="_blank" rel="noopener">xrp.cafe Mickel Nickels</a>. This page does not say that cafe mint is open. Fair pick: spin i = SHA-256(proof tx hash + validating ledger hash + i) mod the never-minted coins (<a href="mn_remaining.json" style="color:#8ab">mn_remaining.json</a>), so odds follow what's left. Paid mints use the same rule with the payment tx hash. A payment at the wrong price is refunded. Public log: <a href="vault_results.json" style="color:#8ab">vault_results.json</a>. Pieces are NFTs.</p>
 <script src="config.js"></script>
 <script src="pay-gate.js?v=20261109-1220"></script>
+<script src="health-gate.js?v=20261109-1400"></script>
 <script>
 const SELLER="rNxAwKP3rdNTfe4ZNw1SntXCfW2U4r2XuB",WSS=["wss://xrplcluster.com","wss://s1.ripple.com","wss://s2.ripple.com"],EXP="https://livenet.xrpl.org",NET='MAINNET',PAGE=location.origin+location.pathname,GW="https://gateway.pinata.cloud/ipfs/";
 const $=id=>document.getElementById(id);let NS=3,MNW=null,mnq=1,VP=null,RES={used_pairs:{}},XM=null,connected=false,sel=null,ws=null,wsi=0,reqId=1,pend={},spinT=null,watchT=null,known=new Set();
@@ -91,7 +92,7 @@ async function myPairs(){const a=$('w').value.trim();if(!valid(a))return;const h
  for(const [N,p] of Object.entries(VP.d1||{}))if(have[p.polaroid_uri]&&have[p.twin_uri])L.push({N,name:p.name+' (D1)',img:p.img,ok:!RES.used_pairs[N],d1:1,why:RES.used_pairs[N]?'spins used':''});
  $('pairs').innerHTML=L.length?L.map(x=>`<div class="pc ${x.ok?'':'used'} ${sel===x.N?'sel':''}" data-n="${x.N}" data-ok="${x.ok}" data-d1="${x.d1?1:0}"><img src="${x.img}" alt="" loading="lazy" decoding="async" width="72" height="72"><div><b>${x.name}</b><div class="small">${x.ok?(x.d1?'D1 pair · 3 spins ready':'🪙 coin on · 2 spins ready'):(x.why||'spins used')}</div></div></div>`).join(''):'<div class="small">No matched pairs found in this wallet.</div>';
  document.querySelectorAll('.pc').forEach(e=>e.onclick=()=>{if(e.dataset.ok!=='true')return;sel=e.dataset.n;NS=e.dataset.d1==='1'?3:2;$('c2').style.display=NS===3?'':'none';myPairs();gate()});gate()}
-function gate(){const b=$('spin');if(!VOPEN){b.disabled=true;b.textContent='THE VAULT opens soon';b.style.filter='grayscale(1)';b.style.opacity='.5';return}b.style.filter='';b.style.opacity='';$('warn').style.display=sel?'block':'none';const walletOk=XM?connected:valid($('w').value.trim());
+function gate(){const b=$('spin');if(!VOPEN){b.disabled=true;b.textContent='THE VAULT opens soon';b.style.filter='grayscale(1)';b.style.opacity='.5';return}if(!(window.CBHHealth&&CBHHealth.allowed('vault'))){b.disabled=true;b.textContent='MAINTENANCE · back soon';b.style.filter='grayscale(1)';b.style.opacity='.5';return}b.style.filter='';b.style.opacity='';$('warn').style.display=sel?'block':'none';const walletOk=XM?connected:valid($('w').value.trim());
  if(!sel){b.disabled=true;b.textContent='Pick a pair';return}if(!$('ok').checked){b.disabled=true;b.textContent='Tick “I understand” first';return}
  if(!walletOk||!XM){b.disabled=true;b.textContent='Connect Xaman to spin';return}b.disabled=false;b.textContent='🐉 UNITE THE TWINS · USE '+NS+' SPINS'}
 $('ok').onchange=gate;
@@ -109,7 +110,7 @@ async function pendingCoins(){const a=$('w').value.trim();const r=(await rq({com
 async function showClaims(){const L=await pendingCoins();if(!L.length){$('claim').innerHTML='';return L}const info=await Promise.all(L.map(x=>coinInfo(x.uri)));
  $('claim').innerHTML='<h3>Your Mickel Nickels to claim</h3><div class="claim">'+L.map((x,i)=>`<a class="btn cl" href="#" onclick='claimOne("${x.offer}");return false'>CLAIM ${info[i].metal||''} ${info[i].name}</a>`).join('')+'</div><div class="small">Claiming costs 0 XRP. Or accept them in Xaman → Events → Requests.</div>';return L.map((x,i)=>({...x,...info[i]}))}
 async function claimOne(o){if(!XM||VBUSY)return;VBUSY=true;try{await xamanSign({TransactionType:'NFTokenAcceptOffer',NFTokenSellOffer:o},'Claim your Mickel Nickel (0 XRP)')}catch(e){$('status').textContent='Xaman: '+e.message}finally{VBUSY=false}setTimeout(showClaims,5000)}
-$('spin').onclick=()=>vlock(async()=>{if(!VOPEN||$('spin').disabled)return;const N=sel;const before=new Set((await pendingCoins()).map(x=>x.offer));startC();
+$('spin').onclick=()=>vlock(async()=>{if(!VOPEN||$('spin').disabled||!(window.CBHHealth&&CBHHealth.allowed('vault')))return;const N=sel;const before=new Set((await pendingCoins()).map(x=>x.offer));startC();
  $('status').innerHTML=`Opening Xaman… check it says <b>${NET}</b> and <b>${SPINFEE/1e6} XRP</b> (spin fee), then sign. That proves you hold pair #${N}.`;
  try{if(!VOPEN)throw new Error('THE VAULT opens soon');await xamanSign({TransactionType:'Payment',Destination:SELLER,Amount:String(SPINFEE),Memos:[{Memo:{MemoType:s2hex('CBH-VAULT'),MemoData:s2hex(N)}}]},`THE VAULT: use ${NS} spins on pair #${N}`)}catch(e){stopC([]);$('status').textContent='Xaman: '+e.message;return}
  clearInterval(watchT);let k=0;watchT=setInterval(async()=>{k++;try{const L=(await showClaims())||[];const nw=L.filter(x=>!before.has(x.offer));
@@ -140,6 +141,8 @@ $('mnbuy').onclick=()=>vlock(async()=>{const S=mnState();if(!S.open||$('mnbuy').
   else if(k>60){clearInterval(watchT);$('status').innerHTML='Nothing came back yet. Check <a href="vault_results.json" style="color:#8ab">the public log</a> (a wrong-price payment is refunded).'}}catch(e){}},4000)});
 setInterval(()=>load().then(mnGate).catch(()=>{}),30000);loadMN();
 $('w').addEventListener('change',()=>myPairs().catch(()=>{}));
+
+if(window.CBHHealth){CBHHealth.load().then(()=>gate());setInterval(()=>{if(!document.hidden)CBHHealth.load().then(()=>gate())},60000)}
 </script><div class="footer" style="margin:30px -16px -16px;padding:22px 10px 26px;border-top:2px solid #f5c542;background:linear-gradient(0deg,#1a1508,#0d0f14)"><div class="title" data-text="Crypto Bros&amp;Ho's Trading Company" role="heading" aria-level="1">Crypto Bros&amp;Ho's Trading Company</div>
 </div>
 </body></html>
