@@ -2,19 +2,39 @@
  "wallet": "rNxAwKP3rdNTfe4ZNw1SntXCfW2U4r2XuB",
  "period": "2026-11-01",
  "month": "2026-11-01",
- "snapshot_taken": false,
+ "snapshot_taken": true,
  "first_snapshot_ct": "2026-10-31T00:00:00-05:00",
  "next_snapshot_ct": "2026-12-01T00:00:00-06:00",
  "free_spins": {
-  "h:ab7ed169a659934b": {
-   "granted": 3,
-   "used": 3
-  },
-  "h:71a6e156a041bc1a": {
+  "h:e77d41222da702ca": {
    "granted": 1,
    "used": 0
   },
-  "h:8f8ff34709118778": {
+  "h:d590e8424441c039": {
+   "granted": 1,
+   "used": 0
+  },
+  "h:e143328a7bc7a0b5": {
+   "granted": 2,
+   "used": 0
+  },
+  "h:15900289512af046": {
+   "granted": 1,
+   "used": 0
+  },
+  "h:ee77defd2d3dc88e": {
+   "granted": 1,
+   "used": 0
+  },
+  "h:ab7ed169a659934b": {
+   "granted": 4,
+   "used": 3
+  },
+  "h:85aea5fc1bf4ed6d": {
+   "granted": 2,
+   "used": 0
+  },
+  "h:71a6e156a041bc1a": {
    "granted": 1,
    "used": 0
   },
@@ -22,7 +42,7 @@
    "granted": 1,
    "used": 1
   },
-  "h:d590e8424441c039": {
+  "h:8f8ff34709118778": {
    "granted": 1,
    "used": 0
   }
@@ -1602,5 +1622,5 @@
    "offers": []
   }
  ],
- "updated": "2026-11-09T12:19:05.504482+00:00"
+ "updated": "2026-11-09T12:19:53.371458+00:00"
 }
