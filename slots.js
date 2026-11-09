@@ -4,7 +4,7 @@
    The pending spin is remembered (localStorage + Xaman return URL ?sltx={txid}&slid={id}) so leaving for Xaman and coming back
    never loses it, and the button stays locked until that spin's result is in (no double payments). No Math.random anywhere. */
 (()=>{
-const JSV='20261022-0830';
+const JSV='20261109-0124';
 const g=id=>document.getElementById(id), qs=new URLSearchParams(location.search);
 const SYM=["goldx","copper","silver","gold","hat","polaroid","glasses","bro","ho"], COMBO={Copper:["copper","copper","copper"],Silver:["silver","silver","silver"],Gold:["gold","gold","gold"],pair:["polaroid","polaroid","glasses"],pair_nospins:["hat","hat","hat"]};
 // landing combos (same as slots_core.py): Copper x3 / Silver x3 = Mickel Nickel; Gold x3 = GRAND Gold Mickel only;
@@ -204,11 +204,21 @@ async function demoSpin(){busy=true;gate();if(!demoN&&+qs.get('demo_from')>1)dem
  catch(e){hardStop();banner('lose','Demo error, tap again.')}busy=false;gate()}
 let multiN=1,freeN=0;const FMAX=()=>Math.max(1,+CFG.max_free_spins_per_payment||5);
 const freePick=n=>Math.max(1,Math.min(n,FMAX(),freeN||n));   // default: all your free spins (max 5) in one signature
-async function liveSpin(mode){if(getP())return resume();if(!isConn()||busy)return;busy=true;AX();startLoop();sStart();gate();   // reels roll the moment you tap
- const n=mode==='PAID'?multiN:freePick(freeLeft()),amt=mode==='FREE'?n*+CFG.free_spin_drops:n*+CFG.paid_spin_drops,me=wal();
- banner('wait',`Opening Xaman… check it says <b>MAINNET</b> and <b>${Number(amt)/1e6} XRP</b>, then sign.${/iPhone|iPad|Android/i.test(navigator.userAgent)?' After signing, tap <b>◀ Safari</b> (top-left) to come back here.':''}`);let r=null;
- try{r=await xamanSign({TransactionType:'Payment',Destination:SELLER,Amount:String(amt),Memos:[{Memo:{MemoType:s2hex(CFG.memo_type||'CBH-SLOT'),MemoData:s2hex(mode)}}]},
-   mode==='FREE'?(n>1?`MICKEL NICKEL SLOTS: ${n} free spins (0.1 XRP fee each)`:'MICKEL NICKEL SLOTS: free spin (0.1 XRP fee)'):`MICKEL NICKEL SLOTS: ${n} spin${n>1?'s':''} (0.5 XRP each)`,uuid=>{setP({mode,n,wallet:me,t0:Date.now(),uuid});if(mode==='FREE')setFreeLock(me,n)},true)}
+function payGate(){if(!window.CBHPayGate)return {ok:false,reason:'pay gate missing'};return window.CBHPayGate.servicePayAllowed(window.CBH_SERVICE_STATUS,Date.now(),'slots')}
+function paintMulti(){const box=g('slmulti');if(!box||!CFG||!window.CBHPayGate)return;box.querySelectorAll('button').forEach(b=>{const n=+b.dataset.n;
+ if(!window.CBHPayGate.showPaidQty(CFG,n)){b.hidden=true;if(multiN===2)multiN=1;return}b.hidden=false;
+ try{b.textContent='x'+n+' · '+window.CBHPayGate.xrpLabel(window.CBHPayGate.slotCheckout(CFG,'PAID',n).amt)}catch(e){b.hidden=true}})}
+function paintCopy(){if(!window.CBHPayGate||!window.CBHPayGate.feeLive(CFG))return;const t=document.getElementById('slcopy-live');if(!t)return;const root=t.content||t;
+ const free=root.querySelector('#slfreecopy-live'),paid=root.querySelector('#slpaidcopy-live');
+ if(free&&g('slfreecopy'))g('slfreecopy').textContent=free.textContent;if(paid&&g('slpaidcopy'))g('slpaidcopy').textContent=paid.textContent}
+async function liveSpin(mode){if(getP())return resume();if(!isConn()||busy)return;const payG=payGate();if(!payG.ok){banner('lose','Payments are off ('+payG.reason+'). Nothing was charged.');return}
+ let quote;const n=mode==='PAID'?multiN:freePick(freeLeft());
+ try{quote=window.CBHPayGate.slotCheckout(CFG,mode,n)}catch(e){banner('lose','Payment amount is not available ('+e.message+'). Nothing was charged.');return}
+ busy=true;AX();startLoop();sStart();gate();   // reels roll only after the status gate and the amount check
+ const amt=quote.amt,me=wal();
+ banner('wait',`Opening Xaman… check it says <b>MAINNET</b> and <b>${window.CBHPayGate.xrpLabel(amt)} XRP</b>, then sign.${/iPhone|iPad|Android/i.test(navigator.userAgent)?' After signing, tap <b>◀ Safari</b> (top-left) to come back here.':''}`);let r=null;
+ try{r=await xamanSign({TransactionType:'Payment',Destination:SELLER,Amount:String(amt),Memos:[{Memo:{MemoType:s2hex(CFG.memo_type||'CBH-SLOT'),MemoData:s2hex(quote.memo)}}]},
+   mode==='FREE'?`MICKEL NICKEL SLOTS: ${n} free spin${n>1?'s':''} (${window.CBHPayGate.xrpLabel(quote.unit)} XRP fee each)`:`MICKEL NICKEL SLOTS: ${n} spin${n>1?'s':''} (${window.CBHPayGate.xrpLabel(amt)} XRP total)`,uuid=>{setP({mode,n,wallet:me,t0:Date.now(),uuid});if(mode==='FREE')setFreeLock(me,n)},true)}
  catch(e){if(mode==='FREE')clearFreeLock();setP(null);stopWith('lose','Xaman: '+e.message);busy=false;gate();return}
  // phone: the sign request is open in Xaman now; resume() polls Xaman + the ledger and keeps the reels rolling (also after the app switch)
  const P=getP();if(r&&r.signed===false){if(mode==='FREE')clearFreeLock();setP(null);stopWith('lose','Cancelled in Xaman. No payment was made.');busy=false;gate();return}
@@ -218,10 +228,11 @@ function gate(){if(!CFG)return;const s=g('slspin'),c=isConn(),n=freeLeft(),P=get
  else if((busy||resuming)&&!late){big='⏳ SPINNING';sm='waiting for the ledger';s.disabled=true}
  else if(P){mode='check';big='CHECK RESULT';sm=late?'result on its way…':'your spin is confirmed';s.disabled=false}
  else if(!c){mode='connect';big='CONNECT XAMAN';sm='sign in to play';s.disabled=!XM}
- else if(CFG.free_spins_enabled&&n>0){mode='FREE';const k=freePick(n);big=k>1?`FREE SPIN x${k}`:'FREE SPIN';sm=`${n} left · ${k>1?'one signature · ':''}${(k*+CFG.free_spin_drops/1e6).toFixed(1)} XRP fee`;s.disabled=false}
- else if(CFG.paid_spins_enabled){mode='PAID';big=multiN>1?`SPIN x${multiN}`:'SPIN';sm=`${(multiN*+CFG.paid_spin_drops/1e6).toFixed(1)} XRP`;s.disabled=false}
+ else if(!payGate().ok){const gpay=payGate();mode='';big='PAYMENTS OFF';sm=gpay.reason;s.disabled=true}
+ else if(CFG.free_spins_enabled&&n>0){try{mode='FREE';const k=freePick(n);big=k>1?`FREE SPIN x${k}`:'FREE SPIN';const q=window.CBHPayGate.slotCheckout(CFG,'FREE',k);sm=`${n} left · ${k>1?'one signature · ':''}${window.CBHPayGate.xrpLabel(q.amt)} XRP fee`;s.disabled=false}catch(e){mode='';big='PAYMENTS OFF';sm=e.message;s.disabled=true}}
+ else if(CFG.paid_spins_enabled){try{mode='PAID';big=multiN>1?`SPIN x${multiN}`:'SPIN';sm=`${window.CBHPayGate.xrpLabel(window.CBHPayGate.slotCheckout(CFG,'PAID',multiN).amt)} XRP`;s.disabled=false}catch(e){mode='';big='PAYMENTS OFF';sm=e.message;s.disabled=true}}
  else{big='NO FREE SPIN';sm=`next snapshot ${snapDate(nextSnap())}`;s.disabled=true}
- s.dataset.mode=mode;s.innerHTML=`<span>${big}</span><small>${sm}</small>`;s.classList.toggle('sl-free',mode==='FREE');
+ s.dataset.mode=mode;s.innerHTML=`<span>${big}</span><small>${sm}</small>`;s.classList.toggle('sl-free',mode==='FREE');paintMulti();paintCopy();
  const mx=g('slmulti');if(mx){mx.hidden=mode!=='PAID';mx.querySelectorAll('button').forEach(b=>b.classList.toggle('on',+b.dataset.n===multiN))}
  const fx=g('slfmulti');if(fx){const m=Math.min(n,FMAX());fx.hidden=!(mode==='FREE'&&m>1);if(!fx.hidden){const k=freePick(n),want=[...Array(m)].map((_,i)=>i+1).join();
   if(fx.dataset.k!==want){fx.dataset.k=want;fx.innerHTML='<span class="sl-flab">Free spins in one signature:</span>'+want.split(',').map(i=>`<button type="button" data-n="${i}">x${i}</button>`).join('');
@@ -239,10 +250,12 @@ async function verify(){const h=g('sltx').value.trim().toUpperCase(),out=g('slvr
   out.innerHTML=`ledger ${t.ledger_index} · hash ${L.ledger_hash}${log}`}
  catch(e){out.textContent='Could not verify: '+e.message}}
 // ---------- boot ----------
-async function boot(){if(g('slbuild'))g('slbuild').textContent='build '+(window.SL_BUILD||'?')+' · js '+JSV;try{CFG=await fj('slots.json')}catch(e){CFG={paid_spins_enabled:false,free_spins_enabled:false,jackpot_one_in_wins:7,paid_spin_drops:'500000',free_spin_drops:'100000',free_spins_per_pairs:3}}
+async function loadServiceStatus(){try{window.CBH_SERVICE_STATUS=await fj('slots_status.json')}catch(e){window.CBH_SERVICE_STATUS=null}gate()}
+async function boot(){if(g('slbuild'))g('slbuild').textContent='build '+(window.SL_BUILD||'?')+' · js '+JSV;try{CFG=await fj('slots.json')}catch(e){CFG={paid_spins_enabled:false,free_spins_enabled:false,jackpot_one_in_wins:7,paid_spin_drops:'500000',free_spin_drops:'100000',free_spins_per_pairs:3,fee_schedule:'PENDING_NOT_LIVE'}}
  DEMO=qs.get('demo')==='1'||(!CFG.paid_spins_enabled&&!CFG.free_spins_enabled);
  try{PRZ=await fj('slots_prizes.json')}catch(e){}try{RS=await fj('slots_results.json')}catch(e){}
- if(g('slmode'))g('slmode').textContent=DEMO?'Demo mode · no payments · no real prizes':'Live on XRPL mainnet';
+ try{window.CBH_SERVICE_STATUS=await fj('slots_status.json')}catch(e){window.CBH_SERVICE_STATUS=null}
+ if(g('slmode'))g('slmode').textContent=DEMO?'Demo mode · no payments · no real prizes':'Payments follow slots_status.json. A missing, stale, or false status does not accept payments.';
  // back from Xaman: ?sltx={txid}&slid={uuid} -> remember it, then clean the URL (keeps ?wallet)
  const tx=(qs.get('sltx')||'').toUpperCase(),id=qs.get('slid')||'';
  if(/^[0-9A-F]{64}$/.test(tx)||/^[0-9a-f-]{36}$/i.test(id)){const P=getP()||{mode:qs.get('slmode')||'',wallet:qs.get('wallet')||'',t0:Date.now()};if(/^[0-9A-F]{64}$/.test(tx))P.txid=tx;if(id)P.uuid=P.uuid||id;setP(P);
@@ -250,6 +263,7 @@ async function boot(){if(g('slbuild'))g('slbuild').textContent='build '+(window.
  buildReels(['goldx','gold','polaroid']);gate();drawFree();countPairs();if(getP())resume();
  setInterval(async()=>{const a=wal(),k=a+'|'+isConn();if(k!==lastW){lastW=k;countPairs();gate()}},1000);
  setInterval(drawFree,5000);setInterval(async()=>{if(resuming)return;try{RS=await fj('slots_results.json');gate();drawFree()}catch(e){}},30000);
+ setInterval(loadServiceStatus,15000);
  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&getP()){resuming=false;resume()}});   // back from Xaman: poll again right away
  window.addEventListener('pageshow',e=>{if(e.persisted&&getP()){resuming=false;resume()}});                       // iOS back/forward cache restore
  // hard watchdog, independent of everything else: the reels can never roll more than ~95 s
@@ -266,6 +280,6 @@ if(g('slver'))g('slver').onclick=verify;
 if(g('slmulti'))g('slmulti').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(busy)return;multiN=Math.min(3,Math.max(1,+b.dataset.n||1));gate()});
 // desktop QR flow: the Xaman websocket told us the tx hash (or a cancel) -> hand it to the polling loop
 function gotTx(r){const P=getP();if(!P)return;if(r.signed===false){if(P.mode==='FREE')clearFreeLock();setP(null);gen++;resuming=false;busy=false;stopWith('lose','Cancelled in Xaman. No payment was made.');gate();return}if(r.txid&&!P.txid){P.txid=String(r.txid).toUpperCase();setP(P)}}
-window.CBH_SLOTS={outcome,multiOutcome,spinHash,getP,gate,gotTx,build:()=>window.SL_BUILD};   // exposed for the parity / flow tests
+window.CBH_SLOTS={outcome,multiOutcome,spinHash,getP,gate,gotTx,payGate,build:()=>window.SL_BUILD};   // exposed for the parity / flow tests
 boot();
 })();
