@@ -12,7 +12,7 @@
   const FUTURE_SKEW_MS = 30000;
   const SERVICES = { slots: 1, coin: 1, vending: 1 };
 
-  function servicePayAllowed(status, nowMs, expectService) {
+  function servicePayAllowed(status, nowMs, expectService, pageCfg) {
     if (!status || typeof status !== 'object' || Array.isArray(status)) {
       return { ok: false, reason: 'status missing' };
     }
@@ -21,6 +21,15 @@
     }
     if (status.accepting_payments !== true) {
       return { ok: false, reason: 'not accepting payments' };
+    }
+    if (status.fee_schedule !== 'live') {
+      return { ok: false, reason: 'fee schedule is not live' };
+    }
+    if (!Number.isInteger(status.fee_epoch_close_unix)) {
+      return { ok: false, reason: 'fee epoch missing' };
+    }
+    if (pageCfg && pageCfg.fee_schedule !== 'live') {
+      return { ok: false, reason: 'page fee schedule is not live' };
     }
     if (!Number.isInteger(status.updated_unix) || !Number.isInteger(nowMs)) {
       return { ok: false, reason: 'status clock missing' };

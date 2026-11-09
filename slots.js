@@ -4,7 +4,7 @@
    The pending spin is remembered (localStorage + Xaman return URL ?sltx={txid}&slid={id}) so leaving for Xaman and coming back
    never loses it, and the button stays locked until that spin's result is in (no double payments). No Math.random anywhere. */
 (()=>{
-const JSV='20261109-0124';
+const JSV='20261109-0136';
 const g=id=>document.getElementById(id), qs=new URLSearchParams(location.search);
 const SYM=["goldx","copper","silver","gold","hat","polaroid","glasses","bro","ho"], COMBO={Copper:["copper","copper","copper"],Silver:["silver","silver","silver"],Gold:["gold","gold","gold"],pair:["polaroid","polaroid","glasses"],pair_nospins:["hat","hat","hat"]};
 // landing combos (same as slots_core.py): Copper x3 / Silver x3 = Mickel Nickel; Gold x3 = GRAND Gold Mickel only;
@@ -204,7 +204,7 @@ async function demoSpin(){busy=true;gate();if(!demoN&&+qs.get('demo_from')>1)dem
  catch(e){hardStop();banner('lose','Demo error, tap again.')}busy=false;gate()}
 let multiN=1,freeN=0;const FMAX=()=>Math.max(1,+CFG.max_free_spins_per_payment||5);
 const freePick=n=>Math.max(1,Math.min(n,FMAX(),freeN||n));   // default: all your free spins (max 5) in one signature
-function payGate(){if(!window.CBHPayGate)return {ok:false,reason:'pay gate missing'};return window.CBHPayGate.servicePayAllowed(window.CBH_SERVICE_STATUS,Date.now(),'slots')}
+function payGate(){if(!window.CBHPayGate)return {ok:false,reason:'pay gate missing'};return window.CBHPayGate.servicePayAllowed(window.CBH_SERVICE_STATUS,Date.now(),'slots',CFG)}
 function paintMulti(){const box=g('slmulti');if(!box||!CFG||!window.CBHPayGate)return;box.querySelectorAll('button').forEach(b=>{const n=+b.dataset.n;
  if(!window.CBHPayGate.showPaidQty(CFG,n)){b.hidden=true;if(multiN===2)multiN=1;return}b.hidden=false;
  try{b.textContent='x'+n+' · '+window.CBHPayGate.xrpLabel(window.CBHPayGate.slotCheckout(CFG,'PAID',n).amt)}catch(e){b.hidden=true}})}

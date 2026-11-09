@@ -16,6 +16,10 @@ const fresh = (over = {}) => Object.assign({
   fee_epoch_close_unix: null,
   updated_unix: Math.floor(NOW / 1000)
 }, over);
+const ready = (over = {}) => fresh(Object.assign({
+  fee_schedule: 'live',
+  fee_epoch_close_unix: 1700000000
+}, over));
 
 test('shipped status files fail closed and are not fresh', () => {
   for (const rel of ['slots_status.json', 'mickel-pickle/coin_status.json', 'mickel-pickle/vending_status.json']) {
@@ -44,15 +48,24 @@ test('a stale enabled flag is not accepting_payments', () => {
   assert.equal(gate.servicePayAllowed(fresh({ accepting_payments: 'true' }), NOW, 'slots').ok, false);
 });
 
-test('fresh accepting status is the only open gate, and it expires before 180 seconds', () => {
-  assert.equal(gate.servicePayAllowed(fresh(), NOW, 'slots').ok, true);
-  const almost = fresh({ updated_unix: Math.floor(NOW / 1000) - 179 });
+test('accepting payments still requires a live schedule and an integer epoch', () => {
+  assert.deepEqual(gate.servicePayAllowed(fresh(), NOW, 'slots'), { ok: false, reason: 'fee schedule is not live' });
+  assert.deepEqual(gate.servicePayAllowed(fresh({ fee_schedule: 'live' }), NOW, 'slots'), { ok: false, reason: 'fee epoch missing' });
+  assert.deepEqual(gate.servicePayAllowed(fresh({ fee_schedule: 'live', fee_epoch_close_unix: '1700000000' }), NOW, 'slots'), { ok: false, reason: 'fee epoch missing' });
+  assert.equal(gate.servicePayAllowed(ready(), NOW, 'slots').ok, true);
+  assert.deepEqual(gate.servicePayAllowed(ready(), NOW, 'slots', { fee_schedule: 'PENDING_NOT_LIVE' }), { ok: false, reason: 'page fee schedule is not live' });
+  assert.equal(gate.servicePayAllowed(ready(), NOW, 'slots', json('slots.json')).reason, 'page fee schedule is not live');
+  assert.equal(gate.servicePayAllowed(ready(), NOW, 'slots', { fee_schedule: 'live' }).ok, true);
+});
+
+test('a coherent fresh status expires before 180 seconds', () => {
+  const almost = ready({ updated_unix: Math.floor(NOW / 1000) - 179 });
   assert.equal(gate.servicePayAllowed(almost, NOW, 'slots').ok, true);
-  const edge = fresh({ updated_unix: Math.floor(NOW / 1000) - 180 });
+  const edge = ready({ updated_unix: Math.floor(NOW / 1000) - 180 });
   assert.deepEqual(gate.servicePayAllowed(edge, NOW, 'slots'), { ok: false, reason: 'status stale' });
-  assert.equal(gate.servicePayAllowed(fresh({ service: 'coin' }), NOW, 'slots').reason, 'unknown service');
+  assert.equal(gate.servicePayAllowed(ready({ service: 'coin' }), NOW, 'slots').reason, 'unknown service');
   assert.equal(gate.servicePayAllowed(null, NOW, 'slots').reason, 'status missing');
-  assert.equal(gate.servicePayAllowed(fresh({ updated_unix: Math.floor(NOW / 1000) + 31 }), NOW, 'slots').reason, 'status stale');
+  assert.equal(gate.servicePayAllowed(ready({ updated_unix: Math.floor(NOW / 1000) + 31 }), NOW, 'slots').reason, 'status stale');
 });
 
 test('current checkout stays 0.1 and 0.5 until fee_schedule is live', () => {

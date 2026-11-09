@@ -11,7 +11,7 @@ Implemented here, still not proof of GitHub Pages, and not backend activation:
 - Home lists Pair Spin above the Vault. Purpose line is affordable collecting and fun, with no spending pressure and no investment promise.
 - Pair Spin files are unchanged. D2 stays 11.82 XRP. Gift-pair request stays 0.1 XRP.
 - Vault stays open and still requests 0.1 XRP (`spin_fee_drops` 100000) while `fee_schedule` is `PENDING_NOT_LIVE`.
-- Slots, Coin, and Vending pages stay open to read. Pay buttons stay off unless that machine's own status file is fresh. Shipped status files set `accepting_payments` false and `updated_unix` 0, so the buttons fail closed. `slots.json` still has the old `paid_spins_enabled: true` flag. The page does not treat that flag as permission.
+- Slots, Coin, and Vending pages stay open to read. A pay button stays off unless that machine's status is fresh, `accepting_payments` is boolean true, `fee_schedule` is exactly `live`, and `fee_epoch_close_unix` is an integer. Slots also requires the page `fee_schedule` to be `live`. Shipped status files keep `accepting_payments` false, `fee_schedule` pending, and `updated_unix` 0. `slots.json` still has the old `paid_spins_enabled: true` flag. The page does not treat that flag as permission.
 - Planned 0.01 XRP requests, and paid Slots at 0.5 XRP for one or exactly 1 XRP total for three, are labeled not active. 0.01 is not a promise that it covers every processing cost.
 
 Not done, because this repository cannot do it:
@@ -20,7 +20,9 @@ Not done, because this repository cannot do it:
 - `fee-cutover.patch` is not applied here and was not applied on the live trees at 18:27.
 - No signing, submission, replay, cursor move, or watcher start.
 
-Deployed only means `main` has been merged and GitHub Pages has finished a build of that commit. The public site is https://cbt123bot.github.io/cbh-pair-spin/ from branch `main`, path `/`. At the time of this change, Pages status was `errored`. The newest build, commit 8904090812, had been `building` since 2026-11-06 18:10:39Z. The two builds before it failed with `Page build failed.` A merge does not prove the public URL changed. Check the live home page and require Pair Spin to be the first card before telling people the new copy is up.
+The Nov 6 Pages failure was not a Jekyll error. Run 42268301501 built the site, then `actions/deploy-pages` stayed at `deployment_queued` and ended with the only annotation `Deployment failed, try again later.` A later merge of that static branch did publish. See the run for commit `216d2ebf143e5ad36a2a6ab67caf2f3ccf231dc4`.
+
+Deployed means GitHub Pages has finished a build of the commit. The site source is branch `main`, path `/`, at https://cbt123bot.github.io/cbh-pair-spin/ . The Nov 6 attempt looked stuck in the Pages builds list, but the Actions run had already finished as a deploy failure. That list is not the job log. After the static merge, confirm the Actions run for that commit is success and the live home page lists Pair Spin first. A merge by itself is not that confirmation.
 
 ## Runtime at 18:27 CST, which is not readiness
 
