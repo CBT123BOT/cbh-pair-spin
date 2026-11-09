@@ -142,7 +142,7 @@ $('mnbuy').onclick=()=>vlock(async()=>{const S=mnState();if(!S.open||$('mnbuy').
 setInterval(()=>load().then(mnGate).catch(()=>{}),30000);loadMN();
 $('w').addEventListener('change',()=>myPairs().catch(()=>{}));
 
-if(window.CBHHealth){CBHHealth.load().then(()=>gate());setInterval(()=>{if(!document.hidden)CBHHealth.load().then(()=>gate())},60000)}
+if(window.CBHHealth){CBHHealth.load().then(()=>{if(VOPEN)gate()});setInterval(()=>{if(!document.hidden)CBHHealth.load().then(()=>{if(VOPEN)gate()})},60000)}   // only re-gate once vault.json has loaded (keeps the original first-paint text)
 </script><div class="footer" style="margin:30px -16px -16px;padding:22px 10px 26px;border-top:2px solid #f5c542;background:linear-gradient(0deg,#1a1508,#0d0f14)"><div class="title" data-text="Crypto Bros&amp;Ho's Trading Company" role="heading" aria-level="1">Crypto Bros&amp;Ho's Trading Company</div>
 </div>
 </body></html>
