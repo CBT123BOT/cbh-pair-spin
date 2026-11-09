@@ -21,14 +21,18 @@ const ready = (over = {}) => fresh(Object.assign({
   fee_epoch_close_unix: 1700000000
 }, over));
 
-test('shipped status files fail closed and are not fresh', () => {
+test('committed status files are either fail-closed or a coherent live heartbeat', () => {
   for (const rel of ['slots_status.json', 'mickel-pickle/coin_status.json', 'mickel-pickle/vending_status.json']) {
     const status = json(rel);
-    const got = gate.servicePayAllowed(status, NOW, status.service);
-    assert.equal(got.ok, false, rel);
-    assert.equal(status.accepting_payments, false);
-    assert.notEqual(status.fee_schedule, 'live');
-    assert.equal(status.updated_unix, 0);
+    if (status.accepting_payments === true) {
+      assert.equal(status.fee_schedule, 'live', rel);
+      assert.ok(Number.isInteger(status.fee_epoch_close_unix), rel);
+      assert.ok(Number.isInteger(status.updated_unix) && status.updated_unix > 0, rel);
+      // a heartbeat file is only valid while fresh; 31 minutes later it fails closed by itself
+      assert.equal(gate.servicePayAllowed(status, (status.updated_unix + 31 * 60) * 1000, status.service).reason, 'status stale');
+    } else {
+      assert.equal(gate.servicePayAllowed(status, NOW, status.service).ok, false, rel);
+    }
   }
 });
 
@@ -36,7 +40,7 @@ test('a stale enabled flag is not accepting_payments', () => {
   const slots = json('slots.json');
   assert.equal(slots.paid_spins_enabled, true);
   assert.equal(slots.free_spins_enabled, true);
-  assert.equal(slots.fee_schedule, 'PENDING_NOT_LIVE');
+  assert.equal(slots.fee_schedule, 'live');
   const masquerade = {
     service: 'slots',
     enabled: true,
@@ -54,22 +58,23 @@ test('accepting payments still requires a live schedule and an integer epoch', (
   assert.deepEqual(gate.servicePayAllowed(fresh({ fee_schedule: 'live', fee_epoch_close_unix: '1700000000' }), NOW, 'slots'), { ok: false, reason: 'fee epoch missing' });
   assert.equal(gate.servicePayAllowed(ready(), NOW, 'slots').ok, true);
   assert.deepEqual(gate.servicePayAllowed(ready(), NOW, 'slots', { fee_schedule: 'PENDING_NOT_LIVE' }), { ok: false, reason: 'page fee schedule is not live' });
-  assert.equal(gate.servicePayAllowed(ready(), NOW, 'slots', json('slots.json')).reason, 'page fee schedule is not live');
+  assert.equal(gate.servicePayAllowed(ready(), NOW, 'slots', json('slots.json')).ok, true);
   assert.equal(gate.servicePayAllowed(ready(), NOW, 'slots', { fee_schedule: 'live' }).ok, true);
 });
 
-test('a coherent fresh status expires before 180 seconds', () => {
-  const almost = ready({ updated_unix: Math.floor(NOW / 1000) - 179 });
+test('a coherent fresh status expires before 30 minutes', () => {
+  assert.equal(gate.MAX_AGE_MS, 1800000);
+  const almost = ready({ updated_unix: Math.floor(NOW / 1000) - 1799 });
   assert.equal(gate.servicePayAllowed(almost, NOW, 'slots').ok, true);
-  const edge = ready({ updated_unix: Math.floor(NOW / 1000) - 180 });
+  const edge = ready({ updated_unix: Math.floor(NOW / 1000) - 1800 });
   assert.deepEqual(gate.servicePayAllowed(edge, NOW, 'slots'), { ok: false, reason: 'status stale' });
   assert.equal(gate.servicePayAllowed(ready({ service: 'coin' }), NOW, 'slots').reason, 'unknown service');
   assert.equal(gate.servicePayAllowed(null, NOW, 'slots').reason, 'status missing');
   assert.equal(gate.servicePayAllowed(ready({ updated_unix: Math.floor(NOW / 1000) + 31 }), NOW, 'slots').reason, 'status stale');
 });
 
-test('current checkout stays 0.1 and 0.5 until fee_schedule is live', () => {
-  const cfg = json('slots.json');
+test('legacy checkout stays 0.1 and 0.5 when fee_schedule is not live', () => {
+  const cfg = Object.assign({}, json('slots.json'), { fee_schedule: 'PENDING_NOT_LIVE' });
   assert.deepEqual(gate.slotCheckout(cfg, 'FREE', 1), { amt: 100000, memo: 'FREE', unit: 100000 });
   assert.deepEqual(gate.slotCheckout(cfg, 'FREE', 5), { amt: 500000, memo: 'FREE', unit: 100000 });
   assert.deepEqual(gate.slotCheckout(cfg, 'PAID', 1), { amt: 500000, memo: 'PAID', unit: 500000 });
@@ -82,8 +87,9 @@ test('current checkout stays 0.1 and 0.5 until fee_schedule is live', () => {
 });
 
 test('live schedule is inert unless the page flag is exactly live, and the bundle is exact', () => {
-  const cfg = Object.assign({}, json('slots.json'), { fee_schedule: 'live' });
-  assert.equal(gate.feeLive(json('slots.json')), false);
+  const cfg = json('slots.json');
+  assert.equal(gate.feeLive(Object.assign({}, cfg, { fee_schedule: 'PENDING_NOT_LIVE' })), false);
+  assert.equal(gate.feeLive(Object.assign({}, cfg, { fee_schedule: 'LIVE' })), false);
   assert.equal(gate.feeLive(cfg), true);
   assert.deepEqual(gate.slotCheckout(cfg, 'FREE', 1), { amt: 10000, memo: 'FREE', unit: 10000 });
   assert.equal(gate.xrpLabel(10000), '0.01');
@@ -97,21 +103,27 @@ test('live schedule is inert unless the page flag is exactly live, and the bundl
   assert.throws(() => gate.slotCheckout(cfg, 'PAID', 4), /bad qty/);
 });
 
-test('vault keeps the published request at or above 0.1 until the live switch', () => {
+test('vault asks 0.01 on the live switch and stays at or above 0.1 otherwise', () => {
   const vault = json('vault.json');
   assert.equal(vault.open, true);
-  assert.equal(vault.fee_schedule, 'PENDING_NOT_LIVE');
+  assert.equal(vault.fee_schedule, 'live');
   assert.equal(vault.spin_fee_drops, '100000');
-  assert.equal(gate.vaultFeeFrom(vault), 100000);
+  assert.equal(gate.vaultFeeFrom(vault), 10000);
   assert.equal(gate.vaultFeeFrom({ spin_fee_drops: '10000', spin_fee_drops_next: '10000', fee_schedule: 'PENDING_NOT_LIVE' }), 100000);
   assert.equal(gate.vaultFeeFrom({ spin_fee_drops: '100000', spin_fee_drops_next: '10000', fee_schedule: 'live' }), 10000);
   assert.equal(gate.vaultFeeFrom({ spin_fee_drops: '200000', fee_schedule: 'PENDING_NOT_LIVE' }), 200000);
   assert.equal(gate.vaultFeeFrom({ spin_fee_drops: '200000', spin_fee_drops_next: '999', fee_schedule: 'live' }), 200000);
 });
 
-test('coin and vending payloads stay on 0.1 drops', () => {
-  assert.equal(gate.currentMachineFeeDrops(json('mickel-pickle/ashes_public.json')), 100000);
-  assert.equal(gate.currentMachineFeeDrops(json('mickel-pickle/coin_results.json')), 100000);
+test('coin and vending ask 0.01 only with a live accepting status, else 0.1', () => {
+  const pub = json('mickel-pickle/ashes_public.json'), cr = json('mickel-pickle/coin_results.json');
+  assert.equal(gate.currentMachineFeeDrops(pub), 100000);
+  assert.equal(gate.currentMachineFeeDrops(cr), 100000);
+  assert.equal(gate.currentMachineFeeDrops(pub, ready({ service: 'vending' })), 10000);
+  assert.equal(gate.currentMachineFeeDrops(cr, ready({ service: 'coin' })), 10000);
+  assert.equal(gate.currentMachineFeeDrops(cr, ready({ service: 'coin', fee_epoch_close_unix: null })), 100000);
+  assert.equal(gate.currentMachineFeeDrops(cr, ready({ service: 'coin', accepting_payments: false })), 100000);
+  assert.equal(gate.currentMachineFeeDrops(cr, fresh({ service: 'coin' })), 100000);
   assert.throws(() => gate.currentMachineFeeDrops({ machine_fee_drops: 10000 }), /100000/);
 });
 
@@ -135,7 +147,9 @@ test('pair spin price files stay on the current schedule', () => {
   assert.doesNotMatch(read('index.html'), /fee_schedule/);
 });
 
-test('no shipped json marks the new fee or payments active', () => {
+test('only the page switches and heartbeat status files may say live', () => {
+  const allowLive = new Set(['slots.json', 'vault.json', 'slots_status.json', 'coin_status.json', 'vending_status.json']);
+  const allowAccepting = new Set(['slots_status.json', 'coin_status.json', 'vending_status.json']);
   const files = [];
   const walk = (dir) => {
     for (const name of fs.readdirSync(dir)) {
@@ -149,7 +163,7 @@ test('no shipped json marks the new fee or payments active', () => {
   walk(root);
   for (const abs of files) {
     const text = fs.readFileSync(abs, 'utf8');
-    assert.doesNotMatch(text, /"fee_schedule"\s*:\s*"live"/, abs);
-    assert.doesNotMatch(text, /"accepting_payments"\s*:\s*true/, abs);
+    if (!allowLive.has(path.basename(abs))) assert.doesNotMatch(text, /"fee_schedule"\s*:\s*"live"/, abs);
+    if (!allowAccepting.has(path.basename(abs))) assert.doesNotMatch(text, /"accepting_payments"\s*:\s*true/, abs);
   }
 });

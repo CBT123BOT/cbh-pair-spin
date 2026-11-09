@@ -4,7 +4,7 @@
    The pending spin is remembered (localStorage + Xaman return URL ?sltx={txid}&slid={id}) so leaving for Xaman and coming back
    never loses it, and the button stays locked until that spin's result is in (no double payments). No Math.random anywhere. */
 (()=>{
-const JSV='20261109-0136';
+const JSV='20261109-1220';
 const g=id=>document.getElementById(id), qs=new URLSearchParams(location.search);
 const SYM=["goldx","copper","silver","gold","hat","polaroid","glasses","bro","ho"], COMBO={Copper:["copper","copper","copper"],Silver:["silver","silver","silver"],Gold:["gold","gold","gold"],pair:["polaroid","polaroid","glasses"],pair_nospins:["hat","hat","hat"]};
 // landing combos (same as slots_core.py): Copper x3 / Silver x3 = Mickel Nickel; Gold x3 = GRAND Gold Mickel only;
@@ -137,7 +137,7 @@ function pendUI(){const sp=g('slspin');if(!sp)return;let b=g('slcancel');if(!b){
  sp.parentNode.insertAdjacentElement('afterend',b)}
  b.style.display=localStorage.getItem(PK)?'block':'none'}
 try{if(new URLSearchParams(location.search).get('reset')==='1')localStorage.removeItem(PK)}catch(e){}
-const WHY={NO_FREE_SPIN_LEFT:'no free spin left on this wallet (the 0.1 XRP fee is kept)',PAID_SPINS_OFF:'paid spins are off right now (refunded)',FREE_SPINS_OFF:'free spins are off right now (refunded)',
+const WHY={NO_FREE_SPIN_LEFT:'no free spin left on this wallet (the anti-spam fee is kept)',PAID_SPINS_OFF:'paid spins are off right now (refunded)',FREE_SPINS_OFF:'free spins are off right now (refunded)',
  WRONG_AMOUNT:'wrong amount (refunded)',BAD_MEMO:'missing spin memo (refunded)',WALLET_HOURLY_LIMIT:'too many spins this hour (refunded)',NO_PRIZES_LEFT:'no prizes left (refunded)'};
 let resuming=false,gen=0,apiLeft=0,late=false;
 const to=(p,ms,v)=>Promise.race([Promise.resolve(p).catch(()=>v),new Promise(r=>setTimeout(()=>r(v),ms))]);   // nothing may hang the spin
