@@ -2,13 +2,17 @@
    No network, no signing, no watcher, no status invention.
    fee_schedule "live" is the only switch that may request 0.01 XRP
    or the 1 XRP paid-Slots bundle. This file does not set that switch.
-   slots.json enabled flags are not a payment authorization. */
+   slots.json enabled flags are not a payment authorization.
+   Nov 9 2026 go-live: backend fee epoch 1794248170 (ledger 108222748).
+   Status files are refreshed by the box heartbeat publisher about every
+   10 minutes through GitHub Pages, so a status counts as fresh for 30
+   minutes. A missing, false, or older status still keeps buttons off. */
 (function (root, factory) {
   const api = factory();
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (root) root.CBHPayGate = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
-  const MAX_AGE_MS = 180000;
+  const MAX_AGE_MS = 1800000;  // 30 min: heartbeat every ~10 min + Pages deploy time
   const FUTURE_SKEW_MS = 30000;
   const SERVICES = { slots: 1, coin: 1, vending: 1 };
 
@@ -98,7 +102,15 @@
     return current;
   }
 
-  function currentMachineFeeDrops(cfg) {
+  // Coin request / vending build fee. 0.01 XRP only when the machine's own
+  // status is accepting payments on the live schedule with an integer epoch
+  // (the backend accepts 10000 drops for payments at or after that epoch).
+  // Otherwise the legacy 0.1 XRP, which the backend accepts on both sides.
+  function currentMachineFeeDrops(cfg, status) {
+    if (status && status.accepting_payments === true && status.fee_schedule === 'live' &&
+        Number.isInteger(status.fee_epoch_close_unix)) {
+      return 10000;
+    }
     const raw = cfg && cfg.machine_fee_drops;
     const n = typeof raw === 'number' ? raw : parseInt(raw, 10);
     if (n !== 100000) throw new Error('machine fee must stay 100000 drops until a verified epoch');
