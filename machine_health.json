@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "updated_unix": 1794253727,
+  "watchdog_checked_unix": 1794253666,
+  "last_full_check_unix": 1794253606,
+  "machines": {
+    "pair": {
+      "state": "open",
+      "code": "ok"
+    },
+    "vault": {
+      "state": "open",
+      "code": "ok"
+    },
+    "slots": {
+      "state": "open",
+      "code": "ok"
+    },
+    "coin": {
+      "state": "open",
+      "code": "ok"
+    },
+    "vending": {
+      "state": "open",
+      "code": "ok"
+    }
+  },
+  "note": "Display only. Published by the box heartbeat from the auto-maintenance watchdog. Older than 30 minutes = treat every machine as maintenance."
+}
