@@ -1,5 +1,7 @@
 {
   "open": true,
-  "note": "Vault switch",
-  "spin_fee_drops": "100000"
+  "note": "Vault switch. spin_fee_drops stays 100000 until fee_schedule is live. The watcher does not read this file. 0.01 is not active.",
+  "spin_fee_drops": "100000",
+  "spin_fee_drops_next": "10000",
+  "fee_schedule": "PENDING_NOT_LIVE"
 }

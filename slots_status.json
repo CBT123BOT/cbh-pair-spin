@@ -1,0 +1,9 @@
+{
+  "service": "slots",
+  "accepting_payments": false,
+  "fee_schedule": "pending",
+  "fee_epoch_close_unix": null,
+  "bundle_enabled": false,
+  "updated_unix": 0,
+  "note": "Fail closed. Do not flip accepting_payments in git. A running watcher may publish a fresh file later. This change does not start a watcher and is not legal clearance for paid prizes."
+}

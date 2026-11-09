@@ -1,0 +1,8 @@
+{
+  "service": "coin",
+  "accepting_payments": false,
+  "fee_schedule": "pending",
+  "fee_epoch_close_unix": null,
+  "updated_unix": 0,
+  "note": "Fail closed. Do not flip accepting_payments in git. Coin processing is not verified from this repo. This file does not start a watcher."
+}
