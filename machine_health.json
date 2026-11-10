@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "updated_unix": 1794347926,
-  "watchdog_checked_unix": 1794347899,
+  "updated_unix": 1794348109,
+  "watchdog_checked_unix": 1794348080,
   "last_full_check_unix": 1794345523,
   "machines": {
     "pair": {
@@ -21,8 +21,8 @@
       "code": "ok"
     },
     "vending": {
-      "state": "open",
-      "code": "ok"
+      "state": "maintenance",
+      "code": "check_failed"
     }
   },
   "note": "Display only. Published by the box heartbeat from the auto-maintenance watchdog. Older than 30 minutes = treat every machine as maintenance."
