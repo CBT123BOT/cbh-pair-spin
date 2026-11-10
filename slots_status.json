@@ -4,6 +4,6 @@
   "fee_schedule": "live",
   "fee_epoch_close_unix": 1794248170,
   "bundle_enabled": true,
-  "updated_unix": 1794315480,
+  "updated_unix": 1794316207,
   "note": "Heartbeat from the box (status_heartbeat.py). Pay buttons need accepting_payments true and updated_unix under 30 minutes old; otherwise they stay off."
 }
