@@ -7,7 +7,7 @@
  "pairs_total": 780,
  "pairs_left": 772,
  "fair_random": "index = int(SHA-256(bytes(payment_tx_hash + validating_ledger_hash))) mod len(remaining pool sorted by piece #)",
- "updated": "2026-11-06T18:10:08.943079+00:00",
+ "updated": "2026-11-14T16:01:01.938504+00:00",
  "events": [
   {
    "t": 1792258805.2544553,
