@@ -6,13 +6,21 @@
  "first_snapshot_ct": "2026-10-31T00:00:00-05:00",
  "next_snapshot_ct": "2026-12-01T00:00:00-06:00",
  "free_spins": {
+  "h:71a6e156a041bc1a": {
+   "granted": 1,
+   "used": 0
+  },
   "h:d590e8424441c039": {
    "granted": 1,
    "used": 0
   },
-  "h:e77d41222da702ca": {
+  "h:ee77defd2d3dc88e": {
    "granted": 1,
    "used": 0
+  },
+  "h:ab7ed169a659934b": {
+   "granted": 4,
+   "used": 3
   },
   "h:85aea5fc1bf4ed6d": {
    "granted": 2,
@@ -22,7 +30,11 @@
    "granted": 1,
    "used": 0
   },
-  "h:ee77defd2d3dc88e": {
+  "h:c07ea9daaecc29bf": {
+   "granted": 1,
+   "used": 1
+  },
+  "h:8f8ff34709118778": {
    "granted": 1,
    "used": 0
   },
@@ -30,19 +42,7 @@
    "granted": 2,
    "used": 0
   },
-  "h:71a6e156a041bc1a": {
-   "granted": 1,
-   "used": 0
-  },
-  "h:ab7ed169a659934b": {
-   "granted": 4,
-   "used": 3
-  },
-  "h:c07ea9daaecc29bf": {
-   "granted": 1,
-   "used": 1
-  },
-  "h:8f8ff34709118778": {
+  "h:e77d41222da702ca": {
    "granted": 1,
    "used": 0
   }
@@ -1622,5 +1622,5 @@
    "offers": []
   }
  ],
- "updated": "2026-11-09T18:16:28.538204+00:00"
+ "updated": "2026-11-14T16:01:34.182830+00:00"
 }
