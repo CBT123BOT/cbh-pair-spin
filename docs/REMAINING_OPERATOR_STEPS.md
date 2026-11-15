@@ -2,7 +2,7 @@
 
 Snapshot these notes were written from: runtime handoff 2026-11-08 18:27 America/Chicago, validated ledger tip 108206819. This file does not activate fees, watchers, or the white paper.
 
-https://cbt123.grok.me is a separate page. This repository does not publish it. The reviewed standalone HTML was copy reference only and is not in this site.
+https://cbt-123-trading-whitepaper.grok.me is a separate page. This repository does not publish it. The reviewed standalone HTML was copy reference only and is not in this site.
 
 ## What this repository changed, and what it did not
 
@@ -79,7 +79,7 @@ Preserve cursors and processed sets. Preserve historical snapshot behavior. Do n
 4. Fee cutover, only after the machines that will take payments are actually operable, or while the page buttons are still gated. Install the inert patch on the real tree only when the script hashes above still match. Leave epochs null and leave `fee_drops` and `machine_fee_drops` at 100000. Set `fee_epoch_close_unix` to a current validated ledger close time. Never backdate it onto the stopped Slots backlog. The bundle needs its own flag and its own epoch. Resume from the saved cursor. A hash already in `processed` or `jobs` keeps its original count. Legacy 1 XRP stays two paid spins. Legacy 1.50 XRP stays three. An old 0.10 XRP earned or Vault payment stays one request, not ten spins.
 5. Results sync. Restore the documented launch environment for `sync_mainnet_results.sh` before relying on GitHub Pages result files. The Nov 6 staged copies were already stale at 18:27.
 6. Paid Slots. Legal readiness is still unresolved. Do not set `accepting_payments` true for chance prizes until that is recorded. The fee name is not that record.
-7. White paper. Keep the pending wording until the backend epoch is verified on the loaded watcher and a fresh status file exists. The sentence swap in the offline cutover doc is a later manual edit for cbt123.grok.me. Do not do it from this repo.
+7. White paper. Keep the pending wording until the backend epoch is verified on the loaded watcher and a fresh status file exists. The sentence swap in the offline cutover doc is a later manual edit for cbt-123-trading-whitepaper.grok.me. Do not do it from this repo.
 
 ## Static rollback
 
