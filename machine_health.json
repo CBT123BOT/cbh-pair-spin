@@ -1,16 +1,16 @@
 {
   "schema": 1,
-  "updated_unix": 1794959341,
-  "watchdog_checked_unix": 1794959300,
+  "updated_unix": 1794959403,
+  "watchdog_checked_unix": 1794959360,
   "last_full_check_unix": 1794959174,
   "machines": {
     "pair": {
       "state": "maintenance",
-      "code": "restarting"
+      "code": "catching_up"
     },
     "vault": {
       "state": "maintenance",
-      "code": "restarting"
+      "code": "starting"
     },
     "slots": {
       "state": "maintenance",
