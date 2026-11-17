@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "updated_unix": 1794932880,
-  "watchdog_checked_unix": 1794932822,
-  "last_full_check_unix": 1794929439,
+  "updated_unix": 1794933816,
+  "watchdog_checked_unix": 1794933521,
+  "last_full_check_unix": 1794933098,
   "machines": {
     "pair": {
       "state": "open",
