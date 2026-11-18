@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "updated_unix": 1795023721,
-  "watchdog_checked_unix": 1795023681,
+  "updated_unix": 1795023843,
+  "watchdog_checked_unix": 1795023802,
   "last_full_check_unix": 1795021414,
   "machines": {
     "pair": {
@@ -9,8 +9,8 @@
       "code": "ok"
     },
     "vault": {
-      "state": "closed",
-      "code": "off"
+      "state": "open",
+      "code": "ok"
     },
     "slots": {
       "state": "open",
