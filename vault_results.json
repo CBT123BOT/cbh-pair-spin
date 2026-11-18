@@ -5,9 +5,9 @@
   "d1": 3,
   "d2_plus": 2
  },
- "stash_left": 13958,
- "coins_left": 13958,
- "giveaway_stash_in_wallet": 95,
+ "stash_left": 13949,
+ "coins_left": 13949,
+ "giveaway_stash_in_wallet": 102,
  "used_pairs": {
   "0907": {
    "holder": "rHcx\u2026ewT",
@@ -157,11 +157,11 @@
  "mn": {
   "open": true,
   "total": 14160,
-  "minted_total": 202,
-  "remaining": 13958,
+  "minted_total": 211,
+  "remaining": 13949,
   "first_wave_until": 4248,
-  "left_at_first_price": 4115,
-  "site_minted": 133,
+  "left_at_first_price": 4106,
+  "site_minted": 142,
   "special_on": true,
   "first_price_xrp": "1.11",
   "normal_price_xrp": "3.33",
@@ -2335,8 +2335,203 @@
    "delivered": "100000",
    "action": "rejected",
    "reason": "PAIR_ALREADY_USED"
+  },
+  {
+   "t": 1795023616.9816778,
+   "time_utc": "2026-11-18T17:40:16.981706+00:00",
+   "payment_tx": "045AF5D23920A51978EF88A21BD69BA07591A066297D158F2E8E366DFC04F5D1",
+   "ledger_index": 108399639,
+   "buyer": "r9vL\u2026aSC",
+   "delivered": "9990000",
+   "action": "mn_mint",
+   "qty": 9,
+   "wave": "first",
+   "price_xrp": "1.11",
+   "ledger_hash": "2411026E69575049B7CD4877A79D1F5AE1F8D8542F212490C31215B7B6784CBF",
+   "picks": [
+    {
+     "i": 0,
+     "type": "mint",
+     "coin": 7610,
+     "metal": "Copper",
+     "uri": "ipfs://bafybeidmhjsm45ld37ve7xcajuvmkzwetdifhxiyylr7mfqusgczga7hzi/7610.json",
+     "pool_size": 4047,
+     "index": 2216,
+     "status": "offered",
+     "attempts": [
+      {
+       "hash": "F8BFF8F42378A03953C71836C79999F5927E0CC90A854FD3AAD154F7C4963D15",
+       "lls": 108399665,
+       "seq": 107412735
+      }
+     ],
+     "nft_id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373B92C93520666F3B6",
+     "offer_id": "5188B8855692AEAD306D02C52DD18519774AEECD36A2784B20DCCC3B5CC02D2D",
+     "mint_tx": "F8BFF8F42378A03953C71836C79999F5927E0CC90A854FD3AAD154F7C4963D15"
+    },
+    {
+     "i": 1,
+     "type": "mint",
+     "coin": 8222,
+     "metal": "Copper",
+     "uri": "ipfs://bafybeidmhjsm45ld37ve7xcajuvmkzwetdifhxiyylr7mfqusgczga7hzi/8222.json",
+     "pool_size": 4046,
+     "index": 2389,
+     "status": "offered",
+     "attempts": [
+      {
+       "hash": "6DE8F0C0C4EC3B7434FD77E838952E867230F316CC4CD02E77CC48D247E195A4",
+       "lls": 108399667,
+       "seq": 107412736
+      }
+     ],
+     "nft_id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373D01264510666F3B7",
+     "offer_id": "81DDF92966026A6DAF2BCF137AB2F6594AB56D41A32897324AA75183751D98DD",
+     "mint_tx": "6DE8F0C0C4EC3B7434FD77E838952E867230F316CC4CD02E77CC48D247E195A4"
+    },
+    {
+     "i": 2,
+     "type": "mint",
+     "coin": 5136,
+     "metal": "Copper",
+     "uri": "ipfs://bafybeidmhjsm45ld37ve7xcajuvmkzwetdifhxiyylr7mfqusgczga7hzi/5136.json",
+     "pool_size": 4045,
+     "index": 1481,
+     "status": "offered",
+     "attempts": [
+      {
+       "hash": "EC99A55E4B18368C2FAF223097A495481AADD2B52AA0FB08274ED98BE2A938BB",
+       "lls": 108415282,
+       "seq": 107412737
+      }
+     ],
+     "nft_id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373E6F835500666F3B8",
+     "offer_id": "6E190B18C2A7CB557599CB5F621DA586462D73A961EB5631671BB2151CFF4F6D",
+     "mint_tx": "EC99A55E4B18368C2FAF223097A495481AADD2B52AA0FB08274ED98BE2A938BB"
+    },
+    {
+     "i": 3,
+     "type": "mint",
+     "coin": 1473,
+     "metal": "Copper",
+     "uri": "ipfs://bafybeidmhjsm45ld37ve7xcajuvmkzwetdifhxiyylr7mfqusgczga7hzi/1473.json",
+     "pool_size": 4044,
+     "index": 409,
+     "status": "offered",
+     "attempts": [
+      {
+       "hash": "A9134F9BE3765DA2959A677AC00D07C0AA37B1B80133868B7A320A90C8FC37F7",
+       "lls": 108415286,
+       "seq": 107412738
+      }
+     ],
+     "nft_id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373FDDE06570666F3B9",
+     "offer_id": "769A5474A8B54278097D3CD9813A5FA3964E0039D37F2C507518E0653299ED50",
+     "mint_tx": "A9134F9BE3765DA2959A677AC00D07C0AA37B1B80133868B7A320A90C8FC37F7"
+    },
+    {
+     "i": 4,
+     "type": "mint",
+     "coin": 13894,
+     "metal": "Copper",
+     "uri": "ipfs://bafybeidmhjsm45ld37ve7xcajuvmkzwetdifhxiyylr7mfqusgczga7hzi/13894.json",
+     "pool_size": 4043,
+     "index": 3971,
+     "status": "offered",
+     "attempts": [
+      {
+       "hash": "6F29174A7FD3AAA69B38EE9B7F974EE1456F4459F3CD527346CD03FDCEF70307",
+       "lls": 108415288,
+       "seq": 107412739
+      }
+     ],
+     "nft_id": "00181770992DB95F47B7A516192A895CCF7E2789C116737314C3D7560666F3BA",
+     "offer_id": "B9B1B49648124BF9A868E244ED4FBAE0EC130356C31BEDD8A771D577199D6FB6",
+     "mint_tx": "6F29174A7FD3AAA69B38EE9B7F974EE1456F4459F3CD527346CD03FDCEF70307"
+    },
+    {
+     "i": 5,
+     "type": "mint",
+     "coin": 263,
+     "metal": "Silver",
+     "uri": "ipfs://bafybeidmhjsm45ld37ve7xcajuvmkzwetdifhxiyylr7mfqusgczga7hzi/263.json",
+     "pool_size": 4042,
+     "index": 70,
+     "status": "offered",
+     "attempts": [
+      {
+       "hash": "87385571C81B41F1D56FE8474561BD8D9974F192EDF1F8B8E174628E7A486B02",
+       "lls": 108415291,
+       "seq": 107412740
+      }
+     ],
+     "nft_id": "00181770992DB95F47B7A516192A895CCF7E2789C11673732BA9A8550666F3BB",
+     "offer_id": "23DFB3708E4A334839CB867C02C8F58559F17E95899414355A03C394DF03A0E2",
+     "mint_tx": "87385571C81B41F1D56FE8474561BD8D9974F192EDF1F8B8E174628E7A486B02"
+    },
+    {
+     "i": 6,
+     "type": "mint",
+     "coin": 5109,
+     "metal": "Copper",
+     "uri": "ipfs://bafybeidmhjsm45ld37ve7xcajuvmkzwetdifhxiyylr7mfqusgczga7hzi/5109.json",
+     "pool_size": 4041,
+     "index": 1469,
+     "status": "offered",
+     "attempts": [
+      {
+       "hash": "8DE63714754B8A06FD69D5024C49E07BF9A21CB45A70B9233F0989F5FD5575CB",
+       "lls": 108415294,
+       "seq": 107412741
+      }
+     ],
+     "nft_id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373428F79540666F3BC",
+     "offer_id": "D86A8250506260142C98A36D9F70F7B3D365C9D517FCDE5FB2078919BB5C50B8",
+     "mint_tx": "8DE63714754B8A06FD69D5024C49E07BF9A21CB45A70B9233F0989F5FD5575CB"
+    },
+    {
+     "i": 7,
+     "type": "mint",
+     "coin": 6276,
+     "metal": "Silver",
+     "uri": "ipfs://bafybeidmhjsm45ld37ve7xcajuvmkzwetdifhxiyylr7mfqusgczga7hzi/6276.json",
+     "pool_size": 4040,
+     "index": 1814,
+     "status": "offered",
+     "attempts": [
+      {
+       "hash": "5FE7D9A35884A9D987578FDAF95DBE71A85104D4DBA2FE0B509AF43710403F7F",
+       "lls": 108415296,
+       "seq": 107412742
+      }
+     ],
+     "nft_id": "00181770992DB95F47B7A516192A895CCF7E2789C116737359754A5B0666F3BD",
+     "offer_id": "C8FC346C40D99A84708B7001D3C016B33FC82658691BA06D21EFF0015CE6C7B3",
+     "mint_tx": "5FE7D9A35884A9D987578FDAF95DBE71A85104D4DBA2FE0B509AF43710403F7F"
+    },
+    {
+     "i": 8,
+     "type": "mint",
+     "coin": 2338,
+     "metal": "Copper",
+     "uri": "ipfs://bafybeidmhjsm45ld37ve7xcajuvmkzwetdifhxiyylr7mfqusgczga7hzi/2338.json",
+     "pool_size": 4039,
+     "index": 656,
+     "status": "offered",
+     "attempts": [
+      {
+       "hash": "51A0BB7BF21D57A9CB13A015FE86B8628D04A15B97669E99A3C2A2A936735D16",
+       "lls": 108415299,
+       "seq": 107412743
+      }
+     ],
+     "nft_id": "00181770992DB95F47B7A516192A895CCF7E2789C1167373705B1B5A0666F3BE",
+     "offer_id": "BF556B770D9241391790AC453B72698E8E4B35E0AF513DEF97D3832D2A53A3DF",
+     "mint_tx": "51A0BB7BF21D57A9CB13A015FE86B8628D04A15B97669E99A3C2A2A936735D16"
+    }
+   ]
   }
  ],
  "rule": "pick i = SHA-256(proof/payment tx hash + validating ledger hash + byte i) mod pool size; pool = never-minted coin numbers sorted (mn_remaining.json); pool shrinks each pick",
- "updated": "2026-11-17T23:49:21.861166+00:00"
+ "updated": "2026-11-18T17:41:52.242913+00:00"
 }
