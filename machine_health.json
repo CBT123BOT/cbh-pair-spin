@@ -1,20 +1,20 @@
 {
   "schema": 1,
-  "updated_unix": 1795449644,
-  "watchdog_checked_unix": 1795449591,
+  "updated_unix": 1795449706,
+  "watchdog_checked_unix": 1795449679,
   "last_full_check_unix": 1795447826,
   "machines": {
     "pair": {
-      "state": "closed",
-      "code": "paused"
+      "state": "open",
+      "code": "ok"
     },
     "vault": {
-      "state": "closed",
-      "code": "paused"
+      "state": "open",
+      "code": "ok"
     },
     "slots": {
-      "state": "closed",
-      "code": "paused"
+      "state": "open",
+      "code": "ok"
     },
     "coin": {
       "state": "open",
