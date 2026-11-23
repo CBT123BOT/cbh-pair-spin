@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "updated_unix": 1795444143,
-  "watchdog_checked_unix": 1795444125,
-  "last_full_check_unix": 1795440566,
+  "updated_unix": 1795444508,
+  "watchdog_checked_unix": 1795444323,
+  "last_full_check_unix": 1795444202,
   "machines": {
     "pair": {
       "state": "open",
@@ -13,8 +13,8 @@
       "code": "ok"
     },
     "slots": {
-      "state": "open",
-      "code": "ok"
+      "state": "maintenance",
+      "code": "check_failed"
     },
     "coin": {
       "state": "open",
